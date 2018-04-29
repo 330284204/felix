@@ -19,6 +19,10 @@
 package org.apache.felix.webconsole;
 
 
+<<<<<<< HEAD
+=======
+import java.io.File;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URLDecoder;
@@ -37,8 +41,11 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+<<<<<<< HEAD
 import org.json.JSONException;
 import org.json.JSONWriter;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 
 /**
@@ -138,6 +145,15 @@ public final class WebConsoleUtil
             // Create a factory for disk-based file items
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setSizeThreshold( 256000 );
+<<<<<<< HEAD
+=======
+            // See https://issues.apache.org/jira/browse/FELIX-4660
+            final Object repo = request.getAttribute( AbstractWebConsolePlugin.ATTR_FILEUPLOAD_REPO );
+            if ( repo instanceof File )
+            {
+                factory.setRepository( (File) repo );
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload( factory );
@@ -155,7 +171,11 @@ public final class WebConsoleUtil
                     if ( current == null )
                     {
                         current = new FileItem[]
+<<<<<<< HEAD
                             { fi };
+=======
+                                { fi };
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     }
                     else
                     {
@@ -203,8 +223,13 @@ public final class WebConsoleUtil
      *  URL is given and cannot be converted into a valid URL
      */
     public static final void sendRedirect(final HttpServletRequest request,
+<<<<<<< HEAD
                                 final HttpServletResponse response,
                                 String redirectUrl) throws IOException {
+=======
+            final HttpServletResponse response,
+            String redirectUrl) throws IOException {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // check for relative URL
         if ( !redirectUrl.startsWith("/") ) { //$NON-NLS-1$
             String base = request.getContextPath() + request.getServletPath() + request.getPathInfo();
@@ -244,7 +269,11 @@ public final class WebConsoleUtil
     }
 
     /**
+<<<<<<< HEAD
      * Escapes HTML special chars like: <>&\r\n and space
+=======
+     * Escapes HTML special chars like: &lt;&gt;&amp;\r\n and space
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      *
      *
      * @param text the text to escape
@@ -260,6 +289,7 @@ public final class WebConsoleUtil
             {
                 switch (ch = text.charAt(i))
                 {
+<<<<<<< HEAD
                     case '<':
                         sb.append("&lt;"); //$NON-NLS-1$
                         break;
@@ -279,6 +309,27 @@ public final class WebConsoleUtil
                         break;
                     default:
                         sb.append(ch);
+=======
+                case '<':
+                    sb.append("&lt;"); //$NON-NLS-1$
+                    break;
+                case '>':
+                    sb.append("&gt;"); //$NON-NLS-1$
+                    break;
+                case '&':
+                    sb.append("&amp;"); //$NON-NLS-1$
+                    break;
+                case ' ':
+                    sb.append("&nbsp;"); //$NON-NLS-1$
+                    break;
+                case '\r':
+                case '\n':
+                    if (oldch != '\r' && oldch != '\n') // don't add twice <br>
+                        sb.append("<br/>\n"); //$NON-NLS-1$
+                    break;
+                default:
+                    sb.append(ch);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
                 oldch = ch;
             }
@@ -296,7 +347,11 @@ public final class WebConsoleUtil
      * @return the request parameter if set and is valid integer, or the default value
      */
     public static final int getParameterInt(HttpServletRequest request, String name,
+<<<<<<< HEAD
         int _default)
+=======
+            int _default)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         int ret = _default;
         String param = request.getParameter(name);
@@ -314,6 +369,7 @@ public final class WebConsoleUtil
     }
 
     /**
+<<<<<<< HEAD
      * Writes a key-value pair in a JSON writer. Write is performed only if both key and
      * value are not null.
      *
@@ -338,6 +394,8 @@ public final class WebConsoleUtil
 
 
     /**
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Decode the given value expected to be URL encoded.
      * <p>
      * This method first tries to use the Java 1.4 method

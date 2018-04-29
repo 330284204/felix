@@ -20,27 +20,37 @@ package org.apache.felix.coordinator.impl;
 
 import java.util.Hashtable;
 
+<<<<<<< HEAD
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.felix.jmx.service.coordinator.CoordinatorMBean;
 import org.apache.felix.service.coordinator.Coordinator;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceFactory;
+<<<<<<< HEAD
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 @SuppressWarnings("deprecation")
+=======
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.coordinator.Coordinator;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class Activator implements BundleActivator
 {
 
     private CoordinationMgr mgr;
 
+<<<<<<< HEAD
     private ServiceTracker mbeanServerTracker;
 
     private ServiceRegistration coordinatorService;
@@ -85,12 +95,32 @@ public class Activator implements BundleActivator
             coordinatorCommand = null;
         }
 
+=======
+    private ServiceRegistration coordinatorService;
+
+    public void start(final BundleContext context)
+    {
+        LogWrapper.setContext(context);
+
+        mgr = new CoordinationMgr();
+
+        final ServiceFactory factory = new CoordinatorFactory(mgr);
+        final Hashtable<String, String> props = new Hashtable<String, String>();
+        props.put(Constants.SERVICE_DESCRIPTION, "Coordinator Service Implementation");
+        props.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
+        coordinatorService = context.registerService(Coordinator.class.getName(), factory, props);
+    }
+
+    public void stop(final BundleContext context)
+    {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         if (coordinatorService != null)
         {
             coordinatorService.unregister();
             coordinatorService = null;
         }
 
+<<<<<<< HEAD
         if (mbeanServerTracker != null)
         {
             mbeanServerTracker.close();
@@ -98,6 +128,11 @@ public class Activator implements BundleActivator
         }
 
         mgr.cleanUp();
+=======
+        mgr.cleanUp();
+
+        LogWrapper.setContext(null);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     static final class CoordinatorFactory implements ServiceFactory
@@ -110,17 +145,26 @@ public class Activator implements BundleActivator
             this.mgr = mgr;
         }
 
+<<<<<<< HEAD
         public Object getService(Bundle bundle, ServiceRegistration registration)
+=======
+        public Object getService(final Bundle bundle, final ServiceRegistration registration)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             return new CoordinatorImpl(bundle, mgr);
         }
 
+<<<<<<< HEAD
         public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)
+=======
+        public void ungetService(final Bundle bundle, final ServiceRegistration registration, final Object service)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             ((CoordinatorImpl) service).dispose();
         }
 
     }
+<<<<<<< HEAD
 
     static final class MBeanServerTracker extends ServiceTracker
     {
@@ -168,4 +212,6 @@ public class Activator implements BundleActivator
             super.removedService(reference, service);
         }
     }
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

@@ -18,12 +18,24 @@
  */
 package org.apache.felix.utils.filter;
 
+<<<<<<< HEAD
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import junit.framework.TestCase;
 import org.osgi.framework.Version;
 
+=======
+import junit.framework.TestCase;
+
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
+
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class FilterImplTest extends TestCase
 {
     public void testStandardLDAP() throws Exception
@@ -121,4 +133,15 @@ public class FilterImplTest extends TestCase
         assertFalse(filterImpl.matchCase(dict));
     }
 
+<<<<<<< HEAD
+=======
+    public void testMatches() throws InvalidSyntaxException {
+        FilterImpl filterImpl = FilterImpl.newInstance("(foo=bar)");
+
+        assertTrue(filterImpl.matches(
+                Collections.singletonMap("foo", "bar")));
+        assertFalse("The matches operation should be case-sensitive",
+                filterImpl.matches(Collections.singletonMap("FOO", "bar")));
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

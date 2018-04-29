@@ -17,11 +17,26 @@
 package org.apache.felix.webconsole.internal.configuration;
 
 
+<<<<<<< HEAD
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONWriter;
+=======
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.felix.utils.json.JSONWriter;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
@@ -249,7 +264,11 @@ class MetaTypeServiceSupport extends MetaTypeSupport
             {
                 for ( int i = 0; i < ad.length; i++ )
                 {
+<<<<<<< HEAD
                     adMap.put( ad[i].getID(), new MetatypePropertyDescriptor( ad[i] ) );
+=======
+                    adMap.put( ad[i].getID(), new MetatypePropertyDescriptor( ad[i], false ) );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         }
@@ -257,7 +276,12 @@ class MetaTypeServiceSupport extends MetaTypeSupport
     }
 
 
+<<<<<<< HEAD
     void mergeWithMetaType( Dictionary props, ObjectClassDefinition ocd, JSONWriter json ) throws JSONException
+=======
+    void mergeWithMetaType( Dictionary props, ObjectClassDefinition ocd, JSONWriter json, Set ignoreAttrIds )
+            throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         json.key( "title" ).value( ocd.getName() ); //$NON-NLS-1$
 
@@ -267,6 +291,12 @@ class MetaTypeServiceSupport extends MetaTypeSupport
         }
 
         AttributeDefinition[] ad = ocd.getAttributeDefinitions( ObjectClassDefinition.ALL );
+<<<<<<< HEAD
+=======
+        AttributeDefinition[] optionalArray = ocd.getAttributeDefinitions( ObjectClassDefinition.OPTIONAL );
+        List/*<AttributeDefinition>*/ optional = optionalArray == null ? Collections.EMPTY_LIST : Arrays.asList( optionalArray );
+        final Set metatypeAttributes = new HashSet(ignoreAttrIds);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         if ( ad != null )
         {
             json.key( "properties" ).object(); //$NON-NLS-1$
@@ -274,11 +304,40 @@ class MetaTypeServiceSupport extends MetaTypeSupport
             {
                 final AttributeDefinition adi = ad[i];
                 final String attrId = adi.getID();
+<<<<<<< HEAD
                 json.key( attrId );
                 attributeToJson( json, new MetatypePropertyDescriptor( adi ), props.get( attrId ) );
             }
             json.endObject();
         }
+=======
+                if (!ignoreAttrIds.contains(attrId)) {
+                    json.key( attrId );
+                    boolean isOptional = optional.contains( adi );
+                    attributeToJson( json, new MetatypePropertyDescriptor( adi, isOptional ), props.get( attrId ) );
+                }
+                metatypeAttributes.add( attrId );
+            }
+            json.endObject();
+        }
+        final StringBuffer sb = new StringBuffer();
+        final Enumeration e = props.keys();
+        while ( e.hasMoreElements() )
+        {
+            String key = (String)e.nextElement();
+            if ( !metatypeAttributes.contains(key) ) {
+                if ( sb.length() > 0 )
+                {
+                    sb.append(',');
+                }
+                sb.append(key);
+            }
+        }
+        if ( sb.length() > 0 )
+        {
+            json.key("additionalProperties").value(sb.toString());
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 

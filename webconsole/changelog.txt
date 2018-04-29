@@ -1,3 +1,116 @@
+<<<<<<< HEAD
+=======
+Changes from 4.3.2 to 4.3.4
+---------------------------
+** Bug
+    * [FELIX-5638] - Unintended Web Console RESTful API change
+
+Changes from 4.3.0 to 4.3.2
+---------------------------
+** Bug
+    * [FELIX-5620] - Bundle start/stop buttons are missing
+** Improvement
+    * [FELIX-5566] - Stop/update/refresh/start bundles when updating through the webconsole for faster turnaround
+    * [FELIX-5602] - Use Java 6 as base java version
+
+
+Changes from 4.2.18 to 4.3.0
+----------------------------
+** Improvement
+    * [FELIX-5504] - Switch from org.json to new simple json writer in utils
+    * [FELIX-5509] - Remove method keyVal from WebConsoleUtil
+
+
+Changes from 4.2.16 to 4.2.18
+-----------------------------
+** Bug
+    * [FELIX-4840] - Asynchronous IO fails in webconsole plugin
+    * [FELIX-5387] - NPE for requests missing 'felix-webconsole-locale' cookie
+
+** Improvement
+    * [FELIX-5445] - Web Console: Properly display non-string property arrays in name hint
+    * [FELIX-5484] - Webconsole configuration factory name hint array rendering
+
+
+Changes from 4.2.14 to 4.2.16
+-----------------------------
+** Bug
+    * [FELIX-4941] - Configuration Properties not defined in Metatype are lost after update
+    * [FELIX-4795] - Servlet API 3.x not supported 
+    * [FELIX-5223] - [IE11][Edge]: Fields in OSGI Configuration Manager are not editable 
+
+
+Changes from 4.2.12 to 4.2.14
+-----------------------------
+** Bug
+    * [FELIX-5042] - Get system bundle by location, not number for global bundle list
+    * [FELIX-5060] - Unnecessary import of org.osgi.service.component
+
+
+Changes from 4.2.10 to 4.2.12
+-----------------------------
+** Bug
+    * [FELIX-2880] - The Webconsole does not handle Vector<PrimitiveWrapper>
+    * [FELIX-3366] - The Configuration Webconsole Plugin seems to ignore the ocd ref element
+    * [FELIX-4849] - Do not call setContentLength after calling sendRedirect
+    * [FELIX-4995] - NPE when updating Apache Felix OSGi Management Console configuration without a password
+    * [FELIX-5004] - Null is passed to BundleInfoProvider if plugin root is null
+    * [FELIX-5031] - NPE in Web Console configuration plugin when metatype service is missing
+    * [FELIX-5041] - Cannot build web console with JDK 1.8 due to javadoc problems
+
+** Improvement
+    * [FELIX-5018] - [webconsole] "create factory configuration" link for config screen
+    * [FELIX-5019] - [webconsole] "referer" parameter for configuration open/create link
+
+
+Changes from 4.2.8 to 4.2.10
+----------------------------
+** Bug
+    * [FELIX-4852] - Unbinding configuration does not have desired effect
+    * [FELIX-4886] - Check for ConfigAdmin#listConfigurations returning null
+
+
+Changes from 4.2.6 to 4.2.8
+---------------------------
+** Bug
+    * [FELIX-3695] - When bundle filter doesn't match, the tool bars are duplicated
+    * [FELIX-4800] - Bundle search in /system/console/bundles produces 405
+** Improvement
+    * [FELIX-3006] - Please create a logout button for the web console screen
+
+Changes from 4.2.4 to 4.2.6
+---------------------------
+** Bug
+    * [FELIX-4203] - ConfigAdmin plugin does not return json
+    * [FELIX-4734] - Web Console RESTful API should wait for asynchonous operations until they complete 
+    * [FELIX-4735] - Cannot create a new factory configuration from Web Admin Console
+** Improvement
+    * [FELIX-3849] - Support setting configuration binding
+    * [FELIX-4007] - enable multiline inputs in Web Console Configuration
+    * [FELIX-4704] - Show ranking in web console services plugin
+    * [FELIX-4710] - Web Console: Display templated name hint for factory configuration entries
+    * [FELIX-4737] - Provide an option to use system bundle context to get bundles/services (Support for subsystems)
+    * [FELIX-4746] - Escape outputting filter parameter in service servlet
+** Task
+    * [FELIX-4738] - Deprecate WebConsoleUtil#keyVal
+
+Changes from 4.2.0 to 4.2.4
+---------------------------
+** Bug
+    * [FELIX-3817] - Form parameters might clash with configuration parameters
+    * [FELIX-4558] - Web Console Service plugin doesn&#39;t list properties with value 0
+    * [FELIX-4562] - Web Console License plugin fails to load files
+    * [FELIX-4572] - Web Console may cause NPE on refresh packages
+    * [FELIX-4610] - WebConsole doesn&#39;t start with Java Security enabled
+    * [FELIX-4652] - Security problem with AbstractWebConsolePlugin.spoolResource
+    * [FELIX-4660] - Security problem in WebConsoleUtil.getParameter() method
+    * [FELIX-4662] - WebConsole Xdialog javascript function is not working correctly
+                
+** New Feature
+    * [FELIX-3848] - Differentiate between unbound and new configuration
+    * [FELIX-4711] - Web Console: False AJAX error displayed on deleting or unbinding config
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 4.0.0 to 4.2.0
 ---------------------------
 

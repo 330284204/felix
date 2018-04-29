@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+<<<<<<< HEAD
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
@@ -29,6 +30,22 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+=======
+import java.net.URL;
+import java.util.Date;
+import java.util.Dictionary;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.felix.utils.json.JSONWriter;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
@@ -37,7 +54,11 @@ import org.osgi.service.event.EventAdmin;
  */
 public class PluginServlet extends HttpServlet
 {
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private static final String ACTION_POST = "post"; //$NON-NLS-1$
     private static final String ACTION_SEND = "send"; //$NON-NLS-1$
     private static final String ACTION_CLEAR = "clear"; //$NON-NLS-1$
@@ -49,7 +70,11 @@ public class PluginServlet extends HttpServlet
 
     /** Is the config admin available? */
     private volatile boolean configAdminAvailable = false;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private EventAdmin eventAdmin;
 
     private final String TEMPLATE;
@@ -59,7 +84,11 @@ public class PluginServlet extends HttpServlet
         this.collector = new EventCollector(null);
         TEMPLATE = readTemplateFile(getClass(), "/res/events.html"); //$NON-NLS-1$
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private final String readTemplateFile(final Class clazz, final String templateFile)
     {
         InputStream templateStream = getClass().getResourceAsStream(templateFile);
@@ -101,15 +130,26 @@ public class PluginServlet extends HttpServlet
             + clazz);
         return ""; //$NON-NLS-1$
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private static final Event newEvent(HttpServletRequest request)
     {
         String topic = request.getParameter("topic"); //$NON-NLS-1$
 
+<<<<<<< HEAD
         return new Event(topic, (Dictionary)PropertiesEditorSupport.convertProperties(request));
     }
     
    
+=======
+        return new Event(topic, PropertiesEditorSupport.convertProperties(request));
+    }
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -169,6 +209,7 @@ public class PluginServlet extends HttpServlet
         final long endTime = (events.size() == 0 ? startTime : ((EventInfo)events.get(events.size() - 1)).received);
         final float scale = (endTime == startTime ? 100.0f : 100.0f / (endTime - startTime));
 
+<<<<<<< HEAD
         pw.write("{");
 
         jsonKey( pw, "status" );
@@ -177,10 +218,20 @@ public class PluginServlet extends HttpServlet
         jsonKey( pw, "data" );
 
         pw.write('[');
+=======
+        final JSONWriter writer = new JSONWriter(pw);
+        writer.object();
+        writer.key( "status" );
+        writer.value( statusLine.toString() );
+
+        writer.key( "data" );
+        writer.array();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // display list in reverse order
         for ( int index = events.size() - 1; index >= 0; index-- )
         {
+<<<<<<< HEAD
             eventJson( pw, ( EventInfo ) events.get( index ), index, startTime, scale );
             if ( index > 0 )
             {
@@ -191,6 +242,14 @@ public class PluginServlet extends HttpServlet
         pw.write(']');
 
         pw.write("}"); //$NON-NLS-1$
+=======
+            eventJson( writer, ( EventInfo ) events.get( index ), index, startTime, scale );
+        }
+
+        writer.endArray();
+
+        writer.endObject();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -233,6 +292,7 @@ public class PluginServlet extends HttpServlet
         return null;
     }
 
+<<<<<<< HEAD
     private void jsonValue( final PrintWriter pw, final String v)
     throws IOException
     {
@@ -380,6 +440,57 @@ public class PluginServlet extends HttpServlet
         jw.write("}");
 
         jw.write("}");
+=======
+
+    private void eventJson( JSONWriter jw, EventInfo info, int index, final long start, final float scale )
+    throws IOException
+    {
+        final long msec = info.received - start;
+
+        // Compute color bar size and make sure the bar is visible
+        final int percent = Math.max((int)(msec * scale), 2);
+
+        jw.object();
+        jw.key( "id" );
+        jw.value( String.valueOf( index ) );
+
+        jw.key( "offset" );
+        jw.value( msec );
+
+        jw.key( "width" );
+        jw.value( percent );
+
+        jw.key( "category" );
+        jw.value( info.category );
+
+        jw.key( "received" );
+        jw.value( info.received );
+
+        jw.key( "topic" );
+        jw.value( info.topic );
+
+        if ( info.info != null )
+        {
+            jw.key( "info" );
+            jw.value( info.info );
+        }
+
+        jw.key( "properties" );
+        jw.object();
+        if ( info.properties != null && info.properties.size() > 0 )
+        {
+            final Iterator i = info.properties.entrySet().iterator();
+            while ( i.hasNext() )
+            {
+                final Map.Entry current = (Entry) i.next();
+                jw.key( current.getKey().toString() );
+                jw.value(current.getValue());
+            }
+        }
+        jw.endObject();
+
+        jw.endObject();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public void updateConfiguration( Dictionary dict)

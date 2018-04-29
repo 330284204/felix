@@ -20,6 +20,7 @@ package org.apache.felix.framework.util;
 
 import java.util.Comparator;
 
+<<<<<<< HEAD
 public class StringComparator implements Comparator
 {
     private final boolean m_isCaseSensitive;
@@ -44,5 +45,56 @@ public class StringComparator implements Comparator
     public boolean isCaseSensitive()
     {
         return m_isCaseSensitive;
+=======
+public class StringComparator implements Comparator<String>
+{
+
+    public static final StringComparator COMPARATOR = new StringComparator();
+
+    public int compare(String s1, String s2)
+    {
+        int n1 = s1.length();
+        int n2 = s2.length();
+        int min = n1 < n2 ? n1 : n2;
+        for ( int i = 0; i < min; i++ )
+        {
+            char c1 = s1.charAt( i );
+            char c2 = s2.charAt( i );
+            if ( c1 != c2 )
+            {
+                // Fast check for simple ascii codes
+                if ( c1 <= 128 && c2 <= 128 )
+                {
+                    c1 = toLowerCaseFast(c1);
+                    c2 = toLowerCaseFast(c2);
+                    if ( c1 != c2 )
+                    {
+                        return c1 - c2;
+                    }
+                }
+                else
+                {
+                    c1 = Character.toUpperCase( c1 );
+                    c2 = Character.toUpperCase( c2 );
+                    if ( c1 != c2 )
+                    {
+                        c1 = Character.toLowerCase( c1 );
+                        c2 = Character.toLowerCase( c2 );
+                        if ( c1 != c2 )
+                        {
+                            // No overflow because of numeric promotion
+                            return c1 - c2;
+                        }
+                    }
+                }
+            }
+        }
+        return n1 - n2;
+    }
+
+    private static char toLowerCaseFast( char ch )
+    {
+        return ( ch >= 'A' && ch <= 'Z' ) ? ( char ) ( ch + 'a' - 'A' ) : ch;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

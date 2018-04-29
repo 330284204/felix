@@ -21,8 +21,17 @@ package org.apache.felix.webconsole.internal.misc;
 
 import java.io.IOException;
 import java.io.InputStream;
+<<<<<<< HEAD
 import java.net.URL;
 import java.util.Enumeration;
+=======
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -32,6 +41,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+<<<<<<< HEAD
+=======
+import org.apache.felix.utils.json.JSONWriter;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.utils.manifest.Clause;
 import org.apache.felix.utils.manifest.Parser;
 import org.apache.felix.webconsole.DefaultVariableResolver;
@@ -39,9 +52,12 @@ import org.apache.felix.webconsole.SimpleWebConsolePlugin;
 import org.apache.felix.webconsole.WebConsoleUtil;
 import org.apache.felix.webconsole.internal.OsgiManagerPlugin;
 import org.apache.felix.webconsole.internal.Util;
+<<<<<<< HEAD
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Bundle;
 
 
@@ -49,10 +65,22 @@ import org.osgi.framework.Bundle;
  * LicenseServlet provides the licenses plugin that browses through the bundles,
  * searching for common license files.
  *
+<<<<<<< HEAD
  * TODO: add support for 'Bundle-License' manifest header
  */
 public final class LicenseServlet extends SimpleWebConsolePlugin implements OsgiManagerPlugin
 {
+=======
+ */
+public final class LicenseServlet extends SimpleWebConsolePlugin implements OsgiManagerPlugin
+{
+    public static final class Entry {
+        String url;
+        String path;
+        String jar;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     // common names (without extension) of the license files.
     static final String LICENSE_FILES[] =
         { "README", "DISCLAIMER", "LICENSE", "NOTICE", "DEPENDENCIES" };
@@ -79,7 +107,11 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
      * @see org.apache.felix.webconsole.AbstractWebConsolePlugin#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+<<<<<<< HEAD
         throws ServletException, IOException
+=======
+            throws ServletException, IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         final PathInfo pathInfo = PathInfo.parse( request.getPathInfo() );
         if ( pathInfo != null )
@@ -106,11 +138,16 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
 
         // prepare variables
         DefaultVariableResolver vars = ( ( DefaultVariableResolver ) WebConsoleUtil.getVariableResolver( request ) );
+<<<<<<< HEAD
         vars.put( "__data__", getBundleData( bundles, request.getLocale() ).toString());
+=======
+        vars.put( "__data__", getBundleData( bundles, request.getLocale() ));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         res.getWriter().print(TEMPLATE);
     }
 
+<<<<<<< HEAD
     private static final JSONArray getBundleData(Bundle[] bundles, Locale locale) throws IOException
     {
         JSONArray ret = new JSONArray();
@@ -137,6 +174,49 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
             throw new IOException(je.toString());
         }
         return ret;
+=======
+    private static final String getBundleData(Bundle[] bundles, Locale locale) throws IOException
+    {
+        final StringWriter json = new StringWriter();
+        final JSONWriter jw = new JSONWriter(json);
+        jw.array();
+
+        for (int i = 0; i < bundles.length; i++)
+        {
+            Bundle bundle = bundles[i];
+
+            List files = findResource(bundle, LICENSE_FILES);
+            addLicensesFromHeader(bundle, files);
+            if (!files.isEmpty())
+            { // has resources
+                jw.object();
+                jw.key( "bid").value( bundle.getBundleId() );
+                jw.key( "title").value( Util.getName( bundle, locale ) );
+                jw.key( "files");
+                jw.object();
+                jw.key("__res__");
+                jw.array();
+                Iterator iter = files.iterator();
+                while ( iter.hasNext() ) {
+                    jw.object();
+                    Entry entry = (Entry) iter.next();
+                    jw.key("path").value(entry.path);
+                    jw.key("url").value(entry.url);
+                    if ( entry.jar != null )
+                    {
+                        jw.key("jar").value(entry.jar);
+                    }
+                    jw.endObject();
+                }
+                jw.endArray();
+                jw.endObject();
+                jw.endObject();
+            }
+        }
+
+        jw.endArray();
+        return json.toString();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -145,8 +225,12 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
         return path.substring( path.lastIndexOf( '/' ) + 1 );
     }
 
+<<<<<<< HEAD
     private static final JSONObject addLicensesFromHeader(Bundle bundle, JSONObject files)
         throws JSONException
+=======
+    private static final void addLicensesFromHeader(Bundle bundle, List files)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         String target = (String) bundle.getHeaders("").get("Bundle-License");
         if (target != null)
@@ -175,6 +259,7 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
                     if (path.indexOf("://") == -1 && null == bundle.getEntry(path))
                         continue;
 
+<<<<<<< HEAD
                     JSONObject entry = new JSONObject();
                     entry.put("path", path);
                     entry.put("url", url);
@@ -188,6 +273,21 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
     private static final JSONObject findResource( Bundle bundle, String[] patterns ) throws IOException, JSONException
     {
         JSONObject ret = new JSONObject();
+=======
+                    Entry entry = new Entry();
+                    entry.path = path;
+                    entry.url = url;
+
+                    files.add(entry);
+                }
+            }
+        }
+    }
+
+    private static final List findResource( Bundle bundle, String[] patterns ) throws IOException
+    {
+        final List files = new ArrayList();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         for ( int i = 0; i < patterns.length; i++ )
         {
@@ -197,10 +297,17 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
                 while ( entries.hasMoreElements() )
                 {
                     URL url = ( URL ) entries.nextElement();
+<<<<<<< HEAD
                     JSONObject entry = new JSONObject();
                     entry.put( "path", url.getPath() );
                     entry.put( "url", getName( url.getPath() ) );
                     ret.append( "__res__", entry );
+=======
+                    Entry entry = new Entry();
+                    entry.path = url.getPath();
+                    entry.url = getName( url.getPath() ) ;
+                    files.add(entry);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         }
@@ -211,7 +318,10 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
             while ( entries.hasMoreElements() )
             {
                 URL url = ( URL ) entries.nextElement();
+<<<<<<< HEAD
                 final String resName = getName( url.getPath() );
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                 InputStream ins = null;
                 try
@@ -234,11 +344,19 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
                         {
                             if ( name.startsWith( patterns[i] ) )
                             {
+<<<<<<< HEAD
                                 JSONObject entry = new JSONObject();
                                 entry.put( "jar", url.getPath() );
                                 entry.put( "path", zentry.getName() );
                                 entry.put( "url", getName( name ) );
                                 ret.append( resName, entry );
+=======
+                                Entry entry = new Entry();
+                                entry.path = zentry.getName();
+                                entry.url = getName( name ) ;
+                                entry.jar = url.getPath();
+                                files.add(entry);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                             }
                         }
                     }
@@ -251,7 +369,11 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
             }
         }
 
+<<<<<<< HEAD
         return ret;
+=======
+        return files;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -277,7 +399,17 @@ public final class LicenseServlet extends SimpleWebConsolePlugin implements Osgi
 
         if ( pathInfo.innerJar == null )
         {
+<<<<<<< HEAD
             final URL resource = bundle.getResource( pathInfo.licenseFile );
+=======
+            URL resource = bundle.getEntry( pathInfo.licenseFile );
+            if ( resource == null)
+            {
+                resource = bundle.getResource( pathInfo.licenseFile );
+            }
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if ( resource != null )
             {
                 final InputStream input = resource.openStream();

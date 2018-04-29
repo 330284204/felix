@@ -24,6 +24,7 @@ import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.util.Eleme
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.objectweb.asm.AnnotationVisitor;
+<<<<<<< HEAD
 import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
@@ -31,11 +32,24 @@ import org.objectweb.asm.commons.EmptyVisitor;
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
 public class UpdatedVisitor extends EmptyVisitor implements AnnotationVisitor {
+=======
+import org.objectweb.asm.Opcodes;
+
+/**
+ * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
+ * @see org.apache.felix.ipojo.annotations.Updated
+ */
+public class UpdatedVisitor extends AnnotationVisitor {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     private ComponentWorkbench workbench;
     private String name;
 
     public UpdatedVisitor(ComponentWorkbench workbench, String name) {
+<<<<<<< HEAD
+=======
+        super(Opcodes.ASM5);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         this.workbench = workbench;
         this.name = name;
     }

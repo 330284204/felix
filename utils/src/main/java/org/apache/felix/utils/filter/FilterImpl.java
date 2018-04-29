@@ -19,6 +19,7 @@
 package org.apache.felix.utils.filter;
 
 
+<<<<<<< HEAD
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -26,12 +27,34 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.utils.version.VersionTable;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
+<<<<<<< HEAD
+=======
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 /**
  * This filter implementation is based on the official OSGi filter with additional
  * support for the SUPERSET (&gt;*) and SUBSET (&lt;*) operators.
@@ -74,6 +97,10 @@ public class FilterImpl implements Filter {
      * unparsable.
      *
      * @param filterString the filter string.
+<<<<<<< HEAD
+=======
+     * @return A new filter
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * @exception InvalidSyntaxException If the filter parameter contains an
      *            invalid filter string that cannot be parsed.
      */
@@ -102,7 +129,11 @@ public class FilterImpl implements Filter {
                 if (value instanceof String) {
                     conv = VersionTable.getVersion((String) value);
                 } else if (value instanceof Version) {
+<<<<<<< HEAD
                     conv = (Version) value;
+=======
+                    conv = value;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         } catch (Throwable t) {
@@ -179,6 +210,25 @@ public class FilterImpl implements Filter {
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Filter using a {@code Map}. This {@code Filter} is executed using the
+     * specified {@code Map}'s keys and values. The keys are looked up in a
+     * normal manner respecting case.
+     *
+     * @param map The {@code Map} whose key/value pairs are used in the match.
+     *        Maps with {@code null} key or values are not supported. A
+     *        {@code null} value is considered not present to the filter.
+     * @return {@code true} if the {@code Map}'s values match this filter;
+     *         {@code false} otherwise.
+     * @since 1.6
+     */
+    public boolean matches(Map<String, ?> map) {
+        return matchCase(map);
+    }
+
+    /**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Returns this <code>Filter</code>'s filter string.
      * <p>
      * The filter string is normalized by removing whitespace which does not
@@ -571,6 +621,7 @@ public class FilterImpl implements Filter {
             return compare_ObjectArray(operation, (Object[]) value1, value2);
         }
         if (value1 instanceof Version) {
+<<<<<<< HEAD
             if (converted != null) {
                 switch (operation) {
                     case APPROX :
@@ -582,6 +633,19 @@ public class FilterImpl implements Filter {
                     }
                     case LESS: {
                         return ((Version) value1).compareTo(converted) <= 0;
+=======
+            if (converted instanceof Version) {
+                switch (operation) {
+                    case APPROX :
+                    case EQUAL : {
+                        return ((Version) value1).compareTo((Version) converted) == 0;
+                    }
+                    case GREATER: {
+                        return ((Version) value1).compareTo((Version) converted) >= 0;
+                    }
+                    case LESS: {
+                        return ((Version) value1).compareTo((Version) converted) <= 0;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     }
                 }
             } else {

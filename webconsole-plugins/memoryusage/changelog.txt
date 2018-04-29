@@ -1,3 +1,19 @@
+<<<<<<< HEAD
+=======
+Changes from 1.0.6 to 1.0.8
+---------------------------
+** Bug
+    * [FELIX-5552] - Handle MemoryPoolMXBean.getUsed returning -1
+    * [FELIX-4019] - Memory Management Plugin does not handle unknown values properly
+
+
+Changes from 1.0.4 to 1.0.6
+---------------------------
+** Bug
+    * [FELIX-4862] - Correct version range for web console package import
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 1.0.2 to 1.0.4
 ---------------------------
 

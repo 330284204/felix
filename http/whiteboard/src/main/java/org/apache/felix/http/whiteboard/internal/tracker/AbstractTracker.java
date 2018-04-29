@@ -16,6 +16,7 @@
  */
 package org.apache.felix.http.whiteboard.internal.tracker;
 
+<<<<<<< HEAD
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -33,11 +34,53 @@ public abstract class AbstractTracker<T>
     public final Object addingService(ServiceReference ref)
     {
         T service = (T)super.addingService(ref);
+=======
+import org.apache.felix.http.base.internal.logger.SystemLogger;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+
+public abstract class AbstractTracker<T>
+    extends ServiceTracker<T, T>
+{
+    public AbstractTracker(final BundleContext context, final Filter filter)
+    {
+        super(context, filter, null);
+    }
+
+    public AbstractTracker(final BundleContext context, final Class<T> clazz)
+    {
+        super(context, clazz.getName(), null);
+    }
+
+    protected void logDeprecationWarning(final String id, final T service, final ServiceReference<T> ref)
+    {
+        SystemLogger.warning("Deprecation warning: " +
+                    id + " registered through Apache Felix whiteboard service: " + getInfo(service, ref) +
+                    ". Please change your code to use the OSGi Http Whiteboard Service.", null);
+    }
+
+    private String getInfo(final T service, final ServiceReference<T> ref)
+    {
+        return "Service " + ref.getProperty(Constants.SERVICE_PID) + " from bundle "
+                + ref.getBundle().getBundleId()
+                + (ref.getBundle().getSymbolicName() != null ? ref.getBundle().getSymbolicName() + ":" + ref.getBundle().getVersion() : "")
+                + " class " + service.getClass();
+    }
+
+    @Override
+    public final T addingService(final ServiceReference<T> ref)
+    {
+        T service = super.addingService(ref);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         added(service, ref);
         return service;
     }
 
     @Override
+<<<<<<< HEAD
     @SuppressWarnings("unchecked")
     public final void modifiedService(ServiceReference ref, Object service)
     {
@@ -57,4 +100,22 @@ public abstract class AbstractTracker<T>
     protected abstract void added(T service, ServiceReference ref);
 
     protected abstract void removed(T service, ServiceReference ref);
+=======
+    public final void modifiedService(final ServiceReference<T> ref, T service)
+    {
+        removed(service, ref);
+        added(service, ref);
+    }
+
+    @Override
+    public final void removedService(final ServiceReference<T> ref, T service)
+    {
+        super.removedService(ref, service);
+        removed(service, ref);
+    }
+
+    protected abstract void added(T service, ServiceReference<T> ref);
+
+    protected abstract void removed(T service, ServiceReference<T> ref);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

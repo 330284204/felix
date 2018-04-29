@@ -18,14 +18,34 @@
  */
 package org.apache.felix.prefs.impl;
 
+<<<<<<< HEAD
 import java.io.*;
+=======
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+<<<<<<< HEAD
 import java.util.*;
 
 import org.apache.felix.prefs.*;
+=======
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.felix.prefs.BackingStoreManager;
+import org.apache.felix.prefs.PreferencesDescription;
+import org.apache.felix.prefs.PreferencesImpl;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -51,6 +71,7 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
     /**
      * @see org.apache.felix.sandbox.preferences.impl.StreamBackingStoreImpl#checkAccess()
      */
+    @Override
     protected void checkAccess() throws BackingStoreException {
         if ( this.rootDirectory == null ) {
             throw new BackingStoreException("Saving of data files to the bundle context is currently not supported.");
@@ -60,6 +81,7 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
     /**
      * @see org.apache.felix.sandbox.preferences.impl.StreamBackingStoreImpl#getOutputStream(org.apache.felix.sandbox.preferences.PreferencesDescription)
      */
+    @Override
     protected OutputStream getOutputStream(PreferencesDescription desc) throws IOException {
         final File file = this.getFile(desc);
         return getFileOutputStream(file);
@@ -75,7 +97,11 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
         } catch (BackingStoreException ignore) {
             return new Long[0];
         }
+<<<<<<< HEAD
         final Set bundleIds = new HashSet();
+=======
+        final Set<Long> bundleIds = new HashSet<Long>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final File[] children = getFilesList(this.rootDirectory);
         for( int i=0; i<children.length; i++ ) {
             final File current = children[i];
@@ -85,7 +111,7 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
                 bundleIds.add(desc.getBundleId());
             }
         }
-        return (Long[])bundleIds.toArray(new Long[bundleIds.size()]);
+        return bundleIds.toArray(new Long[bundleIds.size()]);
     }
 
     protected PreferencesDescription getDescription(File file) {
@@ -132,7 +158,11 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
      */
     public PreferencesImpl[] loadAll(BackingStoreManager manager, Long bundleId) throws BackingStoreException {
         this.checkAccess();
+<<<<<<< HEAD
         final List list = new ArrayList();
+=======
+        final List<PreferencesImpl> list = new ArrayList<PreferencesImpl>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final File[] children = getFilesList(this.rootDirectory);
         for( int i=0; i<children.length; i++ ) {
             final File current = children[i];
@@ -152,7 +182,7 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
                 }
             }
         }
-        return (PreferencesImpl[])list.toArray(new PreferencesImpl[list.size()]);
+        return list.toArray(new PreferencesImpl[list.size()]);
     }
 
     /**
@@ -194,28 +224,51 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
     }
 
     // few utility methods to access File APIs from a privileged block
+<<<<<<< HEAD
     
     private static File[] getFilesList(final File file) {
         return (File[]) AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
+=======
+
+    private static File[] getFilesList(final File file) {
+        return AccessController.doPrivileged(new PrivilegedAction<File[]>() {
+            public File[] run() {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 return file.listFiles();
             }
         });
     }
+<<<<<<< HEAD
     
     private static Boolean fileExists(final File file) {
         return (Boolean) AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
+=======
+
+    private static Boolean fileExists(final File file) {
+        return AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+            public Boolean run() {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 return (file.exists() ? Boolean.TRUE : Boolean.FALSE);
             }
         });
     }
+<<<<<<< HEAD
     
     private static FileInputStream getFileInputStream(final File file) throws IOException {
         try {
             return (FileInputStream) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                 public Object run() throws FileNotFoundException {
+=======
+
+    private static FileInputStream getFileInputStream(final File file) throws IOException {
+        try {
+            return AccessController.doPrivileged(
+                    new PrivilegedExceptionAction<FileInputStream>() {
+                public FileInputStream run() throws FileNotFoundException {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     return new FileInputStream(file);
                 }
             });
@@ -225,12 +278,21 @@ public class DataFileBackingStoreImpl extends StreamBackingStoreImpl {
             throw (FileNotFoundException) e.getException();
         }
     }
+<<<<<<< HEAD
     
     private static FileOutputStream getFileOutputStream(final File file) throws IOException {
         try {
             return (FileOutputStream) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                 public Object run() throws FileNotFoundException {
+=======
+
+    private static FileOutputStream getFileOutputStream(final File file) throws IOException {
+        try {
+            return AccessController.doPrivileged(
+                    new PrivilegedExceptionAction<FileOutputStream>() {
+                public FileOutputStream run() throws FileNotFoundException {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     return new FileOutputStream(file);
                 }
             });

@@ -51,12 +51,20 @@ import java.util.Map.Entry;
 
 import org.apache.felix.framework.BundleProtectionDomain;
 import org.apache.felix.framework.BundleRevisionImpl;
+<<<<<<< HEAD
+=======
+import org.apache.felix.framework.FakeBundle;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.framework.security.permissionadmin.PermissionAdminImpl;
 import org.apache.felix.framework.security.util.Conditions;
 import org.apache.felix.framework.security.util.LocalPermissions;
 import org.apache.felix.framework.security.util.Permissions;
 import org.apache.felix.framework.security.util.PropertiesCache;
+<<<<<<< HEAD
 import org.apache.felix.framework.util.manifestparser.R4Library;
+=======
+import org.apache.felix.framework.util.manifestparser.NativeLibrary;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /*
 import org.apache.felix.moduleloader.ICapability;
@@ -307,6 +315,7 @@ public final class ConditionalPermissionAdminImpl implements
         }
     }
 
+<<<<<<< HEAD
     private static class FakeBundle implements Bundle
     {
         private final Map m_certs;
@@ -477,6 +486,8 @@ public final class ConditionalPermissionAdminImpl implements
         }
     }
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private static class FakeCert extends X509Certificate
     {
         private final Principal m_principal;
@@ -668,7 +679,11 @@ public final class ConditionalPermissionAdminImpl implements
                 certList.add(new FakeCert(certs[j]));
             }
         }
+<<<<<<< HEAD
         final Bundle fake = new FakeBundle(certificates);
+=======
+        final FakeBundle fake = new FakeBundle(certificates);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         ProtectionDomain domain = new ProtectionDomain(null, null)
         {
             public boolean implies(Permission permission)

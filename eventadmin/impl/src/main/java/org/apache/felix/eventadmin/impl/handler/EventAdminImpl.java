@@ -21,6 +21,10 @@ package org.apache.felix.eventadmin.impl.handler;
 import org.apache.felix.eventadmin.impl.tasks.AsyncDeliverTasks;
 import org.apache.felix.eventadmin.impl.tasks.DefaultThreadPool;
 import org.apache.felix.eventadmin.impl.tasks.SyncDeliverTasks;
+<<<<<<< HEAD
+=======
+import org.apache.felix.eventadmin.impl.util.Matchers;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -49,6 +53,12 @@ public class EventAdminImpl implements EventAdmin
     // The synchronous event dispatcher
     private final SyncDeliverTasks m_sendManager;
 
+<<<<<<< HEAD
+=======
+    // matchers for ignore topics
+    private Matchers.Matcher[] m_ignoreTopics;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * The constructor of the <tt>EventAdmin</tt> implementation.
      *
@@ -61,7 +71,12 @@ public class EventAdminImpl implements EventAdmin
                     final DefaultThreadPool asyncPool,
                     final int timeout,
                     final String[] ignoreTimeout,
+<<<<<<< HEAD
                     final boolean requireTopic)
+=======
+                    final boolean requireTopic,
+                    final String[] ignoreTopics)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         checkNull(syncPool, "syncPool");
         checkNull(asyncPool, "asyncPool");
@@ -71,6 +86,10 @@ public class EventAdminImpl implements EventAdmin
         this.tracker.open();
         m_sendManager = new SyncDeliverTasks(syncPool, timeout);
         m_postManager = new AsyncDeliverTasks(asyncPool, m_sendManager);
+<<<<<<< HEAD
+=======
+        m_ignoreTopics = Matchers.createEventTopicMatchers(ignoreTopics);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -87,6 +106,29 @@ public class EventAdminImpl implements EventAdmin
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Check whether the topic should be delivered at all
+     */
+    private boolean checkTopic( final Event event )
+    {
+        boolean result = true;
+        if ( this.m_ignoreTopics != null )
+        {
+            for(final Matchers.Matcher m : this.m_ignoreTopics)
+            {
+                if ( m.match(event.getTopic()) )
+                {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Post an asynchronous event.
      *
      * @param event The event to be posted by this service
@@ -95,9 +137,19 @@ public class EventAdminImpl implements EventAdmin
      *
      * @see org.osgi.service.event.EventAdmin#postEvent(org.osgi.service.event.Event)
      */
+<<<<<<< HEAD
     public void postEvent(final Event event)
     {
         m_postManager.execute(this.getTracker().getHandlers(event), event);
+=======
+    @Override
+    public void postEvent(final Event event)
+    {
+        if ( checkTopic(event) )
+        {
+            m_postManager.execute(this.getTracker().getHandlers(event), event);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -109,9 +161,19 @@ public class EventAdminImpl implements EventAdmin
      *
      * @see org.osgi.service.event.EventAdmin#sendEvent(org.osgi.service.event.Event)
      */
+<<<<<<< HEAD
     public void sendEvent(final Event event)
     {
         m_sendManager.execute(this.getTracker().getHandlers(event), event, false);
+=======
+    @Override
+    public void sendEvent(final Event event)
+    {
+        if ( checkTopic(event) )
+        {
+            m_sendManager.execute(this.getTracker().getHandlers(event), event, false);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -128,12 +190,21 @@ public class EventAdminImpl implements EventAdmin
      */
     public void update(final int timeout,
                     final String[] ignoreTimeout,
+<<<<<<< HEAD
                     final boolean requireTopic)
+=======
+                    final boolean requireTopic,
+                    final String[] ignoreTopics)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         this.tracker.close();
         this.tracker.update(ignoreTimeout, requireTopic);
         this.m_sendManager.update(timeout);
         this.tracker.open();
+<<<<<<< HEAD
+=======
+        this.m_ignoreTopics = Matchers.createEventTopicMatchers(ignoreTopics);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**

@@ -16,12 +16,25 @@
  */
 package org.apache.felix.http.jetty.internal;
 
+<<<<<<< HEAD
 import org.apache.felix.http.base.internal.AbstractHttpActivator;
+=======
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.apache.felix.http.base.internal.AbstractHttpActivator;
+import org.apache.felix.http.jetty.LoadBalancerCustomizerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceFactory;
+import org.osgi.framework.ServiceRegistration;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 public final class JettyActivator extends AbstractHttpActivator
 {
     private JettyService jetty;
 
+<<<<<<< HEAD
     protected void doStart() throws Exception
     {
         super.doStart();
@@ -32,6 +45,109 @@ public final class JettyActivator extends AbstractHttpActivator
     protected void doStop() throws Exception
     {
         this.jetty.stop();
+=======
+    private ServiceRegistration<?> metatypeReg;
+    private ServiceRegistration<LoadBalancerCustomizerFactory> loadBalancerCustomizerFactoryReg;
+    private ServiceRegistration<?> jettyServiceFactoryReg;
+
+    @Override
+    protected void doStart() throws Exception
+    {
+        super.doStart();
+        final Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put(Constants.SERVICE_DESCRIPTION, "Metatype provider for Jetty Http Service");
+        properties.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
+        properties.put("metatype.pid", JettyService.PID);
+
+        metatypeReg = this.getBundleContext().registerService("org.osgi.service.metatype.MetaTypeProvider",
+                new ServiceFactory()
+                {
+
+                    @Override
+                    public Object getService(final Bundle bundle, final ServiceRegistration registration)
+                    {
+                        return new ConfigMetaTypeProvider(getBundleContext().getBundle());
+                    }
+
+                    @Override
+                    public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)
+                    {
+                        // nothing to do
+                    }
+                }, properties);
+        this.jetty = new JettyService(getBundleContext(), getHttpServiceController());
+        this.jetty.start();
+
+        final Dictionary<String, Object> propertiesCustomizer = new Hashtable<>();
+        propertiesCustomizer.put(Constants.SERVICE_DESCRIPTION, "Load Balancer Customizer Factory for Jetty Http Service");
+        propertiesCustomizer.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
+        loadBalancerCustomizerFactoryReg = this.getBundleContext().registerService(LoadBalancerCustomizerFactory.class,
+                new ServiceFactory<LoadBalancerCustomizerFactory>()
+                {
+
+                    @Override
+                    public LoadBalancerCustomizerFactory getService(final Bundle bundle,
+                            final ServiceRegistration<LoadBalancerCustomizerFactory> registration)
+                    {
+                        return new ForwardedRequestCustomizerFactory();
+                    }
+
+                    @Override
+                    public void ungetService(final Bundle bundle,
+                            final ServiceRegistration<LoadBalancerCustomizerFactory> registration,
+                            final LoadBalancerCustomizerFactory service)
+                    {
+                        // nothing to do
+                    }
+                }, propertiesCustomizer);
+
+        final Dictionary<String, Object> factoryProps = new Hashtable<>();
+        factoryProps.put(Constants.SERVICE_PID, JettyService.PID);
+        factoryProps.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
+        factoryProps.put(Constants.SERVICE_DESCRIPTION, "Managed Service Factory for the Jetty Http Service");
+        this.jettyServiceFactoryReg = this.getBundleContext().registerService("org.osgi.service.cm.ManagedServiceFactory",
+                new ServiceFactory()
+                {
+
+                    @Override
+                    public Object getService(final Bundle bundle,
+                            final ServiceRegistration registration)
+                    {
+                        return new JettyManagedServiceFactory(getBundleContext());
+                    }
+
+                    @Override
+                    public void ungetService(final Bundle bundle,
+                            final ServiceRegistration registration,
+                            final Object service)
+                    {
+                        ((JettyManagedServiceFactory)service).stop();
+                    }
+                }, factoryProps);
+
+    }
+
+    @Override
+    protected void doStop() throws Exception
+    {
+        this.jetty.stop();
+        if ( metatypeReg != null )
+        {
+            metatypeReg.unregister();
+            metatypeReg = null;
+        }
+        if ( loadBalancerCustomizerFactoryReg != null )
+        {
+            loadBalancerCustomizerFactoryReg.unregister();
+            loadBalancerCustomizerFactoryReg = null;
+        }
+        if ( jettyServiceFactoryReg != null )
+        {
+            jettyServiceFactoryReg.unregister();
+            jettyServiceFactoryReg = null;
+        }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         super.doStop();
     }
 }

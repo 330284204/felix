@@ -18,6 +18,15 @@
  */
 package org.apache.felix.http.sslfilter.internal;
 
+<<<<<<< HEAD
+=======
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.ATTR_SSL_CERTIFICATE;
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.HDR_X_FORWARDED_PORT;
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.HTTPS;
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.UTF_8;
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.X_509;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -32,14 +41,18 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 class SslFilterRequest extends HttpServletRequestWrapper
 {
+<<<<<<< HEAD
     // The HTTPS scheme name
     private static final String HTTPS_SCHEME = "https";
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     // The HTTP scheme prefix in an URL
     private static final String HTTP_SCHEME_PREFIX = "http://";
 
     // pattern to convert the header to a PEM certificate for parsing
     // by replacing spaces with line breaks
+<<<<<<< HEAD
     private static Pattern HEADER_TO_CERT = Pattern.compile("(?! CERTIFICATE)(?= ) ");
 
     // character encoding for the client certificate header
@@ -58,19 +71,34 @@ class SslFilterRequest extends HttpServletRequestWrapper
     protected static final String ATTR_SSL_CERTIFICATE = "javax.servlet.request.X509Certificate";
 
     private String requestURL;
+=======
+    private static final Pattern HEADER_TO_CERT = Pattern.compile("(?! CERTIFICATE)(?= ) ");
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     @SuppressWarnings("unchecked")
     SslFilterRequest(HttpServletRequest request, String clientCertHeader) throws CertificateException
     {
         super(request);
 
+<<<<<<< HEAD
         if (clientCertHeader != null && clientCertHeader.length() > 0)
+=======
+        // TODO jawi: perhaps we should make this class a little smarter wrt the given request:
+        // it now always assumes it should rewrite its URL, while this might not always be the
+        // case...
+
+        if (clientCertHeader != null && !"".equals(clientCertHeader.trim()))
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             final String clientCert = HEADER_TO_CERT.matcher(clientCertHeader).replaceAll("\n");
 
             try
             {
+<<<<<<< HEAD
                 CertificateFactory fac = CertificateFactory.getInstance("X.509");
+=======
+                CertificateFactory fac = CertificateFactory.getInstance(X_509);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                 InputStream instream = new ByteArrayInputStream(clientCert.getBytes(UTF_8));
 
@@ -90,16 +118,27 @@ class SslFilterRequest extends HttpServletRequestWrapper
         getRequest().removeAttribute(ATTR_SSL_CERTIFICATE);
     }
 
+<<<<<<< HEAD
     public String getScheme()
     {
         return HTTPS_SCHEME;
     }
 
+=======
+    @Override
+    public String getScheme()
+    {
+        return HTTPS;
+    }
+
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public boolean isSecure()
     {
         return true;
     }
 
+<<<<<<< HEAD
     public StringBuffer getRequestURL()
     {
         if (this.requestURL == null)
@@ -116,5 +155,36 @@ class SslFilterRequest extends HttpServletRequestWrapper
         }
 
         return new StringBuffer(this.requestURL);
+=======
+    @Override
+    public StringBuffer getRequestURL()
+    {
+        StringBuffer tmp = new StringBuffer(super.getRequestURL());
+        // In case the request happened over http, simply insert an additional 's'
+        // to make the request appear to be done over https...
+        if (tmp.indexOf(HTTP_SCHEME_PREFIX) == 0)
+        {
+            tmp.insert(4, 's');
+        }
+        return tmp;
+    }
+
+    @Override
+    public int getServerPort()
+    {
+        int port;
+
+        try
+        {
+            String fwdPort = getHeader(HDR_X_FORWARDED_PORT);
+            port = Integer.parseInt(fwdPort);
+        }
+        catch (Exception e)
+        {
+            // Use default port
+            port = 443;
+        }
+        return port;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

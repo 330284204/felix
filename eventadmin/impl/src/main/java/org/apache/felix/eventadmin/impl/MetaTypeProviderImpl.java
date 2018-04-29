@@ -24,7 +24,13 @@ import java.util.Dictionary;
 
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+<<<<<<< HEAD
 import org.osgi.service.metatype.*;
+=======
+import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.metatype.MetaTypeProvider;
+import org.osgi.service.metatype.ObjectClassDefinition;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /**
  * The optional meta type provider for the event admin config.
@@ -38,19 +44,35 @@ public class MetaTypeProviderImpl
     private final int m_timeout;
     private final boolean m_requireTopic;
     private final String[] m_ignoreTimeout;
+<<<<<<< HEAD
+=======
+    private final String[] m_ignoreTopic;
+    private final double m_asyncThreadPoolRatio;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     private final ManagedService m_delegatee;
 
     public MetaTypeProviderImpl(final ManagedService delegatee,
             final int threadPoolSize,
             final int timeout, final boolean requireTopic,
+<<<<<<< HEAD
             final String[] ignoreTimeout)
+=======
+            final String[] ignoreTimeout,
+            final String[] ignoreTopic,
+            final double asyncThreadPoolRatio)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         m_threadPoolSize = threadPoolSize;
         m_timeout = timeout;
         m_requireTopic = requireTopic;
         m_delegatee = delegatee;
         m_ignoreTimeout = ignoreTimeout;
+<<<<<<< HEAD
+=======
+        m_ignoreTopic = ignoreTopic;
+        m_asyncThreadPoolRatio = asyncThreadPoolRatio;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private ObjectClassDefinition ocd;
@@ -58,7 +80,12 @@ public class MetaTypeProviderImpl
     /**
      * @see org.osgi.service.cm.ManagedService#updated(java.util.Dictionary)
      */
+<<<<<<< HEAD
     public void updated(Dictionary properties) throws ConfigurationException
+=======
+    @Override
+    public void updated(Dictionary<String, ?> properties) throws ConfigurationException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         m_delegatee.updated(properties);
     }
@@ -66,6 +93,10 @@ public class MetaTypeProviderImpl
     /**
      * @see org.osgi.service.metatype.MetaTypeProvider#getLocales()
      */
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public String[] getLocales()
     {
         return null;
@@ -74,6 +105,10 @@ public class MetaTypeProviderImpl
     /**
      * @see org.osgi.service.metatype.MetaTypeProvider#getObjectClassDefinition(java.lang.String, java.lang.String)
      */
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public ObjectClassDefinition getObjectClassDefinition( String id, String locale )
     {
         if ( !Configuration.PID.equals( id ) )
@@ -83,6 +118,7 @@ public class MetaTypeProviderImpl
 
         if ( ocd == null )
         {
+<<<<<<< HEAD
             final ArrayList adList = new ArrayList();
 
             adList.add( new AttributeDefinitionImpl( Configuration.PROP_THREAD_POOL_SIZE, "Thread Pool Size",
@@ -91,6 +127,23 @@ public class MetaTypeProviderImpl
                 "the event dispatching thread or a lot of timeouts are to be expected. A value of " +
                 "less then 2 triggers the default value. A value of 2 effectively disables thread pooling.",
                 m_threadPoolSize ) );
+=======
+            final ArrayList<AttributeDefinition> adList = new ArrayList<AttributeDefinition>();
+
+            adList.add( new AttributeDefinitionImpl( Configuration.PROP_THREAD_POOL_SIZE, "Thread Pool Size",
+                "The size of the thread pool used for event delivery. The default value is 20. " +
+                "Increase in case of a large amount of events. A value of " +
+                "less then 2 triggers the default value. If the pool is exhausted, event delivery " +
+                "is blocked until a thread becomes available from the pool. Each event is delivered " +
+                "in a thread from the pool unless the ignore timeouts is configured for the receiving event handler.",
+                m_threadPoolSize ) );
+            adList.add( new AttributeDefinitionImpl( Configuration.PROP_ASYNC_TO_SYNC_THREAD_RATIO, "Async/sync Thread Pool Ratio",
+                    "The ratio of asynchronous to synchronous threads in the internal thread" +
+                    " pool. Ratio must be positive and may be adjusted to represent the " +
+                    "distribution of post to send operations.  Applications with higher number " +
+                    "of post operations should have a higher ratio.",
+                    m_asyncThreadPoolRatio));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
             adList.add( new AttributeDefinitionImpl( Configuration.PROP_TIMEOUT, "Timeout",
                     "The black-listing timeout in milliseconds. The default value is 5000. Increase or decrease " +
@@ -116,6 +169,7 @@ public class MetaTypeProviderImpl
                     "all handlers in this package and all subpackages are ignored. If the string neither " +
                     "ends with a dot nor with a star, this is assumed to define an exact class name.",
                     AttributeDefinition.STRING, m_ignoreTimeout, Integer.MAX_VALUE, null, null));
+<<<<<<< HEAD
             ocd = new ObjectClassDefinition()
             {
 
@@ -123,24 +177,55 @@ public class MetaTypeProviderImpl
                     .toArray( new AttributeDefinition[adList.size()] );
 
 
+=======
+            adList.add( new AttributeDefinitionImpl( Configuration.PROP_IGNORE_TOPIC, "Ignore Topics",
+                    "For performance optimization it is possible to configure topics which are ignored " +
+                    "by the event admin implementation. In this case, a event is not delivered to " +
+                    "registered event handlers. The value is a list of strings (separated by comma). " +
+                    "If a single value ends with a dot, all topics in exactly this package are ignored. " +
+                    "If a single value ends with a star, all topics in this package and all sub packages " +
+                    "are ignored. If a single value neither ends with a dot nor with a start, this is assumed " +
+                    "to define an exact topic. A single star can be used to disable delivery completely.",
+                    AttributeDefinition.STRING, m_ignoreTopic, Integer.MAX_VALUE, null, null));
+            ocd = new ObjectClassDefinition()
+            {
+
+                private final AttributeDefinition[] attrs = adList
+                    .toArray( new AttributeDefinition[adList.size()] );
+
+
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public String getName()
                 {
                     return "Apache Felix Event Admin Implementation";
                 }
 
 
+<<<<<<< HEAD
+=======
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public InputStream getIcon( int arg0 )
                 {
                     return null;
                 }
 
 
+<<<<<<< HEAD
+=======
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public String getID()
                 {
                     return Configuration.PID;
                 }
 
 
+<<<<<<< HEAD
+=======
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public String getDescription()
                 {
                     return "Configuration for the Apache Felix Event Admin Implementation." +
@@ -148,6 +233,10 @@ public class MetaTypeProviderImpl
                 }
 
 
+<<<<<<< HEAD
+=======
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public AttributeDefinition[] getAttributeDefinitions( int filter )
                 {
                     return ( filter == OPTIONAL ) ? null : attrs;
@@ -183,6 +272,15 @@ public class MetaTypeProviderImpl
                 { String.valueOf(defaultValue) }, 0, null, null );
         }
 
+<<<<<<< HEAD
+=======
+        AttributeDefinitionImpl( final String id, final String name, final String description, final double defaultValue )
+        {
+            this( id, name, description, DOUBLE, new String[]
+                { String.valueOf(defaultValue) }, 0, null, null );
+        }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         AttributeDefinitionImpl( final String id, final String name, final String description, final int type,
             final String[] defaultValues, final int cardinality, final String[] optionLabels,
             final String[] optionValues )
@@ -198,54 +296,90 @@ public class MetaTypeProviderImpl
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public int getCardinality()
         {
             return cardinality;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String[] getDefaultValue()
         {
             return defaultValues;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String getDescription()
         {
             return description;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String getID()
         {
             return id;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String getName()
         {
             return name;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String[] getOptionLabels()
         {
             return optionLabels;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String[] getOptionValues()
         {
             return optionValues;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public int getType()
         {
             return type;
         }
 
 
+<<<<<<< HEAD
+=======
+        @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public String validate( String arg0 )
         {
             return null;

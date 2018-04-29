@@ -49,7 +49,11 @@ function displayConfigForm(obj) {
     var trEl = tr( );
     parent.appendChild( trEl );
     
+<<<<<<< HEAD
     var tdEl = td( null, { colSpan: "2" } );
+=======
+    var tdEl = td( "noPaddingLeft", { colSpan: "2" } );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     trEl.appendChild( tdEl );
     
     var formEl = createElement( "form", null, {
@@ -95,6 +99,16 @@ function displayConfigForm(obj) {
         });
     formEl.appendChild( inputEl );
     
+<<<<<<< HEAD
+=======
+    inputEl = createElement( "input", null, {
+        type: "hidden",
+        name: "$location",
+        id: "lochidden"
+    });
+    formEl.appendChild( inputEl );
+    
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     var tableEl = createElement( "table", null, {
             border: 0,
             width: "100%"
@@ -107,7 +121,11 @@ function displayConfigForm(obj) {
     if (obj.description)
     {
         trEl = tr( );
+<<<<<<< HEAD
         tdEl = td( null, { colSpan: "2" } );
+=======
+        tdEl = td( "configDescription", { colSpan: "3" } );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         addText( tdEl, obj.description );
         trEl.appendChild( tdEl );
         bodyEl.appendChild( trEl );
@@ -115,7 +133,11 @@ function displayConfigForm(obj) {
     
     if (obj.properties)
     {
+<<<<<<< HEAD
         printForm(bodyEl, obj.properties);
+=======
+        printForm(bodyEl, obj.properties, obj.additionalProperties);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     printConfigurationInfo(parent, obj);
@@ -132,6 +154,7 @@ function displayConfigForm(obj) {
 		.attr('__location', obj.bundleLocation?obj.bundleLocation:'')
 		.dialog('option', 'title', obj.title)
 		.dialog('open'));
+<<<<<<< HEAD
 }
 
 function printForm( /* Element */ parent, /* Object */ properties ) {
@@ -146,12 +169,68 @@ function printForm( /* Element */ parent, /* Object */ properties ) {
         parent.appendChild( trEl );
 
         var tdEl = td( null, { style: { width: "99%" } } );
+=======
+
+	// Resize all the textareas based on their content
+    autosize.update($('textarea'));
+}
+
+/* Element */ function addDefaultValue( /* Element */ element ) {
+	if (element) {
+		element.appendChild( 
+			createElement('span', 'default_value ui-state-highlight1 ui-icon ui-icon-alert iconMarginTop', {
+				title : i18n.dflt_value
+			})
+		);
+	}
+	return element;
+}
+
+function printForm( /* Element */ parent, /* Object */ properties, additionalProperties ) {
+    var propList;
+    if ( additionalProperties != undefined ) {
+    	propList = additionalProperties;
+    }
+    for (var prop in properties)
+    {
+        var attr = properties[prop];
+
+		// create optionality element
+		var optElement = false;
+		if (attr.optional) {
+			var elAttributes = {
+                type: "checkbox",
+                name: "opt" + prop,
+				title: i18n.opt_value
+            };
+			if (attr.is_set) {
+				elAttributes['checked'] = 'checked';
+			}
+			optElement = createElement( "input", "optionality", elAttributes);
+		} else {
+			optElement = text( "" );
+		}
+		// create the raw
+        var trEl = tr( null, null, [
+				td( null, null, [ optElement ] ),
+                td( "minWidthCell", null, [ text( attr.name ) ] )
+            ]);
+        parent.appendChild( trEl );
+
+        var tdEl = td( "paddedCell", { style: { width: "99%" } } );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         trEl.appendChild( tdEl );
   
         if (attr.value != undefined)
         {
             // check is required to also handle empty strings, 0 and false
+<<<<<<< HEAD
             tdEl.appendChild( createInput( prop, attr.value, attr.type, '99%' ) );
+=======
+            var inputName = (prop == "action" || prop == "propertylist" || prop == "apply" || prop == "delete") ? '$' + prop : prop;
+			var inputEl = createInput( inputName, attr.value, attr.type, '99%' );
+            tdEl.appendChild( inputEl );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             tdEl.appendChild( createElement( "br" ) );
         }
         else if (typeof(attr.type) == 'object')
@@ -172,9 +251,21 @@ function printForm( /* Element */ parent, /* Object */ properties ) {
             }
         }
         
+<<<<<<< HEAD
         if (attr.description)
         {
             addText( tdEl, attr.description );
+=======
+		if (!attr.is_set) {
+			addDefaultValue( tdEl );
+		}
+
+        if (attr.description)
+        {
+            var textWrapper = createElement("div", "topPaddedText");
+            addText(textWrapper, attr.description );
+            tdEl.appendChild(textWrapper);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         
         if (propList) {
@@ -205,10 +296,17 @@ function printConfigurationInfo( /* Element */ parent, obj )
     );
     
     parent.appendChild( tr( null, null, [
+<<<<<<< HEAD
             td( null, null, [
                 text( i18n.pid )
             ]),
             td( null, null, [
+=======
+            td( "paddedCell", null, [
+                text( i18n.pid )
+            ]),
+            td( "paddedCell", null, [
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 text( obj.pid )
             ])
         ])
@@ -217,16 +315,24 @@ function printConfigurationInfo( /* Element */ parent, obj )
     if (obj.factoryPid)
     {
         parent.appendChild( tr( null, null, [
+<<<<<<< HEAD
                 td( null, null, [
                     text( i18n.fpid )
                 ]),
                 td( null, null, [
+=======
+                td( "paddedCell", null, [
+                    text( i18n.fpid )
+                ]),
+                td( "paddedCell", null, [
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     text( obj.factoryPid )
                 ])
             ])
         );
     }
     
+<<<<<<< HEAD
     var binding = obj.bundleLocation;
     if (!binding)
     {
@@ -243,6 +349,62 @@ function printConfigurationInfo( /* Element */ parent, obj )
         ])
     );
 
+=======
+    var binding = obj.bundle_location;
+    if (!binding)
+    {
+        binding = i18n.unbound;
+    } else {
+    	$("#lochidden").val(binding);
+    }
+    
+    parent.appendChild( tr( null, null, [
+            td( "paddedCell", null, [
+                text( i18n.binding )
+            ]),
+            td( "paddedCell", null, [
+                createElement( "input", null, {
+                    type: "text",
+                    name: "$location",
+                    style: { width: '99%' },
+                    value: binding,
+                    id: "locinput"
+                })                             
+            ])
+        ])
+    );
+    if ( binding === i18n.unbound ) {
+    	$("#locinput").addClass("placeholder-active");
+    }
+	$("#locinput").on("focus", function() {
+	    if ($("#locinput").val() === i18n.unbound) {
+	        $("#locinput").removeClass("placeholder-active");
+	        $("#locinput").val("");
+	    }
+	});
+	$("#locinput").on("blur", function() {
+	    if($("#locinput").val() === "") {
+	        $("#locinput").val(i18n.unbound);
+	        $("#locinput").addClass("placeholder-active");
+	    }
+	});
+	$("#locinput").on("keydown", function(event) {
+	    if (event.keyCode == 27){
+	        $("#locinput").val("");
+	    }
+	});
+	if ( obj.bundleLocation && obj.bundleLocation != "" ) {
+	    parent.appendChild( tr( null, null, [
+	                                         td( "paddedCell", null, [
+	                                             text( "" )
+	                                         ]),
+	                                         td( "paddedCell", null, [
+	                                             text( obj.bundleLocation )
+	                                         ])
+	                                     ])
+	                                 );		
+	}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }
 
 
@@ -323,6 +485,7 @@ var spanCounter = 0;
         
     	return selectEl;
         
+<<<<<<< HEAD
     } else { // Simple 
 	// Metatype 1.2: Attr type 12 is PASSWORD
 	var elType = (type == 12) ? "password" : "text";
@@ -332,6 +495,25 @@ var spanCounter = 0;
                 value: value,
                 style: { width: width }
             });
+=======
+    } else if (type == 12) { // Metatype 1.2: Attr type 12 is PASSWORD
+        return createElement( "input", null, {
+            type: "password",
+            name: prop,
+            value: value,
+            style: { width: width }
+        });
+    } else { // Simple
+        var textareaEl = createElement( "textarea", null, {
+            name: prop,
+            style: { width: width },
+            rows: 1,
+            class: "minHeightTextarea"
+        });
+        addText(textareaEl, value.toString());
+        autosize($(textareaEl));
+        return textareaEl;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }
 
@@ -405,9 +587,22 @@ function configConfirm(/* String */ message, /* String */ title, /* String */ lo
 function deleteConfig(/* String */ configId, /* String */ bundleLocation)
 {
     if ( configConfirm(i18n.del_ask, configId, bundleLocation) ) {
+<<<<<<< HEAD
 	$.post(pluginRoot + '/' + configId, param.apply + '=1&' + param.dele + '=1', null, function() {
 	    document.location.href = pluginRoot;
 	}, 'json');
+=======
+	$.ajax({
+		type     : 'POST',
+		url      : pluginRoot + '/' + configId,
+		data     : param.apply + '=1&' + param.dele + '=1',
+		success  : function () { 
+		  if(!navigateAfterConfigurationClose()) document.location.href = pluginRoot;
+		},
+		dataType : 'json',
+		async    : false
+	});
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	return true;
     }
     return false;
@@ -416,7 +611,11 @@ function deleteConfig(/* String */ configId, /* String */ bundleLocation)
 function unbindConfig(/* String */ configId, /* String */ bundleLocation)
 {
     if ( configConfirm(i18n.unbind_ask, configId, bundleLocation) ) {
+<<<<<<< HEAD
 	$.post(pluginRoot + '/' + configId, param.unbind + '=1', null, function() {
+=======
+	$.post(pluginRoot + '/' + configId, param.unbind + '=1', function() {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	    document.location.href = pluginRoot + '/' + configId;
 	}, 'json');
 	return true;
@@ -426,20 +625,43 @@ function unbindConfig(/* String */ configId, /* String */ bundleLocation)
 
 function addConfig(conf) {
 	var tr = configRow.clone().appendTo(configBody);
+<<<<<<< HEAD
 
 	// rendering name - indented if factory pid is set
 	var nms = tr.find('td:eq(0) div');
 	if (conf.fpid) { 
 		nms.after(conf.id); 
+=======
+	
+	if (!conf.has_config) {
+		tr.find('td:eq(0)').empty();
+	}
+
+	// rendering name - indented if factory pid is set
+	var nms = tr.find('td:eq(1) div');
+	if (conf.fpid) { 
+        if (conf.nameHint) {
+		    nms.after("<span title='" + conf.id + "'>" + conf.nameHint + "</span>");
+		} else {
+			nms.after(conf.id);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 		tr.attr('fpid', conf.name);
 	} else {
 		nms.addClass('ui-helper-hidden').parent().text(conf.name);
 	}
 
+<<<<<<< HEAD
 	tr.find('td:eq(0)').click(function() { // name & edit
 		configure(conf.id);
 	});
 	tr.find('td:eq(1)').html(conf.bundle ? '<a href="' + pluginRoot + '/../bundles/' + conf.bundle + '">' + conf.bundle_name + '</a>' : '-'); // binding
+=======
+	tr.find('td:eq(1)').click(function() { // name & edit
+		configure(conf.id);
+	});
+	tr.find('td:eq(2)').html(conf.bundle ? '<a href="' + pluginRoot + '/../bundles/' + conf.bundle + '">' + conf.bundle_name + '</a>' : '-'); // binding
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	
 	// buttons
 	tr.find('li:eq(0)').click(function() { // edit
@@ -458,7 +680,11 @@ function addConfig(conf) {
 function addFactoryConfig(conf) {
 	var tr = factoryRow.clone().appendTo(configTable).attr('fpid', conf.name);
 	//tr.find('td:eq(1)').text(conf.id); // fpid
+<<<<<<< HEAD
 	tr.find('td:eq(0)').text(conf.name).click(function() { // name & edit
+=======
+	tr.find('td:eq(1)').text(conf.name).click(function() { // name & edit
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 		configure(conf.id, true);
 	});
 	// buttons
@@ -479,13 +705,27 @@ function treetableExtraction(node) {
 	var fpid = row.attr('fpid');
 	
 	// factory row
+<<<<<<< HEAD
 	if ( row.hasClass('fpid') && fpid) return fpid + (desc==0?1:0) + text;
+=======
+	if ( row.hasClass('fpid') && fpid) return fpid + (desc==1?1:0) + text;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 	// bundle or name row
 	if ( fpid ) return fpid + desc + text;
 
 	return mixedLinksExtraction(node);
 };
+<<<<<<< HEAD
+=======
+function navigateAfterConfigurationClose() {
+	if(configurationReferer) {
+	  window.location = configurationReferer;
+	  return true;
+	}
+	return false;
+}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 $(document).ready(function() {
 	configContent = $('#configContent');
@@ -494,7 +734,11 @@ $(document).ready(function() {
 	configBody    = configTable.find('tbody');
 	configRow     = configBody.find('tr:eq(0)').clone();
 	factoryRow    = configBody.find('tr:eq(1)').clone();
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	// setup button - cannot inline in dialog option because of i18n
 	var _buttons = {};
 	_buttons[i18n.abort] = function() {
@@ -513,11 +757,47 @@ $(document).ready(function() {
 	    	unbindConfig($(this).attr('__pid'), $(this).attr('__location'));
 	}
 	_buttons[i18n.save] = function() {
+<<<<<<< HEAD
 		$.post(pluginRoot + '/' + $(this).attr('__pid'), $(this).find('form').serialize(), function() {
 			// reload on success - prevents AJAX errors - see FELIX-3116
 			document.location.href = pluginRoot; 
 		});
 		$(this).dialog('close');
+=======
+		if ( $("#locinput").val() === i18n.unbound ) {
+			$("#lochidden").val("");			
+		} else {
+			$("#lochidden").val($("#locinput").val());			
+		}
+		
+		// get all the configuration properties names
+		var propListElement = $(this).find('form').find('[name=propertylist]');
+		var propListArray = propListElement.val().split(',');
+
+		// removes the properties, that are unchecked
+		$(this).find('form').find('input.optionality:not(:checked)').each( function(idx, el) {
+			var name = $(el).attr('name').substring(3); // name - 'opt'
+			var index = propListArray.indexOf(name);
+			if (index >= 0) {
+				propListArray.splice(index, 1);
+			}
+		});
+		propListElement.val(propListArray.join(','));
+
+		$.ajax({
+			type     : 'POST',
+			url      : pluginRoot + '/' + $(this).attr('__pid'),
+			data     : $(this).find('form').serialize(),
+			success  : function () {
+			  // reload on success - prevents AJAX errors - see FELIX-3116
+			  if(!navigateAfterConfigurationClose()) document.location.href = pluginRoot; 
+			},
+			async    : false
+		})
+		.fail(function () {
+		  $(this).dialog('close');
+		});
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	}
 	// prepare editor, but don't open yet!
 	editor = $('#editor').dialog({
@@ -525,7 +805,12 @@ $(document).ready(function() {
 		modal    : true,
 		width    : '90%',
 		closeText: i18n.abort,
+<<<<<<< HEAD
 		buttons  : _buttons
+=======
+		buttons  : _buttons,
+		close    : function( event, ui ) { navigateAfterConfigurationClose(); }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	});
 	editorMessage = editor.find('p');
 
@@ -567,6 +852,7 @@ $(document).ready(function() {
 
 		// init tablesorte
 		configTable.tablesorter({
+<<<<<<< HEAD
 			headers: { 2: { sorter: false }  },
 			sortList: [[0,1]],
 			textExtraction: treetableExtraction
@@ -577,4 +863,22 @@ $(document).ready(function() {
 		configContent.addClass('ui-helper-hidden');
 	}
 	if (selectedPid) configure(selectedPid);
+=======
+			headers: {
+				0: { sorter: false },
+				3: { sorter: false }
+			},
+			sortList: [[1,1]],
+			textExtraction: treetableExtraction
+		}).bind('sortStart', function() { // clear cache, otherwise extraction will not work
+			var table = $(this).trigger('update'); 
+		}).find('th:eq(1)').click();
+	} else {
+		configContent.addClass('ui-helper-hidden');
+	}
+	if(selectedPid) {
+	  if(factoryCreate) configure(selectedPid, true);
+	  else configure(selectedPid);
+	}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 });

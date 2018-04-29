@@ -20,8 +20,18 @@ package org.apache.felix.cm.integration;
 
 
 import java.io.IOException;
+<<<<<<< HEAD
 import java.util.Dictionary;
 import java.util.Hashtable;
+=======
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 import junit.framework.TestCase;
 
@@ -1257,4 +1267,68 @@ public class ConfigurationBaseTest extends ConfigurationTestBase
             getConfigurationAdmin().getConfiguration( pid, null ).delete();
         }
     }
+<<<<<<< HEAD
+=======
+
+   @Test
+    public void test_collection_property_order() throws IOException, BundleException
+    {
+        final String pid = "test_collection_property_order";
+        final String[] value = new String[]
+            { "a", "b", "c" };
+        final Bundle cmBundle = getCmBundle();
+        try
+        {
+            final Vector v = new Vector( Arrays.asList( value ) );
+            getConfigurationAdmin().getConfiguration( pid ).update( new Hashtable()
+            {
+                {
+                    put( "v", v );
+                }
+            } );
+            assertOrder( value, getConfigurationAdmin().getConfiguration( pid ).getProperties().get( "v" ) );
+
+            cmBundle.stop();
+            cmBundle.start();
+
+            assertOrder( value, getConfigurationAdmin().getConfiguration( pid ).getProperties().get( "v" ) );
+            getConfigurationAdmin().getConfiguration( pid, null ).delete();
+
+            final List l = Arrays.asList( value );
+            getConfigurationAdmin().getConfiguration( pid ).update( new Hashtable()
+            {
+                {
+                    put( "v", l );
+                }
+            } );
+            assertOrder( value, getConfigurationAdmin().getConfiguration( pid ).getProperties().get( "v" ) );
+
+            cmBundle.stop();
+            cmBundle.start();
+
+            assertOrder( value, getConfigurationAdmin().getConfiguration( pid ).getProperties().get( "v" ) );
+            getConfigurationAdmin().getConfiguration( pid, null ).delete();
+        }
+        finally
+        {
+            // make sure no configuration survives ...
+            getConfigurationAdmin().getConfiguration( pid, null ).delete();
+        }
+    }
+
+
+    private void assertOrder( final String[] expected, final Object actual )
+    {
+        TestCase.assertTrue( "Actual value must be a collection", actual instanceof Collection );
+        TestCase.assertEquals( "Collection must have " + expected.length + " entries", expected.length,
+            ( ( Collection ) actual ).size() );
+
+        final Iterator actualI = ( ( Collection ) actual ).iterator();
+        for ( int i = 0; i < expected.length; i++ )
+        {
+            String string = expected[i];
+            TestCase.assertEquals( i + "th element must be " + string, string, actualI.next() );
+        }
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

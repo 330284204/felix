@@ -1,3 +1,63 @@
+<<<<<<< HEAD
+=======
+Changes from 1.12.0 to 1.12.1
+-----------------------------
+
+** Bug
+    * [FELIX-3836] - NPE when calling InstanceDescription.getDescription()
+    * [FELIX-4565] - Occasional ArrayIndexOutOfBoundException in iPOJO's ProvidedServiceHandler
+    * [FELIX-4646] - @Context(Context.Source.INSTANCE) does not inject bundle context
+    * [FELIX-4713] - Error in ProvidedServiceHandler.checkProvidedService : only the first service is checked
+    * [FELIX-4715] - instance bundle context injection does not works
+    * [FELIX-4716] - Bundle org.apache.felix.ipojo physically contains OSGi API classes
+    * [FELIX-4717] - Cannot use the stream API on injected collections
+    * [FELIX-4728] - InstanceManager concurrency issue
+
+Changes from 1.11.2 to 1.12.0
+-----------------------------
+
+** Bug
+    * [FELIX-4464] - Wrong configuration admin package import / export clause
+    * [FELIX-4488] - Attempt to create nullable object for non-interface service
+
+** Improvement
+    * [FELIX-4482] - Use scope=provided for OSGi APIs dependencies
+    * [FELIX-4490] - IPOJO allows "instance.name" property to be an empty String
+
+** New Feature
+    * [FELIX-4476] - Java 8 Support
+
+** Sub-task
+    * [FELIX-4508] - Update to ASM 5.0.2
+    * [FELIX-4509] - Change the frame computation strategy
+    * [FELIX-4510] - Support lambda expression
+
+Changes from 1.11.1 to 1.11.2
+-----------------------------
+
+** Bug
+    * [FELIX-4229] - Provide a way to obtain the component's BundleContext (other than constructor injection)
+    * [FELIX-4419] - Open access to InstanceDeclaration and TypeDeclaration
+    * [FELIX-4432] - DefaultServiceRankingInterceptor holds duplicate dependencies
+    * [FELIX-4448] - Invalid dynamism management when an interceptor implements both Tracking and Ranking interceptors
+    * [FELIX-4449] - The ConfigurationListener list contains duplicates and fires update on unchanged configurations
+
+** Improvement
+    * [FELIX-3931] - Provide a handler to inject the bundle context
+    * [FELIX-4160] - Create an Maven Parent POM for iPOJO
+
+Changes from 1.11.0 to 1.11.1
+-----------------------------
+
+** Bug
+    * [FELIX-4335] - PropertyDescription does not allow retrieving the current value of the represented property
+    * [FELIX-4374] - iPOJO: ConcurrentModificationException in ProvidedService
+    * [FELIX-4386] - Deadlock while creating composite instances programmatically
+
+** Improvement
+    * [FELIX-4292] - @Component 'propagation' attribute has wrong default value
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 1.10.1 to 1.11.0
 -----------------------------
 

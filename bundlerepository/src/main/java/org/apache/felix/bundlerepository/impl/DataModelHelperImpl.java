@@ -34,6 +34,10 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+<<<<<<< HEAD
+=======
+import java.util.zip.GZIPInputStream;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -90,7 +94,10 @@ public class DataModelHelperImpl implements DataModelHelper
     public Repository repository(final URL url) throws Exception
     {
         InputStream is = null;
+<<<<<<< HEAD
         BufferedReader br = null;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         try
         {
@@ -100,13 +107,36 @@ public class DataModelHelperImpl implements DataModelHelper
                 ZipEntry entry = zin.getNextEntry();
                 while (entry != null)
                 {
+<<<<<<< HEAD
                     if (entry.getName().equals("repository.xml"))
+=======
+                    if (entry.getName().equals("repository.xml") || entry.getName().equals("index.xml"))
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     {
                         is = zin;
                         break;
                     }
                     entry = zin.getNextEntry();
                 }
+<<<<<<< HEAD
+=======
+                // as the ZipInputStream is not used further it would not be closed.
+                if (is == null)
+                {
+                    try
+                    {
+                        zin.close();
+                    }
+                    catch (IOException ex)
+                    {
+                        // Not much we can do.
+                    }
+                }
+            }
+            else if (url.getPath().endsWith(".gz"))
+            {
+                is = new GZIPInputStream(FileUtil.openURL(url));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
             else
             {
@@ -115,8 +145,23 @@ public class DataModelHelperImpl implements DataModelHelper
 
             if (is != null)
             {
+<<<<<<< HEAD
                 RepositoryImpl repository = repository(is);
                 repository.setURI(url.toExternalForm());
+=======
+                String repositoryUri = url.toExternalForm();
+                String baseUri;
+                if (repositoryUri.endsWith(".zip")) {
+                    baseUri = new StringBuilder("jar:").append(repositoryUri).append("!/").toString();
+                } else if (repositoryUri.endsWith(".xml")) {
+                    baseUri = repositoryUri.substring(0, repositoryUri.lastIndexOf('/') + 1);
+                } else {
+                    baseUri = repositoryUri;
+                }
+                RepositoryImpl repository = repository(is, URI.create(baseUri));
+                repository.setURI(repositoryUri);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 return repository;
             }
             else
@@ -141,10 +186,18 @@ public class DataModelHelperImpl implements DataModelHelper
         }
     }
 
+<<<<<<< HEAD
     public RepositoryImpl repository(InputStream is) throws Exception
     {
         RepositoryParser parser = RepositoryParser.getParser();
         RepositoryImpl repository = parser.parseRepository(is);
+=======
+    public RepositoryImpl repository(InputStream is, URI baseURI) throws Exception
+    {
+        RepositoryParser parser = RepositoryParser.getParser();
+        RepositoryImpl repository = parser.parseRepository(is, baseURI);
+        
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         return repository;
     }
 
@@ -449,18 +502,29 @@ public class DataModelHelperImpl implements DataModelHelper
             }
             private byte[] loadEntry(String name) throws IOException
             {
+<<<<<<< HEAD
                 InputStream is = FileUtil.openURL(bundleUrl);
                 try
                 {
                     ZipInputStream jis = new ZipInputStream(is);
                     for (ZipEntry e = jis.getNextEntry(); e != null; e = jis.getNextEntry())
+=======
+                ZipInputStream zis = new ZipInputStream(FileUtil.openURL(bundleUrl));
+                try
+                {
+                    for (ZipEntry e = zis.getNextEntry(); e != null; e = zis.getNextEntry())
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     {
                         if (name.equalsIgnoreCase(e.getName()))
                         {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             byte[] buf = new byte[1024];
                             int n;
+<<<<<<< HEAD
                             while ((n = jis.read(buf, 0, buf.length)) > 0)
+=======
+                            while ((n = zis.read(buf, 0, buf.length)) > 0)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                             {
                                 baos.write(buf, 0, n);
                             }
@@ -470,7 +534,11 @@ public class DataModelHelperImpl implements DataModelHelper
                 }
                 finally
                 {
+<<<<<<< HEAD
                     is.close();
+=======
+                    zis.close();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
                 return null;
             }
@@ -555,6 +623,10 @@ public class DataModelHelperImpl implements DataModelHelper
         doExports(resource, headers);
         doImports(resource, headers);
         doExecutionEnvironment(resource, headers);
+<<<<<<< HEAD
+=======
+        doProvides(resource, headers);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private static void doCategories(ResourceImpl resource, Headers headers)
@@ -699,16 +771,37 @@ public class DataModelHelperImpl implements DataModelHelper
         }
     }
 
+<<<<<<< HEAD
     private static CapabilityImpl createCapability(String name, Clause clause)
     {
         CapabilityImpl capability = new CapabilityImpl(name);
+=======
+    private static void doProvides(ResourceImpl resource, Headers headers) {
+        Clause[] clauses = Parser.parseHeader(headers.getHeader(Constants.PROVIDE_CAPABILITY));
+
+        if (clauses != null) {
+            for (Clause clause : clauses) {
+                CapabilityImpl capability = createCapability(clause.getName(), clause);
+                resource.addCapability(capability);
+            }
+        }
+    }
+
+    private static CapabilityImpl createCapability(String name, Clause clause)
+    {
+        CapabilityImpl capability = new CapabilityImpl(NamespaceTranslator.getFelixNamespace(name));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         capability.addProperty(name, clause.getName());
         capability.addProperty(Resource.VERSION, Property.VERSION, getVersion(clause));
         Attribute[] attributes = clause.getAttributes();
         for (int i = 0; attributes != null && i < attributes.length; i++)
         {
             String key = attributes[i].getName();
+<<<<<<< HEAD
             if (key.equalsIgnoreCase(Constants.PACKAGE_SPECIFICATION_VERSION) || key.equalsIgnoreCase(Constants.VERSION_ATTRIBUTE))
+=======
+            if (key.equalsIgnoreCase(Constants.PACKAGE_SPECIFICATION_VERSION) || key.equalsIgnoreCase(Constants.VERSION_ATTRIBUTE) || key.equalsIgnoreCase("version:Version"))
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             {
                 continue;
             }
@@ -841,6 +934,14 @@ public class DataModelHelperImpl implements DataModelHelper
         {
             v = clause.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
         }
+<<<<<<< HEAD
+=======
+        if (v == null)
+        {
+            v = clause.getAttribute("version:Version");
+        }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         return VersionCleaner.clean(v);
     }
 

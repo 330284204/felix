@@ -30,6 +30,10 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.felix.deploymentadmin.AbstractDeploymentPackage;
+<<<<<<< HEAD
+=======
+import org.apache.felix.deploymentadmin.Utils;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.deploymentadmin.BundleInfo;
@@ -37,6 +41,11 @@ import org.osgi.service.deploymentadmin.DeploymentException;
 import org.osgi.service.log.LogService;
 
 public class SnapshotCommand extends Command {
+<<<<<<< HEAD
+=======
+    /** The ZIP specification mandates that directory-entries end with a forward slash (on all platforms). */
+    static final String FORWARD_SLASH = "/";
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     private final GetStorageAreaCommand m_getStorageAreaCommand;
 
@@ -44,7 +53,11 @@ public class SnapshotCommand extends Command {
         m_getStorageAreaCommand = getStorageAreaCommand;
     }
 
+<<<<<<< HEAD
     public void execute(DeploymentSessionImpl session) throws DeploymentException {
+=======
+    protected void doExecute(DeploymentSessionImpl session) throws Exception {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         AbstractDeploymentPackage target = session.getTargetAbstractDeploymentPackage();
         BundleContext context = session.getBundleContext();
 
@@ -52,11 +65,21 @@ public class SnapshotCommand extends Command {
         Map storageAreas = m_getStorageAreaCommand.getStorageAreas();
         for (int i = 0; i < infos.length; i++) {
             if (isCancelled()) {
+<<<<<<< HEAD
                 throw new DeploymentException(DeploymentException.CODE_CANCELLED);
             }
             Bundle bundle = target.getBundle(infos[i].getSymbolicName());
             if (bundle != null) {
                 File root = (File) storageAreas.get(bundle.getSymbolicName());
+=======
+                throw new DeploymentException(CODE_CANCELLED);
+            }
+
+            String symbolicName = infos[i].getSymbolicName();
+            Bundle bundle = target.getBundle(symbolicName);
+            if (bundle != null) {
+                File root = (File) storageAreas.get(symbolicName);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 if (root != null) {
                     File snapshot = context.getDataFile("snapshots");
                     snapshot.mkdirs();
@@ -67,16 +90,27 @@ public class SnapshotCommand extends Command {
                         addRollback(new RestoreSnapshotRunnable(session, snapshot, root));
                         addCommit(new DeleteSnapshotRunnable(session, snapshot));
                     }
+<<<<<<< HEAD
                     catch (IOException e) {
                         snapshot.delete();
                     }
                 } else {
                     session.getLog().log(LogService.LOG_WARNING, "Could not retrieve storage area of bundle '" + bundle.getSymbolicName() + "', skipping it.");
+=======
+                    catch (Exception e) {
+                        session.getLog().log(LogService.LOG_WARNING, "Could not access storage area of bundle '" + symbolicName + "'!", e);
+                        snapshot.delete();
+                    }
+                }
+                else {
+                    session.getLog().log(LogService.LOG_WARNING, "Could not retrieve storage area of bundle '" + symbolicName + "', skipping it.");
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         }
     }
 
+<<<<<<< HEAD
     private void store(File source, File target) throws IOException {
         ZipOutputStream output = null;
         try {
@@ -126,11 +160,111 @@ public class SnapshotCommand extends Command {
                 catch (Exception ex) {
                     // Not much we can do
                 }
+=======
+    protected static void restore(File archiveFile, File targetDir) throws IOException {
+        ZipInputStream input = null;
+        try {
+            input = new ZipInputStream(new FileInputStream(archiveFile));
+
+            ZipEntry entry;
+            while ((entry = input.getNextEntry()) != null) {
+                File targetEntry = new File(targetDir, entry.getName());
+
+                if (entry.isDirectory()) {
+                    if (!targetEntry.mkdirs()) {
+                        throw new IOException("Failed to create one or more sub-directories!");
+                    }
+                }
+                else {
+                    OutputStream output = null;
+                    try {
+                        output = new FileOutputStream(targetEntry);
+                        copy(input, output);
+                    }
+                    finally {
+                        closeSilently(output);
+                    }
+                }
+
+                input.closeEntry();
+            }
+        }
+        finally {
+            closeSilently(input);
+        }
+    }
+
+    protected static void store(File sourceDir, File archiveFile) throws IOException {
+        ZipOutputStream output = null;
+        try {
+            output = new ZipOutputStream(new FileOutputStream(archiveFile));
+            // Traverse source directory recursively, and store all entries...
+            store(output, sourceDir, "");
+        }
+        finally {
+            closeSilently(output);
+        }
+    }
+
+    protected static void copy(InputStream is, OutputStream os) throws IOException {
+        byte[] buffer = new byte[8192];
+        int read;
+        try {
+            while ((read = is.read(buffer)) != -1) {
+                os.write(buffer, 0, read);
+            }
+        }
+        finally {
+            os.flush();
+        }
+    }
+
+    private static void store(ZipOutputStream output, File sourceDir, String entryName) throws IOException {
+        File entry = new File(sourceDir, entryName);
+
+        if (entry.isFile()) {
+            ZipEntry zipEntry = new ZipEntry(entryName);
+            zipEntry.setSize(entry.length());
+            zipEntry.setTime(entry.lastModified());
+
+            output.putNextEntry(zipEntry);
+
+            InputStream input = null;
+            try {
+                input = new FileInputStream(entry);
+                copy(input, output);
+            }
+            finally {
+                closeSilently(input);
+                output.closeEntry();
+            }
+        }
+        else if (entry.isDirectory()) {
+            String baseDir = "";
+            if (!"".equals(entryName)) {
+                baseDir = entryName;
+                // Directories *must* use forward slashes...
+                if (!baseDir.endsWith(FORWARD_SLASH)) {
+                    baseDir = baseDir.concat(FORWARD_SLASH);
+                }
+
+                output.putNextEntry(new ZipEntry(baseDir));
+                output.closeEntry();
+            }
+
+            String[] entries = entry.list();
+            for (int i = 0; i < entries.length; i++) {
+                store(output, sourceDir, baseDir.concat(entries[i]));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
         }
     }
 
+<<<<<<< HEAD
     private static class DeleteSnapshotRunnable implements Runnable {
+=======
+    private static class DeleteSnapshotRunnable extends AbstractAction {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         private final DeploymentSessionImpl m_session;
         private final File m_snapshot;
 
@@ -139,14 +273,22 @@ public class SnapshotCommand extends Command {
             m_snapshot = snapshot;
         }
 
+<<<<<<< HEAD
         public void run() {
+=======
+        protected void doRun() {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if (!m_snapshot.delete()) {
                 m_session.getLog().log(LogService.LOG_WARNING, "Failed to delete snapshot in " + m_snapshot + "!");
             }
         }
     }
 
+<<<<<<< HEAD
     private static class RestoreSnapshotRunnable implements Runnable {
+=======
+    private static class RestoreSnapshotRunnable extends AbstractAction {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         private final DeploymentSessionImpl m_session;
         private final File m_snapshot;
         private final File m_root;
@@ -157,6 +299,7 @@ public class SnapshotCommand extends Command {
             m_root = root;
         }
 
+<<<<<<< HEAD
         public void run() {
             try {
                 delete(m_root, false);
@@ -164,12 +307,19 @@ public class SnapshotCommand extends Command {
             }
             catch (Exception ex) {
                 m_session.getLog().log(LogService.LOG_WARNING, "Failed to restore snapshot!", ex);
+=======
+        protected void doRun() throws Exception {
+            try {
+                Utils.delete(m_root, false /* deleteRoot */);
+                restore(m_snapshot, m_root);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
             finally {
                 m_snapshot.delete();
             }
         }
 
+<<<<<<< HEAD
         private void delete(File root, boolean deleteRoot) {
             if (root.isDirectory()) {
                 File[] childs = root.listFiles();
@@ -225,4 +375,10 @@ public class SnapshotCommand extends Command {
             }
         }
    }
+=======
+        protected void onFailure(Exception e) {
+            m_session.getLog().log(LogService.LOG_WARNING, "Failed to restore snapshot!", e);
+        }
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

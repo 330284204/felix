@@ -382,4 +382,24 @@ public class T1
     {
         callPerformed = "suitableT1";
     }
+<<<<<<< HEAD
+=======
+    
+    void packageT1Map(Map props)
+    {
+        if ( props != null && !props.isEmpty())
+        {
+            callPerformed = "packageT1Map";
+        }
+        else if ( props == null)
+        {
+            callPerformed = "packageT1Map with null props";
+        }
+        else
+        {
+            callPerformed = "packageT1Map with empty props";
+        }
+    }
+    
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

@@ -19,6 +19,7 @@
 package org.apache.felix.scr.integration;
 
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 
 import org.apache.felix.scr.Component;
@@ -26,13 +27,29 @@ import org.apache.felix.scr.integration.components.activatesignature.AbstractAct
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+=======
+import java.util.Collection;
+
+import org.apache.felix.scr.integration.components.activatesignature.AbstractActivateSignatureTestComponent;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+
+import junit.framework.TestCase;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 
 /**
  * The <code>ActivateSignatureTest</code> tests various DS 1.1 activation
  * signatures for the default method name
  */
+<<<<<<< HEAD
 @RunWith(JUnit4TestRunner.class)
+=======
+@RunWith(PaxExam.class)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class ActivateSignatureTest extends ComponentTestBase
 {
 
@@ -53,6 +70,7 @@ public class ActivateSignatureTest extends ComponentTestBase
         // wait for components to fire up in the background....
         delay();
 
+<<<<<<< HEAD
         final Component[] components = getComponents();
         TestCase.assertNotNull( components );
 
@@ -71,6 +89,22 @@ public class ActivateSignatureTest extends ComponentTestBase
 
             final AbstractActivateSignatureTestComponent aastc = ( AbstractActivateSignatureTestComponent ) instance;
             TestCase.assertEquals( "Expect activate method to be called", component.getName(), aastc.getMethodCalled() );
+=======
+        final Collection<ComponentDescriptionDTO> components = getComponentDescriptions();
+        TestCase.assertNotNull( components );
+
+        for ( ComponentDescriptionDTO component : components )
+        {
+            TestCase.assertTrue( "Expecting component " + component.name + " to be enabled", component
+                    .defaultEnabled );
+
+            ComponentConfigurationDTO cc = findComponentConfigurationByName(component.name, 0);
+            TestCase.assertEquals( "Expecting component " + component.name + " to be active",
+                    ComponentConfigurationDTO.ACTIVE, cc.state );
+
+            TestCase.assertNotNull("Expect activate method to be called", AbstractActivateSignatureTestComponent.getInstance(component.name));
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     }
 

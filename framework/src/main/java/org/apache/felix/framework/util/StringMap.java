@@ -18,7 +18,8 @@
  */
 package org.apache.felix.framework.util;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Simple utility class that creates a map for string-based keys.
@@ -28,6 +29,7 @@ import java.util.*;
  * <tt>toString()</tt> method, since it is only intended to
  * compare strings.
  **/
+<<<<<<< HEAD
 public class StringMap extends AbstractMap<String, Object>
 {
     private static final CharArrayComparator COMPARATOR = new CharArrayComparator();
@@ -210,8 +212,28 @@ public class StringMap extends AbstractMap<String, Object>
             Object v = this.value;
             this.value = value;
             return v;
+=======
+public class StringMap extends TreeMap<String, Object>
+{
+
+    public StringMap()
+    {
+        super(StringComparator.COMPARATOR);
+    }
+
+    public StringMap(Map<?, ?> map)
+    {
+        this();
+        for (Map.Entry<?, ?> e : map.entrySet())
+        {
+            put(e.getKey().toString(), e.getValue());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         String key;
         Object value;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

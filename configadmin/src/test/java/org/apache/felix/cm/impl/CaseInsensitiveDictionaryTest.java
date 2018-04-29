@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+<<<<<<< HEAD
+=======
+import java.util.Locale;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Vector;
 
 import junit.framework.TestCase;
@@ -31,6 +35,31 @@ import junit.framework.TestCase;
 public class CaseInsensitiveDictionaryTest extends TestCase
 {
 
+<<<<<<< HEAD
+=======
+    public void testLocaleIndependence() {
+        Locale defaultLocal = Locale.getDefault();
+        CaseInsensitiveDictionary dict = new CaseInsensitiveDictionary();
+        dict.put("illegal", "value1");
+        dict.put("ILLEGAL", "value2");
+        assertEquals(dict.get("illegal"), "value2");
+        assertEquals(dict.get("ILLEGAL"), "value2");
+
+        // validate "i" conversion with Turkish default locale
+        Locale.setDefault(new Locale("tr", "" ,""));
+        try {
+            dict = new CaseInsensitiveDictionary();
+            dict.put("illegal", "value1");
+            dict.put("ILLEGAL", "value2");
+            assertEquals(dict.get("illegal"), "value2");
+            assertEquals(dict.get("ILLEGAL"), "value2");
+        } finally {
+            Locale.setDefault(defaultLocal);
+        }
+    }
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testCheckValueNull()
     {
         // null which must throw IllegalArgumentException

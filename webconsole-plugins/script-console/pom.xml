@@ -22,13 +22,22 @@
   <parent>
     <groupId>org.apache.felix</groupId>
     <artifactId>felix-parent</artifactId>
+<<<<<<< HEAD
     <version>2.1</version>
     <relativePath>../pom/pom.xml</relativePath>
+=======
+    <version>4</version>
+    <relativePath>../../pom/pom.xml</relativePath>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
   </parent>
 
   <artifactId>org.apache.felix.webconsole.plugins.scriptconsole</artifactId>
   <packaging>bundle</packaging>
+<<<<<<< HEAD
   <version>1.0.1-SNAPSHOT</version>
+=======
+  <version>1.0.3-SNAPSHOT</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
   <name>Apache Felix Script Console Plugin</name>
   <description>
@@ -37,13 +46,21 @@
   </description>
 
   <properties>
+<<<<<<< HEAD
     <pax-exam.version>3.0.0</pax-exam.version>
+=======
+    <pax-exam.version>4.6.0</pax-exam.version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     <bundle.build.name>
       ${basedir}/target
     </bundle.build.name>
     <bundle.file.name>
       ${bundle.build.name}/${project.build.finalName}.jar
     </bundle.file.name>
+<<<<<<< HEAD
+=======
+    <felix.java.version>6</felix.java.version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
   </properties>
 
   <scm>
@@ -54,6 +71,7 @@
     <url>http://svn.apache.org/viewvc/felix/trunk/webconsole-plugins/script-console</url>
   </scm>
 
+<<<<<<< HEAD
   <build>
     <plugins>
       <plugin>
@@ -87,6 +105,35 @@
           </instructions>
         </configuration>
       </plugin>
+=======
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.2.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Category>osgi</Bundle-Category>
+                        <Bundle-SymbolicName>
+                            ${project.artifactId}
+                        </Bundle-SymbolicName>
+                        <Import-Package>
+                           javax.servlet.*;version=2.3,
+                           org.apache.commons.io; version="[1.4,3)",
+                           *
+                        </Import-Package>
+                        <Bundle-Activator>
+                            org.apache.felix.webconsole.plugins.scriptconsole.internal.Activator
+                        </Bundle-Activator>
+                        <Embed-Dependency>
+                             org.apache.felix.utils;inline=org/apache/felix/utils/json/JSONWriter**
+                        </Embed-Dependency>
+                    </instructions>
+                </configuration>
+            </plugin>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
@@ -126,6 +173,7 @@
         </executions>
       </plugin>
       <plugin>
+<<<<<<< HEAD
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>properties-maven-plugin</artifactId>
         <version>1.0-alpha-2</version>
@@ -167,6 +215,8 @@
         </executions>
       </plugin>
       <plugin>
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         <groupId>org.apache.servicemix.tooling</groupId>
         <artifactId>depends-maven-plugin</artifactId>
         <version>1.2</version>
@@ -195,6 +245,10 @@
           <systemPropertyVariables>
             <coverage.command>${coverage.command}</coverage.command>
             <http.port>${http.port}</http.port>
+<<<<<<< HEAD
+=======
+            <project.bundle.file>${bundle.file.name}</project.bundle.file>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
           </systemPropertyVariables>
           <forkMode>always</forkMode>
           <parallel>none</parallel>
@@ -205,6 +259,18 @@
   </build>
 
   <dependencies>
+<<<<<<< HEAD
+=======
+    <!-- Need to keep first to override conflicts in core and
+    compendium jars-->
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <version>5.4.0</version>
+      <scope>test</scope>
+    </dependency>
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
@@ -236,15 +302,25 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+<<<<<<< HEAD
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20070829</version>
+=======
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.utils</artifactId>
+      <version>1.9.0</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
+<<<<<<< HEAD
       <version>1.2.1</version>
+=======
+      <version>1.3.2</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       <scope>provided</scope>
     </dependency>
 
@@ -259,7 +335,11 @@
     <!-- Pax Exam Dependencies -->
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
+<<<<<<< HEAD
       <artifactId>pax-exam-container-forked</artifactId>
+=======
+      <artifactId>pax-exam-container-native</artifactId>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       <version>${pax-exam.version}</version>
       <scope>test</scope>
     </dependency>
@@ -278,7 +358,11 @@
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
       <artifactId>pax-url-wrap</artifactId>
+<<<<<<< HEAD
       <version>1.5.2</version>
+=======
+      <version>2.4.3</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -325,6 +409,10 @@
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
+<<<<<<< HEAD
+=======
+            <version>1.7</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             <executions>
               <execution>
                 <id>scr-file-create</id>
@@ -395,6 +483,7 @@
         </plugins>
       </build>
     </profile>
+<<<<<<< HEAD
 
     <profile>
       <id>felix</id>
@@ -421,5 +510,7 @@
         </dependency>
       </dependencies>
     </profile>
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
   </profiles>
 </project>

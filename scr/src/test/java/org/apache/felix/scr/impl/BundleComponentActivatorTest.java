@@ -24,11 +24,19 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.osgi.framework.Bundle;
 
+=======
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+
+import junit.framework.TestCase;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class BundleComponentActivatorTest extends TestCase
 {
 
@@ -83,6 +91,7 @@ public class BundleComponentActivatorTest extends TestCase
         final URL[] descriptors = new URL[]
             { new URL( "file:foo.xml" ) };
         final Enumeration de = new Vector( Arrays.asList( descriptors ) ).elements();
+<<<<<<< HEAD
         final Bundle bundle = ( Bundle ) EasyMock.createNiceMock( Bundle.class );
         EasyMock.expect( bundle.findEntries( "/some/location", "foo.xml", false ) ).andReturn( de );
 
@@ -91,6 +100,13 @@ public class BundleComponentActivatorTest extends TestCase
         final URL[] urls = BundleComponentActivator.findDescriptors( bundle, "/some/location/foo.xml" );
         EasyMock.verify( new Object[]
             { bundle } );
+=======
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.findEntries( "/some/location", "foo.xml", false ) ).thenReturn( de );
+
+        final URL[] urls = BundleComponentActivator.findDescriptors( bundle, "/some/location/foo.xml" );
+        Mockito.verify( bundle ).findEntries("/some/location", "foo.xml", false);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         assertNotNull( "Descriptor array is not null", urls );
         assertEquals( "Descriptor length", 1, urls.length );
@@ -109,12 +125,20 @@ public class BundleComponentActivatorTest extends TestCase
                 new URL( "file:foo2.xml" )
             };
         final Enumeration de = new Vector( Arrays.asList( urls ) ).elements();
+<<<<<<< HEAD
         final Bundle bundle = (Bundle) EasyMock.createNiceMock( Bundle.class );
         EasyMock.expect( bundle.findEntries( path, filePattern, false ) ).andReturn( de );
 
         EasyMock.replay( new Object[]{ bundle } );
         final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, location );
         EasyMock.verify( new Object[]{ bundle } );
+=======
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.findEntries( path, filePattern, false ) ).thenReturn( de );
+
+        final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, location );
+        Mockito.verify( bundle ).findEntries( path, filePattern, false );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         assertNotNull( "Descriptor array is not null", actualUrls );
         assertEquals( "Descriptor length", urls.length, actualUrls.length );
@@ -154,12 +178,20 @@ public class BundleComponentActivatorTest extends TestCase
     public void test_findDescriptors_withWildcardLocation_nullEnum()
         throws MalformedURLException
     {
+<<<<<<< HEAD
         final Bundle bundle = (Bundle) EasyMock.createNiceMock( Bundle.class );
         EasyMock.expect( bundle.findEntries( "/", "*.xml", false ) ).andReturn( null );
 
         EasyMock.replay( new Object[]{ bundle } );
         final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, "*.xml" );
         EasyMock.verify( new Object[]{ bundle } );
+=======
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.findEntries( "/", "*.xml", false ) ).thenReturn( null );
+
+        final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, "*.xml" );
+        Mockito.verify( bundle).findEntries( "/", "*.xml", false );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         assertNotNull( "Descriptor array is not null", actualUrls );
         assertEquals( "Descriptor length", 0, actualUrls.length );
@@ -173,12 +205,20 @@ public class BundleComponentActivatorTest extends TestCase
     public void test_findDescriptors_withWildcardLocation_emptyEnum()
         throws MalformedURLException
     {
+<<<<<<< HEAD
         final Bundle bundle = (Bundle) EasyMock.createNiceMock( Bundle.class );
         EasyMock.expect( bundle.findEntries( "/", "*.xml", false ) ).andReturn( new Vector().elements() );
 
         EasyMock.replay( new Object[]{ bundle } );
         final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, "*.xml" );
         EasyMock.verify( new Object[]{ bundle } );
+=======
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.findEntries( "/", "*.xml", false ) ).thenReturn( new Vector().elements() );
+
+        final URL[] actualUrls = BundleComponentActivator.findDescriptors( bundle, "*.xml" );
+        Mockito.verify( bundle ).findEntries( "/", "*.xml", false );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         assertNotNull( "Descriptor array is not null", actualUrls );
         assertEquals( "Descriptor length", 0, actualUrls.length );

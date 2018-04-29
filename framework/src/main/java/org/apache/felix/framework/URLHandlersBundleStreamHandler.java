@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -44,7 +44,7 @@ class URLHandlersBundleStreamHandler extends URLStreamHandler
         m_action = action;
     }
 
-    protected synchronized URLConnection openConnection(URL url) throws IOException
+    protected URLConnection openConnection(URL url) throws IOException
     {
         if (!"felix".equals(url.getAuthority()))
         {
@@ -54,9 +54,9 @@ class URLHandlersBundleStreamHandler extends URLStreamHandler
         {
             return new URLHandlersBundleURLConnection(url, m_framework);
         }
-        
+
         Object framework = URLHandlers.getFrameworkFromContext();
-        
+
         if (framework != null)
         {
             if (framework instanceof Felix)
@@ -67,8 +67,13 @@ class URLHandlersBundleStreamHandler extends URLStreamHandler
             {
                 Class targetClass = framework.getClass().getClassLoader().loadClass(
                     URLHandlersBundleURLConnection.class.getName());
+<<<<<<< HEAD
                 
                 Constructor constructor = m_action.getConstructor(targetClass, 
+=======
+
+                Constructor constructor = m_action.getConstructor(targetClass,
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         new Class[]{URL.class, framework.getClass().getClassLoader().loadClass(
                                 Felix.class.getName())});
                 m_action.setAccesssible(constructor);
@@ -82,7 +87,11 @@ class URLHandlersBundleStreamHandler extends URLStreamHandler
         throw new IOException("No framework context found");
     }
 
+<<<<<<< HEAD
     protected void parseURL(URL u, String spec, int start, int limit) 
+=======
+    protected void parseURL(URL u, String spec, int start, int limit)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         super.parseURL(u, spec, start, limit);
 
@@ -92,31 +101,53 @@ class URLHandlersBundleStreamHandler extends URLStreamHandler
         }
     }
 
+<<<<<<< HEAD
     protected String toExternalForm(URL u) 
     {
         StringBuffer result = new StringBuffer();
+=======
+    protected String toExternalForm(URL u)
+    {
+        StringBuilder result = new StringBuilder();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         result.append(u.getProtocol());
         result.append("://");
         result.append(u.getHost());
         result.append(':');
         result.append(u.getPort());
+<<<<<<< HEAD
         if (u.getPath() != null) 
         {
             result.append(u.getPath());
         }
         if (u.getQuery() != null) 
+=======
+        if (u.getPath() != null)
+        {
+            result.append(u.getPath());
+        }
+        if (u.getQuery() != null)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             result.append('?');
             result.append(u.getQuery());
         }
+<<<<<<< HEAD
         if (u.getRef() != null) 
+=======
+        if (u.getRef() != null)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             result.append("#");
             result.append(u.getRef());
         }
         return result.toString();
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     protected java.net.InetAddress getHostAddress(URL u)
     {
         return null;

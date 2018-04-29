@@ -18,10 +18,21 @@
  */
 package org.apache.felix.cm.impl.helper;
 
+<<<<<<< HEAD
+=======
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Dictionary;
 
 import org.apache.felix.cm.impl.ConfigurationManager;
 import org.osgi.framework.ServiceReference;
+<<<<<<< HEAD
+=======
+import org.osgi.service.cm.ConfigurationException;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.cm.ManagedServiceFactory;
 
 public class ManagedServiceFactoryTracker extends BaseTracker<ManagedServiceFactory>
@@ -85,7 +96,11 @@ public class ManagedServiceFactoryTracker extends BaseTracker<ManagedServiceFact
             {
                 Dictionary props = getProperties( properties, reference, configPid.toString(),
                     factoryPid.toString() );
+<<<<<<< HEAD
                 service.updated( configPid.toString(), props );
+=======
+                updated( reference, service, configPid.toString(), props );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 configs.record( configPid, factoryPid, revision );
             }
             catch ( Throwable t )
@@ -112,7 +127,11 @@ public class ManagedServiceFactoryTracker extends BaseTracker<ManagedServiceFact
             {
                 try
                 {
+<<<<<<< HEAD
                     service.deleted( configPid.toString() );
+=======
+                    deleted( reference, service, configPid.toString() );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     configs.record( configPid, factoryPid, -1 );
                 }
                 catch ( Throwable t )
@@ -126,4 +145,55 @@ public class ManagedServiceFactoryTracker extends BaseTracker<ManagedServiceFact
             }
         }
     }
+<<<<<<< HEAD
+=======
+
+
+    private void updated( final ServiceReference<ManagedServiceFactory> reference, final ManagedServiceFactory service, final String pid, final Dictionary properties )
+        throws ConfigurationException
+    {
+        if ( System.getSecurityManager() != null )
+        {
+            try
+            {
+                AccessController.doPrivileged( new PrivilegedExceptionAction()
+                {
+                    public Object run() throws ConfigurationException
+                    {
+                        service.updated( pid, properties );
+                        return null;
+                    }
+                }, getAccessControlContext( reference.getBundle() ) );
+            }
+            catch ( PrivilegedActionException e )
+            {
+                throw ( ConfigurationException ) e.getException();
+            }
+        }
+        else
+        {
+            service.updated( pid, properties );
+        }
+    }
+
+
+    private void deleted( final ServiceReference<ManagedServiceFactory> reference, final ManagedServiceFactory service, final String pid )
+    {
+        if ( System.getSecurityManager() != null )
+        {
+            AccessController.doPrivileged( new PrivilegedAction()
+            {
+                public Object run()
+                {
+                    service.deleted( pid );
+                    return null;
+                }
+            }, getAccessControlContext( reference.getBundle() ) );
+        }
+        else
+        {
+            service.deleted( pid );
+        }
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

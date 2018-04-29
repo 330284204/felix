@@ -18,6 +18,7 @@
  */
 package org.apache.felix.fileinstall.internal;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -26,6 +27,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.io.Closeable;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.zip.CRC32;
 
 /**
@@ -41,6 +56,7 @@ import java.util.zip.CRC32;
  * the change on this file.  This allows to not report the change until
  * a big copy if complete for example.
  */
+<<<<<<< HEAD
 public class Scanner {
 
     final File directory;
@@ -49,6 +65,23 @@ public class Scanner {
     // Store checksums of files or directories
     Map/* <File, Long> */ lastChecksums = new HashMap/* <File, Long> */();
     Map/* <File, Long> */ storedChecksums = new HashMap/* <File, Long> */();
+=======
+public class Scanner implements Closeable {
+
+    public final static String SUBDIR_MODE_JAR = "jar";
+    public final static String SUBDIR_MODE_SKIP = "skip";
+    public final static String SUBDIR_MODE_RECURSE = "recurse";
+
+    final File directory;
+    final FilenameFilter filter;
+    final boolean jarSubdir;
+    final boolean skipSubdir;
+    final boolean recurseSubdir;
+
+    // Store checksums of files or directories
+    Map<File, Long> lastChecksums = new HashMap<File, Long>();
+    Map<File, Long> storedChecksums = new HashMap<File, Long>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Create a scanner for the specified directory
@@ -57,19 +90,50 @@ public class Scanner {
      */
     public Scanner(File directory)
     {
+<<<<<<< HEAD
         this(directory, null);
+=======
+        this(directory, null, null);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
      * Create a scanner for the specified directory and file filter
      *
      * @param directory the directory to scan
+<<<<<<< HEAD
      * @param filter a filter for file names
      */
     public Scanner(File directory, FilenameFilter filter)
     {
         this.directory = canon(directory);
         this.filter = filter;
+=======
+     * @param filterString a filter for file names
+     * @param subdirMode to use when scanning
+     */
+    public Scanner(File directory, final String filterString, String subdirMode)
+    {
+        this.directory = canon(directory);
+        if (filterString != null && filterString.length() > 0)
+        {
+            this.filter = new FilenameFilter()
+            {
+                Pattern pattern = Pattern.compile(filterString);
+                public boolean accept(File dir, String name)
+                {
+                    return pattern.matcher(name).matches();
+                }
+            };
+        }
+        else
+        {
+            this.filter = null;
+        }
+        this.jarSubdir = subdirMode == null || SUBDIR_MODE_JAR.equals(subdirMode);
+        this.skipSubdir = SUBDIR_MODE_SKIP.equals(subdirMode);
+        this.recurseSubdir = SUBDIR_MODE_RECURSE.equals(subdirMode);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -80,7 +144,11 @@ public class Scanner {
      *
      * @param checksums a map of checksums
      */
+<<<<<<< HEAD
     public void initialize(Map/*<File, Long>*/ checksums)
+=======
+    public void initialize(Map<File, Long> checksums)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         storedChecksums.putAll(checksums);
     }
@@ -95,6 +163,7 @@ public class Scanner {
      * @param reportImmediately report all files immediately without waiting for the checksum to be stable
      * @return a list of changes on the files included in the directory
      */
+<<<<<<< HEAD
     public Set/*<File>*/ scan(boolean reportImmediately)
     {
         File[] list = directory.listFiles(filter);
@@ -115,15 +184,62 @@ public class Scanner {
             if ((newChecksum == lastChecksum || reportImmediately) && newChecksum != storedChecksum)
             {
                 storedChecksums.put(file, new Long(newChecksum));
+=======
+    public Set<File> scan(boolean reportImmediately)
+    {
+        File[] list = directory.listFiles(filter);
+        Set<File> files = processFiles(reportImmediately, list);
+        return new TreeSet<>(files);
+    }
+
+    private Set<File> processFiles(boolean reportImmediately, File[] list)
+    {
+        if (list == null)
+        {
+            return new HashSet<>();
+        }
+        Set<File> files = new HashSet<File>();
+        Set<File> removed = new HashSet<File>(storedChecksums.keySet());
+        for (File file : list)
+        {
+            if (file.isDirectory())
+            {
+                if (skipSubdir)
+                {
+                    continue;
+                } 
+                else if (recurseSubdir)
+                {
+                    files.addAll(processFiles(reportImmediately, file.listFiles(filter)));
+                    continue;
+                }
+            }
+            long lastChecksum = lastChecksums.get(file) != null ? (Long) lastChecksums.get(file) : 0;
+            long storedChecksum = storedChecksums.get(file) != null ? (Long) storedChecksums.get(file) : 0;
+            long newChecksum = checksum(file);
+            lastChecksums.put(file, newChecksum);
+            // Only handle file when it does not change anymore and it has changed
+            // since last reported
+            if ((newChecksum == lastChecksum || reportImmediately) && newChecksum != storedChecksum)
+            {
+                storedChecksums.put(file, newChecksum);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 files.add(file);
             }
             removed.remove(file);
         }
+<<<<<<< HEAD
         for (Iterator it = removed.iterator(); it.hasNext();)
         {
             File file = (File) it.next();
             // Make sure we'll handle a file that has been deleted
             files.addAll(removed);
+=======
+        // Make sure we'll handle a file that has been deleted
+        files.addAll(removed);
+        for (File file : removed)
+        {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             // Remove no longer used checksums
             lastChecksums.remove(file);
             storedChecksums.remove(file);
@@ -131,6 +247,12 @@ public class Scanner {
         return files;
     }
 
+<<<<<<< HEAD
+=======
+    public void close() throws IOException {
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private static File canon(File file)
     {
         try
@@ -151,21 +273,33 @@ public class Scanner {
      */
     public long getChecksum(File file)
     {
+<<<<<<< HEAD
         Long c = (Long) storedChecksums.get(file);
         return c != null ? c.longValue() : 0;
+=======
+        Long c = storedChecksums.get(file);
+        return c != null ? c : 0;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
       * Update the checksum of a file if that file is already known locally.
+<<<<<<< HEAD
       *
       * @param file
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
       */
     public void updateChecksum(File file)
     {
         if (file != null && storedChecksums.containsKey(file))
         {
             long newChecksum = checksum(file);
+<<<<<<< HEAD
             storedChecksums.put(file, new Long(newChecksum));
+=======
+            storedChecksums.put(file, newChecksum);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     }
 
@@ -196,9 +330,15 @@ public class Scanner {
             File[] children = file.listFiles();
             if (children != null)
             {
+<<<<<<< HEAD
                 for (int i = 0; i < children.length; i++)
                 {
                     checksum(children[i], crc);
+=======
+                for (File aChildren : children)
+                {
+                    checksum(aChildren, crc);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         }

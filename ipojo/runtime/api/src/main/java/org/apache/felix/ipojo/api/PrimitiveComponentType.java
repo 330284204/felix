@@ -75,6 +75,7 @@ public class PrimitiveComponentType extends ComponentType {
     private ComponentFactory m_factory;
 
     /**
+<<<<<<< HEAD
      * Component type metadata.
      */
     private Element m_metadata;
@@ -83,16 +84,29 @@ public class PrimitiveComponentType extends ComponentType {
      * List of provided services.
      */
     private List m_services = new ArrayList(1);
+=======
+     * List of provided services.
+     */
+    private List<Service> m_services = new ArrayList<Service>(1);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * List of service dependencies.
      */
+<<<<<<< HEAD
     private List m_dependencies = new ArrayList();
+=======
+    private List<Dependency> m_dependencies = new ArrayList<Dependency>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * List of configuration properties.
      */
+<<<<<<< HEAD
     private List m_properties = new ArrayList();
+=======
+    private List<Property> m_properties = new ArrayList<Property>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * The validate callback.
@@ -105,7 +119,11 @@ public class PrimitiveComponentType extends ComponentType {
     private String m_invalidate;
 
     /**
+<<<<<<< HEAD
      * The udpated callback.
+=======
+     * The updated callback.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      */
     private String m_updated;
 
@@ -132,13 +150,21 @@ public class PrimitiveComponentType extends ComponentType {
     /**
      * The temporal dependencies.
      */
+<<<<<<< HEAD
     private ArrayList m_temporals = new ArrayList();
+=======
+    private ArrayList<TemporalDependency> m_temporals = new ArrayList<TemporalDependency>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * List of Handler representing external
      * handler configuration.
      */
+<<<<<<< HEAD
     private List m_handlers = new ArrayList();
+=======
+    private List<HandlerConfiguration> m_handlers = new ArrayList<HandlerConfiguration>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 
     /**
@@ -363,6 +389,7 @@ public class PrimitiveComponentType extends ComponentType {
         if (m_immediate) {
             element.addAttribute(new Attribute("immediate", "true"));
         }
+<<<<<<< HEAD
         for (int i = 0; i < m_services.size(); i++) {
             Service svc = (Service) m_services.get(i);
             element.addElement(svc.getElement());
@@ -373,6 +400,15 @@ public class PrimitiveComponentType extends ComponentType {
         }
         for (int i = 0; i < m_temporals.size(); i++) {
             TemporalDependency dep = (TemporalDependency) m_temporals.get(i);
+=======
+        for (Service svc : m_services) {
+            element.addElement(svc.getElement());
+        }
+        for (Dependency dep : m_dependencies) {
+            element.addElement(dep.getElement());
+        }
+        for (TemporalDependency dep : m_temporals) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             element.addElement(dep.getElement());
         }
         if (m_validate != null) {
@@ -401,16 +437,24 @@ public class PrimitiveComponentType extends ComponentType {
             if (m_updated != null) {
                 properties.addAttribute(new Attribute("updated", m_updated));
             }
+<<<<<<< HEAD
             for (int i = 0; i < m_properties.size(); i++) {
                 Property prop = (Property) m_properties.get(i);
+=======
+            for (Property prop : m_properties) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 properties.addElement(prop.getElement());
             }
             element.addElement(properties);
         }
 
         // External handlers
+<<<<<<< HEAD
         for (int i = 0; i < m_handlers.size(); i++) {
             HandlerConfiguration hc = (HandlerConfiguration) m_handlers.get(i);
+=======
+        for (HandlerConfiguration hc : m_handlers) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             element.addElement(hc.getElement());
         }
 
@@ -436,8 +480,13 @@ public class PrimitiveComponentType extends ComponentType {
     private void createFactory() {
         ensureValidity();
         byte[] clazz = manipulate();
+<<<<<<< HEAD
         m_metadata = generateComponentMetadata();
         Element meta = m_metadata;
+=======
+
+        Element meta = generateComponentMetadata();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         meta.addElement(m_manipulation);
         try {
             if (m_alreadyManipulated) { // Already manipulated
@@ -458,7 +507,20 @@ public class PrimitiveComponentType extends ComponentType {
      * @return the manipulated class
      */
     private byte[] manipulate() {
+<<<<<<< HEAD
         Manipulator manipulator = new Manipulator();
+=======
+        Manipulator manipulator = new Manipulator(new ClassLoader() {
+            @Override
+            public Class<?> loadClass(String name) throws ClassNotFoundException {
+                try {
+                    return m_context.getBundle().loadClass(name);
+                } catch (ClassNotFoundException e) {
+                    return this.getClass().getClassLoader().loadClass(name);
+                }
+            }
+        });
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         try {
             byte[] array = getClassByteArray();
 

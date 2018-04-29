@@ -64,7 +64,10 @@ public class ObjectClassDefinitionImpl implements ObjectClassDefinition {
 	}
 
 	public InputStream getIcon(int size) throws IOException {
+<<<<<<< HEAD
 		// TODO Auto-generated method stub
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 		return null;
 	}
 
@@ -79,5 +82,8 @@ public class ObjectClassDefinitionImpl implements ObjectClassDefinition {
 	public String getName() {
 		return m_ocd.getName();
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

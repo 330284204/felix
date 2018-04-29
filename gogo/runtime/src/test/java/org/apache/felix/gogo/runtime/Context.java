@@ -18,13 +18,23 @@
  */
 package org.apache.felix.gogo.runtime;
 
+<<<<<<< HEAD
 import org.apache.felix.gogo.runtime.threadio.ThreadIOImpl;
 import org.apache.felix.service.command.CommandSession;
+=======
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.file.Path;
+
+import org.apache.felix.service.command.CommandSession;
+import org.apache.felix.service.threadio.ThreadIO;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 public class Context extends CommandProcessorImpl
 {
     public static final String EMPTY = "";
     
+<<<<<<< HEAD
     private static final ThreadIOImpl threadio;
     private final CommandSession session;
 
@@ -35,12 +45,21 @@ public class Context extends CommandProcessorImpl
     }
 
     public Context()
+=======
+    private final CommandSession session;
+
+    public Context(ThreadIO threadio, InputStream in, PrintStream out, PrintStream err)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         super(threadio);
         addCommand("osgi", this, "addCommand");
         addCommand("osgi", this, "removeCommand");
         addCommand("osgi", this, "eval");
+<<<<<<< HEAD
         session = (CommandSessionImpl) createSession(System.in, System.out, System.err);
+=======
+        session = createSession(in, out, err);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public Object execute(CharSequence source) throws Exception
@@ -63,9 +82,29 @@ public class Context extends CommandProcessorImpl
         addCommand("test", target, function);
     }
 
+<<<<<<< HEAD
     public void set(String name, Object value)
     {
         session.put(name, value);
     }
 
+=======
+    public Object set(String name, Object value)
+    {
+        return session.put(name, value);
+    }
+
+    public Object get(String name)
+    {
+        return session.get(name);
+    }
+
+    public void currentDir(Path path) {
+        session.currentDir(path);
+    }
+
+    public Path currentDir() {
+        return session.currentDir();
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

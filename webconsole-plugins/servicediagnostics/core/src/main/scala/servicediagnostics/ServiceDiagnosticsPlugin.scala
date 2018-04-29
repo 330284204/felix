@@ -23,8 +23,11 @@ import collection.JavaConversions._
 
 import scala.collection.mutable.{Map => mMap}
 
+<<<<<<< HEAD
 import org.json.JSONObject
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import Util._
 
 /**
@@ -93,9 +96,34 @@ object Util
         l.map(_.take(1)).mkString(".") + l.last.drop(1)
     }
 
+<<<<<<< HEAD
     /** 
      * turn the ServiceDiagnostics output into a JSON representation.
      */
     def json(map:Map[String,Set[String]]) = 
       new JSONObject(asJavaMap(mMap() ++ map.map(kv => (kv._1, asJavaList(kv._2.toList)))))
+=======
+}
+
+object JSON
+{
+  trait Json[T] {
+    def toJson(t:T):String
+  }
+  implicit object jsonStr extends Json[String] {
+    def toJson(s:String) = s""""$s""""
+  }
+  implicit object jsonInt extends Json[Int] {
+    def toJson(s:Int) = s"$s"
+  }
+  implicit def jsonSet[T:Json] = new Json[Set[T]] {
+    def toJson(l:Set[T]) = (l map (v => implicitly[Json[T]].toJson(v))).mkString("[",",","]")
+  }
+  implicit def jsonMap[T:Json] = new Json[Map[String,T]] {
+    def toJson(m:Map[String,T]) = (m map { case (k,v) =>
+      s""""$k":${implicitly[Json[T]].toJson(v)}""" }).mkString("{",",","}")
+  }
+
+  def json[T:Json](v:T) = implicitly[Json[T]].toJson(v)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

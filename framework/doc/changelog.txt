@@ -1,3 +1,235 @@
+<<<<<<< HEAD
+=======
+Changes from 5.6.8 to 5.6.10
+----------------------------
+
+** Bug
+    * [FELIX-5707] - Bundle-NativeCode header should not require osname and processor parameter to be present to match
+    * [FELIX-5709] - PackageAdmin getHosts should only return hosts required via HOST_NAMESPACE.
+
+** Improvement
+    * [FELIX-5710] - Improve Java9 support
+
+** Sub-task
+    * [FELIX-5717] - Define proper package lists for java9 modules
+    * [FELIX-5718] - Autodetect modules available
+    * [FELIX-5719] - Extend property substitution to user defined FRAMEWORK_SYSTEMPACKAGES_EXTRA and FRAMEWORK_SYSTEMPACKAGES properties for java9 module expansion.
+    * [FELIX-5720] - Use PlatformClassLoader as boot classloader on java9
+    * [FELIX-5721] - Make javafx packages available by default on java9 if they are there
+    * [FELIX-5725] - Cache generated reflection classes for jdk.internal.reflect like we do for sun.reflect.
+    * [FELIX-5727] - Allow extension bundles when loaded with the PlattformClassLoader
+    * [FELIX-5742] - Provide java9 system bundle exports for jpms jre
+
+Changes from 5.6.6 to 5.6.8
+---------------------------
+
+** Bug
+    * [FELIX-5672] - Cannot launch Felix on Raspberry Pi: problem with normalizeOSVersion()
+    * [FELIX-5676] - Uninstall should throw an exception if called while the bundle is starting or stopping
+
+** Improvement
+    * [FELIX-5665] - High CPU usage on sun.reflect.Generated* class loads by log4j 
+
+Changes from 5.6.4 to 5.6.6
+---------------------------
+
+** Bug
+    * [FELIX-5646] - Missing EE and system packages for Java 9
+    * [FELIX-5649] - Refreshing a fragment causes the framework to be restarted
+    * [FELIX-5652] - Felix Framework hangs on shutdown
+
+Changes from 5.6.2 to 5.6.4
+---------------------------
+
+** Bug
+    * [FELIX-4695] - Normalize os.version system property in framework properties
+    * [FELIX-4837] - Workaround for JNLPClassLoader in ShutdownHook 
+    * [FELIX-5553] - Cannot load native libraries in Windows Server 2016 with the name win32
+    * [FELIX-5573] - Don't return null but throw a CNFE from BundleClassloader.loadclass and Bundle.loadClass on recursive class loads.
+    * [FELIX-5604] - Normalize require capabilites the same way we normalize provide capabilites
+    * [FELIX-5605] - Update to latest resolver 1.14.0
+
+** Improvement
+    * [FELIX-4696] - Improve native OS version sanitation
+    * [FELIX-5574] - When detecting an unknow Windows OS name, provides a suitable default value for org.osgi.framework.os.name
+    * [FELIX-5589] - reduce memory usage of BundleRequirementImpl / BundleCapabilityImpl
+    * [FELIX-5593] - Specify ARM processor Endianness
+
+Changes from 5.6.1 to 5.6.2
+---------------------------
+
+** Bug
+    * [FELIX-5184] - Regression: Native JNA bundle cannot be installed on Windows Server 2012
+    * [FELIX-5485] - ServiceReference#getUsingBundles() returns usages with 0 count
+    * [FELIX-5544] - Don't take implicit boot delegation into account on service assignability check
+
+** Improvement
+    * [FELIX-5138] - Felix should log underlying exception on failed bundle update
+    * [FELIX-5513] - Remove code for pre java 5
+    * [FELIX-5528] - Improve handing of bundle updates concurrent to other lifecycle changes
+    * [FELIX-5547] - Implement FelixResolveContext.getSubstitutionWires(Wiring)
+    * Update to latest resolver 1.12.0
+
+** New Feature
+    * [FELIX-5329] - [Framework] Fix Java 8 packages and add Java 9 packages in default.properties
+
+Changes from 5.6.0 to 5.6.1
+---------------------------
+
+** Bug
+    * [FELIX-5363] - new URL(string) suffers under concurrency
+    * [FELIX-5372] - BundleWiring#getClassLoader should return null for fragments
+    * [FELIX-5384] - EventDispatcher#createWhitelistFromHooks fails under security
+
+** Improvement
+    * [FELIX-5247] - Reduce number of threads created by Resolver during a startup of OSGi-based applications
+
+Changes from 5.4.0 to 5.6.0
+---------------------------
+
+** Improvement
+    * Update to latest resolver 1.10.0
+
+** Bug
+    * [FELIX-4871] - The felix framework logger can't be used with reflection anymore
+    * [FELIX-5204] - IllegalStateException when using custom URL handlers for bundles
+
+** Test
+    * [FELIX-5084] - Add a mock based test for BundleTracker
+    * [FELIX-5085] - Add a mock based test for ServiceTracker
+
+Changes from 5.2.0 to 5.4.0
+---------------------------
+
+** Bug
+    * [FELIX-5043] - Potential of waiting forever in ServiceRegistry.getService()
+    * [FELIX-5061] - Optional resource fragment with requirements that cause class space consistency issues with the host export cause unexpected ResolutionExceptions
+    * [FELIX-5064] - Framework should provide service capabilities for registered services
+    * [FELIX-5075] - Framework hooks not re-sorted on service ranking update
+
+** Improvement
+    * [FELIX-5014] - Support Windows 10 for Bundle-NativeCode
+    * [FELIX-5034] - Reduce and correct locking related to the hook registry
+    * Update to latest resolver 1.8.0
+
+Changes from 5.0.1 to 5.2.0
+---------------------------
+** Bug
+    * [FELIX-4456] - openConnection().getContentLengthLong() always returns -1 for bundle URLs on Java7
+    * [FELIX-4468] - EventObject is created with null pointer : "null source"
+    * [FELIX-4960] - NPE in BundleRevisionImpl.getResourcesLocal()
+    * [FELIX-4977] - Concurrency issue with factory services
+    * [FELIX-5010] - NPE when resolving bundle with a header "Bundle-NativeCode = *"
+
+** Improvement
+    * [FELIX-4938] - Throw an exception when service use count overflow
+
+** New Feature
+    * [FELIX-4942] - Optimise the resolver
+
+Changes from 5.0.0 to 5.0.1
+---------------------------
+** Bug
+    * [FELIX-4867] - Stale bundle revisions don't get cleaned up when last using bundle is gone
+    * [FELIX-4905] - Framework does not export org.osgi.service.resolver
+    * [FELIX-4914] - Resolution problem with identity requirements on fragments
+    * [FELIX-4927] - Felix reports itself as an OSGi R4/R5 Framework
+    * [FELIX-4928] - Singleton getService() sometimes incorrectly returns null
+
+** Improvement
+    * [FELIX-4866] - Improve service registry
+
+Changes from 4.6.1 to 5.0.0
+---------------------------
+** Bug
+    * [FELIX-4838] - Deadlock in Service Registry
+    * [FELIX-4850] - org.osgi.framework.version should be 1.8
+    * [FELIX-4854] - Unable to create consistent wiring when same package is exported in same version by multiple bundles
+
+** Improvement
+    * [FELIX-4821] - Use a faster implementation for StringMap
+    * [FELIX-4845] - Clean up Logger implementation
+    * [FELIX-4525] - Refactor the Framework to use the Resolver module
+
+Changes from 4.6.0 to 4.6.1
+---------------------------
+** Bug
+    * [FELIX-4806] - Ungetting service through ServiceObjects might throw IllegalArgumentException
+
+** Improvement
+    * [FELIX-4810] - Cache WeakZipFile#entries
+
+Changes from 4.4.1 to 4.6.0
+---------------------------
+** Sub-task
+    * [FELIX-4503] - [Core R6] Support osgi.native capability
+    * [FELIX-4504] - [Core R6] Support Framework DTOs
+    * [FELIX-4505] - [Core R6] Support Prototype Service Factory
+    * [FELIX-4578] - [Core R6] Support new Framework.init(FrameworkListener ... listeners) override
+    * [FELIX-4579] - [Core R6] Support Framework Extension Bundle Activators
+    * [FELIX-4580] - [Core R6] Support service.bundleid Service Registration property
+    * [FELIX-4581] - [Core R6] Support FrameworkWiring.findProviders(Requirement)
+    * [FELIX-4582] - [Core R6] Support WovenClassListener
+    * [FELIX-4583] - [Core R6] Ensure that all OSGi Core R6 CT tests pass
+    * [FELIX-4590] - [Core R6] Update to R6 API
+    * [FELIX-4593] - Support the JavaSE/compact profiles for Java 8
+    * [FELIX-4726] - [Core R6] Update bundle and service hooks for the system bundle
+
+** Bug
+    * [FELIX-3883] - [Framework] Move OS and processor aliases to configuration properties
+    * [FELIX-4690] - Some bundles containing native code can fail to start on Windows 7+
+    * [FELIX-4701] - Properties with surprising spelling in AutoProcessor
+    * [FELIX-4729] - [Core R6] Support for osgi.native namespace with Loading native code libraries
+
+** Improvement
+    * [FELIX-4502] - [Core R6] Provide an OSGi R6 compliant framework implementation
+    * [FELIX-4658] - URL of the CodeSource of a ProtectionDomain should resolve to the right JAR
+    * [FELIX-4692] - Improve Service access time
+    * [FELIX-4757] - Native Capabilities should allow OS and Processor alias to load from default and config properties
+
+Changes form 4.4.0 to 4.4.1
+---------------------------
+** Bug
+    * [FELIX-3239] - PackageAdmin#getExportedPackages does not work on packages exported by attached fragments
+    * [FELIX-3309] - Dashes in qualifier get replaced by periods causing framework not to start up
+    * [FELIX-3701] - Intermittent CNFE with embedded jars in Fragment Bundles
+    * [FELIX-4220] - BundleException type is always set to 0 
+    * [FELIX-4281] - Security Warning: Felix with Java Web Start
+    * [FELIX-4515] - BundleRevision for system extension has no capabilities
+    * [FELIX-4523] - Deadlock in URLHandlers when Felix.init and Felix.stop are called concurrently
+    * [FELIX-4534] - Bundles containing native code fails to start on Windows 7
+
+Changes from 4.2.1 to 4.4.0
+---------------------------
+** Bug
+    * [FELIX-1131] - ServiceReference.isAssignableTo fails when using a factory that can not see the exported class and the bundle exporting the service does not have a direct wire to this class
+    * [FELIX-3992] - Classloader access outside of a privileged block
+    * [FELIX-4190] - The framework should not hold any lock while calling ServiceFactory#unget
+    * [FELIX-4283] - actually throw exception if method not found
+    * [FELIX-4331] - [Core R5] Support BundleContext and Framework adaptations
+    * [FELIX-4353] - [Core R5] BundleWiringTests OSGi CT test failures
+    * [FELIX-4354] - [Core R5] ResolverHookTests OSGi CT test failures
+    * [FELIX-4355] - [Core R5] org.osgi.test.cases.framework.launch OSGi CT test failure
+    * [FELIX-4365] - Input stream not properly closed on org.apache.felix.framework.Felix.getFrameworkVersion
+    * [FELIX-4388] - Initial start level not considered when bundle.start() is called
+    * [FELIX-4462] - Classloader deadlock in Java6 between two bundles
+
+** Improvement
+    * [FELIX-4128] - [Core R5] Provide an OSGi R5 compliant framework implementation
+    * [FELIX-4284] - remove dead allocation
+
+** Task
+    * [FELIX-4080] - [Core R5] Add support for org.osgi.framework.UnfilteredServiceListener
+    * [FELIX-4082] - [Core R5] Update org.osgi.framework.bsnversion framework property
+    * [FELIX-4083] - [Core R5] Support for valueOf when evaluating a Filter
+    * [FELIX-4084] - [Core R5] Enhance Bundle.adapt() to provider AccessControlContext.
+    * [FELIX-4085] - [Core R5] Implement updates to the Bundle Hook Specification
+    * [FELIX-4324] - [Core R5] Implement osgi.identity namespace for fragments
+
+** Wish
+    * [FELIX-3868] - Adding osgi.identity namespace to bundles (resources)
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 4.2.0 to 4.2.1
 ---------------------------
 ** Bug

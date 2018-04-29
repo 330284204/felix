@@ -34,7 +34,13 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.InvalidSyntaxException;
+<<<<<<< HEAD
 import org.osgi.framework.ServiceListener;
+=======
+import org.osgi.framework.ServiceFactory;
+import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceObjects;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.ServicePermission;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -465,7 +471,7 @@ class BundleContextImpl implements FelixBundleContext
            ((SecurityManager) sm).checkPermission(new ServicePermission(ref, ServicePermission.GET));
         }
 
-        return m_felix.getService(m_bundle, ref);
+        return m_felix.getService(m_bundle, ref, false);
     }
 
     public boolean ungetService(ServiceReference<?> ref)
@@ -483,7 +489,7 @@ class BundleContextImpl implements FelixBundleContext
         }
 
         // Unget the specified service.
-        return m_felix.ungetService(m_bundle, ref);
+        return m_felix.ungetService(m_bundle, ref, null);
     }
 
     public File getDataFile(String s)
@@ -513,4 +519,85 @@ class BundleContextImpl implements FelixBundleContext
 
         throw new IllegalStateException("Invalid BundleContext.");
     }
+
+    /**
+     * @see org.osgi.framework.BundleContext#registerService(java.lang.Class, org.osgi.framework.ServiceFactory, java.util.Dictionary)
+     */
+    public <S> ServiceRegistration<S> registerService(Class<S> clazz,
+            ServiceFactory<S> factory, Dictionary<String, ?> properties)
+    {
+        return (ServiceRegistration<S>)
+                registerService(new String[] { clazz.getName() }, factory, properties);
+    }
+
+    /**
+     * @see org.osgi.framework.BundleContext#getServiceObjects(org.osgi.framework.ServiceReference)
+     */
+    public <S> ServiceObjects<S> getServiceObjects(final ServiceReference<S> ref)
+    {
+    	checkValidity();
+
+        Object sm = System.getSecurityManager();
+
+        if (sm != null)
+        {
+           ((SecurityManager) sm).checkPermission(new ServicePermission(ref, ServicePermission.GET));
+        }
+
+        ServiceRegistrationImpl reg =
+                ((ServiceRegistrationImpl.ServiceReferenceImpl) ref).getRegistration();
+        if ( reg.isValid() )
+        {
+        	return new ServiceObjectsImpl(ref);
+        }
+        return null;
+    }
+
+    //
+    // ServiceObjects implementation
+    //
+    class ServiceObjectsImpl<S> implements ServiceObjects<S>
+    {
+        private final ServiceReference<S> m_ref;
+
+        public ServiceObjectsImpl(final ServiceReference<S> ref)
+        {
+            this.m_ref = ref;
+        }
+
+        public S getService() {
+            checkValidity();
+
+            // CONCURRENCY NOTE: This is a check-then-act situation,
+            // but we ignore it since the time window is small and
+            // the result is the same as if the calling thread had
+            // won the race condition.
+
+            final Object sm = System.getSecurityManager();
+
+            if (sm != null)
+            {
+               ((SecurityManager) sm).checkPermission(new ServicePermission(m_ref, ServicePermission.GET));
+            }
+
+            return m_felix.getService(m_bundle, m_ref, true);
+        }
+
+        public void ungetService(final S srvObj)
+        {
+            checkValidity();
+
+            // Unget the specified service.
+            if ( !m_felix.ungetService(m_bundle, m_ref, srvObj) )
+            {
+            	throw new IllegalArgumentException();
+            }
+        }
+
+        public ServiceReference<S> getServiceReference()
+        {
+            return m_ref;
+        }
+    }
+
 }

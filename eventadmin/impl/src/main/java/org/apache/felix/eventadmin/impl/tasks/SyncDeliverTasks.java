@@ -24,7 +24,10 @@ import java.util.Iterator;
 import org.apache.felix.eventadmin.impl.handler.EventHandlerProxy;
 import org.osgi.service.event.Event;
 
+<<<<<<< HEAD
 import EDU.oswego.cs.dl.util.concurrent.TimeoutException;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /**
  * This class does the actual work of the synchronous event delivery.
@@ -80,6 +83,7 @@ public class SyncDeliverTasks
     }
 
     /**
+<<<<<<< HEAD
      * This method defines if a timeout handling should be used for the
      * task.
      * @param tasks The event handler dispatch tasks to execute
@@ -170,5 +174,52 @@ public class SyncDeliverTasks
                 }
 //            }
         }
+=======
+     * This blocks an unrelated thread used to send a synchronous event until the
+     * event is send (or a timeout occurs).
+     *
+     * @param tasks The event handler dispatch tasks to execute
+     *
+     */
+    public void execute(final Collection<EventHandlerProxy> tasks, final Event event, final boolean filterAsyncUnordered)
+    {
+        final Thread sleepingThread = Thread.currentThread();
+        final SyncThread syncThread = sleepingThread instanceof SyncThread ? (SyncThread)sleepingThread : null;
+
+        final Iterator<EventHandlerProxy> i = tasks.iterator();
+        final BlacklistLatch handlerLatch = new BlacklistLatch(tasks.size(), this.timeout/2);
+
+        while ( i.hasNext() )
+        {
+            final EventHandlerProxy task = i.next();
+            HandlerTask handlerTask = new HandlerTask(task, event, this.timeout, handlerLatch);
+//            if ( !filterAsyncUnordered || task.isAsyncOrderedDelivery() )
+//            {
+                if( !handlerTask.useTimeout() )
+                {
+                	handlerTask.runWithoutBlacklistTiming();
+                }
+            	else if ( syncThread != null  )
+                {
+                    // if this is a cascaded event, we directly use this thread
+                    // otherwise we could end up in a starvation
+                    handlerTask.run();
+                }
+                else
+                {
+
+                	handlerLatch.addToBlacklistCheck(handlerTask);
+                    if ( !this.pool.executeTask(handlerTask) )
+                    {
+                        // scheduling failed: last resort, call directly
+                        handlerTask.run();
+                    }
+                }
+
+//            }
+        }
+        handlerLatch.awaitAndBlacklistCheck();
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

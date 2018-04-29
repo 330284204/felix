@@ -35,10 +35,19 @@
  */
 
 // This document is an experimental draft to enable interoperability
+<<<<<<< HEAD
 // between bundle repositories. There is currently no commitment to 
 // turn this draft into an official specification.  
 package org.apache.felix.bundlerepository;
 
+=======
+// between bundle repositories. There is currently no commitment to
+// turn this draft into an official specification.
+package org.apache.felix.bundlerepository;
+
+import java.util.Map;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 /**
  * A named requirement specifies the need for certain capabilities with the same
  * name.
@@ -48,11 +57,33 @@ package org.apache.felix.bundlerepository;
  *   <li>they have the same nsame</li>
  *   <li>the filter matches the capability properties</li>
  * </ul>
+<<<<<<< HEAD
  * 
+=======
+ *
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  * @version $Revision: 1.4 $
  */
 public interface Requirement
 {
+<<<<<<< HEAD
+=======
+    /**
+     * Return a map of attributes. Requirements can have attributes, but these are not
+     * used for matching. They are for informational purposes only.
+     *
+     * @return The map of attributes.
+     */
+    Map<String, Object> getAttributes();
+
+    /**
+     * Return the map of directives for this requirement. This requirements map does *not*
+     * contain requirements that are modeled via direct APIs on this interface, such as the
+     * filter, cardinality and resolution.
+     * @return
+     */
+    Map<String, String> getDirectives();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Return the name of the requirement.

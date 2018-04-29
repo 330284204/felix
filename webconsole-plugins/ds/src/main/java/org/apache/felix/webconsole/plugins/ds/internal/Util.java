@@ -16,15 +16,22 @@
  */
 package org.apache.felix.webconsole.plugins.ds.internal;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 
 import org.apache.felix.scr.Component;
+=======
+import java.util.Comparator;
+
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 class Util
 {
 
+<<<<<<< HEAD
     static final Comparator COMPONENT_COMPARATOR = new Comparator()
     {
         public int compare(Object o0, Object o1)
@@ -32,11 +39,22 @@ class Util
             final Component c0 = (Component) o0;
             final Component c1 = (Component) o1;
             final int nameCmp = c0.getName().compareTo(c1.getName());
+=======
+    static final Comparator<ComponentConfigurationDTO> COMPONENT_COMPARATOR = new Comparator<ComponentConfigurationDTO>()
+    {
+        public int compare(ComponentConfigurationDTO c0, ComponentConfigurationDTO c1)
+        {
+            final int nameCmp = c0.description.name.compareTo(c1.description.name);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if (nameCmp != 0)
             {
                 return nameCmp;
             }
+<<<<<<< HEAD
             return (c0.getId() < c1.getId()) ? -1 : ((c0.getId() > c1.getId()) ? 1 : 0);
+=======
+            return (c0.id < c1.id) ? -1 : ((c0.id > c1.id) ? 1 : 0);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     };
 
@@ -45,6 +63,7 @@ class Util
         // prevent instantiation
     }
 
+<<<<<<< HEAD
     /**
      * This method is the same as Collections#list(Enumeration). The reason to
      * duplicate it here, is that it is missing in OSGi/Minimum execution
@@ -63,4 +82,6 @@ class Util
         return l;
     }
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

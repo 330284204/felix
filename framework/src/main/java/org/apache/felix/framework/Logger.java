@@ -18,9 +18,11 @@
  */
 package org.apache.felix.framework;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.osgi.framework.*;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
 
 /**
  * <p>
@@ -34,44 +36,47 @@ import org.osgi.framework.*;
  * The log levels match those specified in the OSGi Log Service (i.e., 1 = error,
  * 2 = warning, 3 = information, and 4 = debug). The default value is 1.
  * </p>
- * <p>
- * This class also uses the System Bundle's context to track log services
- * and will use the highest ranking log service, if present, as a back end
- * instead of printing to standard out. The class uses reflection to invoking
- * the log service's method to avoid a dependency on the log interface.
- * </p>
 **/
-public class Logger implements ServiceListener
+public class Logger extends org.apache.felix.resolver.Logger
 {
-    public static final int LOG_ERROR = 1;
-    public static final int LOG_WARNING = 2;
-    public static final int LOG_INFO = 3;
-    public static final int LOG_DEBUG = 4;
-
-    private int m_logLevel = 1;
-    private BundleContext m_context = null;
-
-    private final static int LOGGER_OBJECT_IDX = 0;
-    private final static int LOGGER_METHOD_IDX = 1;
-    private ServiceReference m_logRef = null;
-    private Object[] m_logger = null;
+    private Object[] m_logger;
 
     public Logger()
     {
+        super(LOG_ERROR);
     }
 
-    public final synchronized void setLogLevel(int i)
+    public void setLogger(Object logger)
     {
-        m_logLevel = i;
+        if (logger == null)
+        {
+            m_logger = null;
+        }
+        else
+        {
+            try
+            {
+                Method mth = logger.getClass().getMethod("log",
+                        Integer.TYPE, String.class, Throwable.class);
+                mth.setAccessible(true);
+                m_logger = new Object[] { logger, mth };
+            }
+            catch (NoSuchMethodException ex)
+            {
+                System.err.println("Logger: " + ex);
+                m_logger = null;
+            }
+        }
     }
 
-    public final synchronized int getLogLevel()
+    public final void log(ServiceReference sr, int level, String msg)
     {
-        return m_logLevel;
+        _log(null, sr, level, msg, null);
     }
 
-    protected void setSystemBundleContext(BundleContext context)
+    public final void log(ServiceReference sr, int level, String msg, Throwable throwable)
     {
+<<<<<<< HEAD
         // TODO: Find a way to log to a log service inside the framework.
         // The issue is that we log messages while holding framework
         // internal locks -- hence, when a log service calls back into 
@@ -82,25 +87,49 @@ public class Logger implements ServiceListener
 
         // m_context = context;
         // startListeningForLogService();
+=======
+        _log(null, sr, level, msg, throwable);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
-    public final void log(int level, String msg)
+    public final void log(Bundle bundle, int level, String msg)
     {
+<<<<<<< HEAD
         _log(null, null, level, msg, null);
+=======
+        _log(bundle, null, level, msg, null);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
-    public final void log(int level, String msg, Throwable throwable)
+    public final void log(Bundle bundle, int level, String msg, Throwable throwable)
     {
+<<<<<<< HEAD
         _log(null, null, level, msg, throwable);
+=======
+        _log(bundle, null, level, msg, throwable);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
-    public final void log(ServiceReference sr, int level, String msg)
+    protected void _log(
+            Bundle bundle, ServiceReference sr, int level,
+            String msg, Throwable throwable)
     {
+<<<<<<< HEAD
         _log(null, sr, level, msg, null);
+=======
+        if (getLogLevel() >= level)
+        {
+            // Default logging action.
+            doLog(bundle, sr, level, msg, throwable);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
-    public final void log(ServiceReference sr, int level, String msg, Throwable throwable)
+    protected void doLog(
+        Bundle bundle, ServiceReference sr, int level,
+        String msg, Throwable throwable)
     {
+<<<<<<< HEAD
         _log(null, sr, level, msg, throwable);
     }
 
@@ -132,6 +161,42 @@ public class Logger implements ServiceListener
         {
             s = s + " (" + throwable + ")";
         }
+=======
+        StringBuilder s = new StringBuilder();
+        if (sr != null)
+        {
+            s.append("SvcRef ").append(sr).append(" ").append(msg);
+        }
+        else if (bundle != null)
+        {
+            s.append("Bundle ").append(bundle.toString()).append(" ").append(msg);
+        }
+        else
+        {
+            s.append(msg);
+        }
+        if (throwable != null)
+        {
+            s.append(" (").append(throwable).append(")");
+        }
+        doLog(level, s.toString(), throwable);
+    }
+
+    protected void doLog(int level, String msg, Throwable throwable)
+    {
+        if (m_logger != null)
+        {
+            doLogReflectively(level, msg, throwable);
+        }
+        else
+        {
+            doLogOut(level, msg, throwable);
+        }
+    }
+
+    protected void doLogOut(int level, String s, Throwable throwable)
+    {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         switch (level)
         {
             case LOG_DEBUG:
@@ -160,6 +225,7 @@ public class Logger implements ServiceListener
         }
     }
 
+<<<<<<< HEAD
     private void _log(
         Bundle bundle, ServiceReference sr, int level,
         String msg, Throwable throwable)
@@ -217,108 +283,22 @@ public class Logger implements ServiceListener
     private synchronized void startListeningForLogService()
     {
         // Add a service listener for log services.
+=======
+    protected void doLogReflectively(int level, String msg, Throwable throwable)
+    {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         try
         {
-            m_context.addServiceListener(
-                this, "(objectClass=org.osgi.service.log.LogService)");
+            ((Method) m_logger[1]).invoke(
+                    m_logger[0],
+                    level,
+                    msg,
+                    throwable
+            );
         }
-        catch (InvalidSyntaxException ex) {
-            // This will never happen since the filter is hard coded.
-        }
-        // Try to get an existing log service.
-        m_logRef = m_context.getServiceReference("org.osgi.service.log.LogService");
-        // Get the service object if available and set it in the logger.
-        if (m_logRef != null)
+        catch (Exception ex)
         {
-            setLogger(m_context.getService(m_logRef));
-        }
-    }
-
-    /**
-     * This method implements the callback for the ServiceListener interface.
-     * It is public as a byproduct of implementing the interface and should
-     * not be called directly. This method tracks run-time changes to log
-     * service availability. If the log service being used by the framework's
-     * logging mechanism goes away, then this will try to find an alternative.
-     * If a higher ranking log service is registered, then this will switch
-     * to the higher ranking log service.
-    **/
-    public final synchronized void serviceChanged(ServiceEvent event)
-    {
-        // If no logger is in use, then grab this one.
-        if ((event.getType() == ServiceEvent.REGISTERED) && (m_logRef == null))
-        {
-            m_logRef = event.getServiceReference();
-            // Get the service object and set it in the logger.
-            setLogger(m_context.getService(m_logRef));
-        }
-        // If a logger is in use, but this one has a higher ranking, then swap
-        // it for the existing logger.
-        else if ((event.getType() == ServiceEvent.REGISTERED) && (m_logRef != null))
-        {
-            ServiceReference ref =
-                m_context.getServiceReference("org.osgi.service.log.LogService");
-            if (!ref.equals(m_logRef))
-            {
-                m_context.ungetService(m_logRef);
-                m_logRef = ref;
-                setLogger(m_context.getService(m_logRef));
-            }
-
-        }
-        // If the current logger is going away, release it and try to
-        // find another one.
-        else if ((event.getType() == ServiceEvent.UNREGISTERING) &&
-            m_logRef.equals(event.getServiceReference()))
-        {
-            // Unget the service object.
-            m_context.ungetService(m_logRef);
-            // Try to get an existing log service.
-            m_logRef = m_context.getServiceReference(
-                "org.osgi.service.log.LogService");
-            // Get the service object if available and set it in the logger.
-            if (m_logRef != null)
-            {
-                setLogger(m_context.getService(m_logRef));
-            }
-            else
-            {
-                setLogger(null);
-            }
-        }
-    }
-
-    /**
-     * This method sets the new log service object. It also caches the method to
-     * invoke. The service object and method are stored in array to optimistically
-     * eliminate the need to locking when logging.
-    **/
-    private void setLogger(Object logObj)
-    {
-        if (logObj == null)
-        {
-            m_logger = null;
-        }
-        else
-        {
-            Class[] formalParams = {
-                ServiceReference.class,
-                Integer.TYPE,
-                String.class,
-                Throwable.class
-            };
-
-            try
-            {
-                Method logMethod = logObj.getClass().getMethod("log", formalParams);
-                logMethod.setAccessible(true);
-                m_logger = new Object[] { logObj, logMethod };
-            }
-            catch (NoSuchMethodException ex)
-            {
-                System.err.println("Logger: " + ex);
-                m_logger = null;
-            }
+            System.err.println("Logger: " + ex);
         }
     }
 }

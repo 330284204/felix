@@ -21,6 +21,10 @@ package org.apache.felix.http.sslfilter.internal;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+<<<<<<< HEAD
+=======
+import static org.apache.felix.http.sslfilter.internal.SslFilterConstants.HDR_X_FORWARDED_PORT;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -81,4 +85,40 @@ public class SslFilterRequestTest
         assertEquals("https://some/page", sreq.getRequestURL().toString());
         assertEquals("https://some/page", req.getRequestURL().toString());
     }
+<<<<<<< HEAD
+=======
+    
+    @Test
+    public void test_getServerPort() throws Exception
+    {
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        SslFilterRequest sreq = new SslFilterRequest(req, null);
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn(null);        
+        when(req.getServerPort()).thenReturn(-1);
+        assertEquals(443, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("");        
+        when(req.getServerPort()).thenReturn(-1);
+        assertEquals(443, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("WRONG");        
+        when(req.getServerPort()).thenReturn(-1);
+        assertEquals(443, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("W1");        
+        when(req.getServerPort()).thenReturn(-1);
+        assertEquals(443, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("443");        
+        assertEquals(443, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("80");        
+        assertEquals(80, sreq.getServerPort());
+        
+        when(req.getHeader(HDR_X_FORWARDED_PORT)).thenReturn("4502");        
+        assertEquals(4502, sreq.getServerPort());
+        
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

@@ -160,7 +160,7 @@ public class JarContent implements Content
         {
             m_logger.log(
                 Logger.LOG_ERROR,
-                "JarContent: Unable to read bytes.", ex);
+                "JarContent: Unable to read bytes for file " + name + " in ZIP file " + m_file.getAbsolutePath(), ex);
             return null;
         }
         finally
@@ -543,4 +543,8 @@ public class JarContent implements Content
             }
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368

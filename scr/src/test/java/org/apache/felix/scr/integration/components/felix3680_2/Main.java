@@ -29,12 +29,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+<<<<<<< HEAD
 import org.apache.felix.scr.ScrService;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.scr.impl.manager.ThreadDump;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+<<<<<<< HEAD
+=======
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.log.LogService;
 
 
@@ -46,7 +54,11 @@ public class Main implements Runnable
     private volatile CountDownLatch m_enabledLatch;
     private volatile CountDownLatch m_disabledLatch;
     private volatile LogService m_logService;
+<<<<<<< HEAD
     private ScrService m_scr;
+=======
+    private ServiceComponentRuntime m_scr;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private final Executor m_exec = Executors.newFixedThreadPool( 12 );
     private volatile BundleContext m_bctx;
     volatile ConcurrentHashMap<Class, ServiceRegistration> m_registrations = new ConcurrentHashMap<Class, ServiceRegistration>();
@@ -146,7 +158,11 @@ public class Main implements Runnable
     }
 
 
+<<<<<<< HEAD
     void bindSCR( ScrService scr )
+=======
+    void bindSCR( ServiceComponentRuntime scr )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         m_scr = scr;
     }
@@ -300,6 +316,7 @@ public class Main implements Runnable
 
     private void dumpA()
     {
+<<<<<<< HEAD
         org.apache.felix.scr.Component c = m_scr
             .getComponents( "org.apache.felix.scr.integration.components.felix3680_2.A" )[0];
         m_logService.log( LogService.LOG_WARNING, "State of " + c + ":" + getState( c ) + "\n" );
@@ -338,4 +355,12 @@ public class Main implements Runnable
                 return "?";
         }
     }
+=======
+        ComponentDescriptionDTO c = m_scr
+            .getComponentDescriptionDTO(m_bctx.getBundle(), "org.apache.felix.scr.integration.components.felix3680_2.A" );
+        m_logService.log( LogService.LOG_WARNING, "State of " + c.name + " enabled:" + m_scr.isComponentEnabled(c) + "\n" );
+    }
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

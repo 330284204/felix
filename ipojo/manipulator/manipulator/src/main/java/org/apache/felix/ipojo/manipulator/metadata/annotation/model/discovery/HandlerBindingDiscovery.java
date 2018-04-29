@@ -22,6 +22,7 @@ package org.apache.felix.ipojo.manipulator.metadata.annotation.model.discovery;
 import org.apache.felix.ipojo.annotations.HandlerBinding;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.model.AnnotationDiscovery;
 import org.objectweb.asm.AnnotationVisitor;
+<<<<<<< HEAD
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
@@ -31,6 +32,16 @@ import org.objectweb.asm.commons.EmptyVisitor;
  * Time: 14:52
  */
 public class HandlerBindingDiscovery extends EmptyVisitor implements AnnotationDiscovery {
+=======
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+/**
+ * The annotation visitor responsible for parsing the {@link org.apache.felix.ipojo.annotations.HandlerBinding}
+ * annotation.
+ */
+public class HandlerBindingDiscovery extends AnnotationVisitor implements AnnotationDiscovery {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     public static final String HANDLER_BINDING_DESCRIPTOR = Type.getType(HandlerBinding.class).getDescriptor();
 
@@ -38,6 +49,16 @@ public class HandlerBindingDiscovery extends EmptyVisitor implements AnnotationD
     private String m_value = null;
     private String m_namespace = null;
 
+<<<<<<< HEAD
+=======
+    /**
+     * Constructs a new {@link org.objectweb.asm.AnnotationVisitor}.
+     */
+    public HandlerBindingDiscovery() {
+        super(Opcodes.ASM5);
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public AnnotationVisitor visitAnnotation(final String desc) {
         if (HANDLER_BINDING_DESCRIPTOR.equals(desc)) {
             m_handlerBinding = true;

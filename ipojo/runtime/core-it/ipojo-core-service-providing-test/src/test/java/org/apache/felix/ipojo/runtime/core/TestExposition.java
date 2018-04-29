@@ -60,6 +60,7 @@ public class TestExposition extends Common {
     public void testSimpleExposition() {
         ServiceReference ref = ipojoHelper.getServiceReferenceByName(FooService.class.getName(), fooProviderSimple.getInstanceName());
         assertNotNull("Check the availability of the FS from " + fooProviderSimple.getInstanceName(), ref);
+<<<<<<< HEAD
         FooService fs = (FooService) osgiHelper.getServiceObject(ref);
         assertTrue("Check fs invocation", fs.foo());
         fs = null;
@@ -67,12 +68,20 @@ public class TestExposition extends Common {
         ref = ipojoHelper.getServiceReferenceByName(FooService.class.getName(), fooProviderSimple.getInstanceName());
         assertNull("Check the absence of the FS from " + fooProviderSimple.getInstanceName(), ref);
 
+=======
+        FooService fs = (FooService) osgiHelper.getRawServiceObject(ref);
+        assertTrue("Check fs invocation", fs.foo());
+        fooProviderSimple.stop();
+        assertFalse("Check the absence of the FS from " + fooProviderSimple.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(FooService.class.getName(), fooProviderSimple.getInstanceName()));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     @Test
     public void testItfExposition() {
         ServiceReference ref = ipojoHelper.getServiceReferenceByName(FooService.class.getName(), fooProviderItf.getInstanceName());
         assertNotNull("Check the availability of the FS from " + fooProviderItf.getInstanceName(), ref);
+<<<<<<< HEAD
         FooService fs = (FooService) osgiHelper.getServiceObject(ref);
         assertTrue("Check fs invocation", fs.foo());
         fs = null;
@@ -80,6 +89,14 @@ public class TestExposition extends Common {
 
         ref = ipojoHelper.getServiceReferenceByName(FooService.class.getName(), fooProviderItf.getInstanceName());
         assertNull("Check the absence of the FS from " + fooProviderItf.getInstanceName(), ref);
+=======
+        FooService fs = (FooService) osgiHelper.getRawServiceObject(ref);
+        assertTrue("Check fs invocation", fs.foo());
+        fooProviderItf.stop();
+
+        assertFalse("Check the absence of the FS from " + fooProviderSimple.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(FooService.class.getName(), fooProviderItf.getInstanceName()));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     @Test
@@ -91,6 +108,7 @@ public class TestExposition extends Common {
 
         assertSame("Check service reference equality", refFoo, refBar);
 
+<<<<<<< HEAD
         FooService fs = (FooService) osgiHelper.getServiceObject(refFoo);
         assertTrue("Check fs invocation", fs.foo());
         fs = null;
@@ -105,6 +123,20 @@ public class TestExposition extends Common {
         refBar = ipojoHelper.getServiceReferenceByName(BarService.class.getName(), fooBarProvider.getInstanceName());
         assertNull("Check the absence of the FS from " + fooBarProvider.getInstanceName(), refFoo);
         assertNull("Check the absence of the BS from " + fooBarProvider.getInstanceName(), refBar);
+=======
+        FooService fs = (FooService) osgiHelper.getRawServiceObject(refFoo);
+        assertTrue("Check fs invocation", fs.foo());
+
+        BarService bs = (BarService) osgiHelper.getRawServiceObject(refBar);
+        assertTrue("Check bs invocation", bs.bar());
+
+        fooBarProvider.stop();
+
+        assertFalse("Check the absence of the FS from " + fooBarProvider.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(FooService.class.getName(), fooBarProvider.getInstanceName()));
+        assertFalse("Check the absence of the BS from " + fooBarProvider.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(BarService.class.getName(), fooBarProvider.getInstanceName()));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     @Test
@@ -116,6 +148,7 @@ public class TestExposition extends Common {
 
         assertSame("Check service reference equality", refFoo, refBar);
 
+<<<<<<< HEAD
         FooService fs = (FooService) osgiHelper.getServiceObject(refFoo);
         assertTrue("Check fs invocation", fs.foo());
         fs = null;
@@ -130,6 +163,20 @@ public class TestExposition extends Common {
         refBar = ipojoHelper.getServiceReferenceByName(BarService.class.getName(), fooBarProvider2.getInstanceName());
         assertNull("Check the absence of the FS from " + fooBarProvider.getInstanceName(), refFoo);
         assertNull("Check the absence of the BS from " + fooBarProvider.getInstanceName(), refBar);
+=======
+        FooService fs = (FooService) osgiHelper.getRawServiceObject(refFoo);
+        assertTrue("Check fs invocation", fs.foo());
+
+        BarService bs = (BarService) osgiHelper.getRawServiceObject(refBar);
+        assertTrue("Check bs invocation", bs.bar());
+
+        fooBarProvider2.stop();
+
+        assertFalse("Check the absence of the FS from " + fooBarProvider2.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(FooService.class.getName(), fooBarProvider2.getInstanceName()));
+        assertFalse("Check the absence of the BS from " + fooBarProvider2.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(BarService.class.getName(), fooBarProvider2.getInstanceName()));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     @Test
@@ -141,6 +188,7 @@ public class TestExposition extends Common {
 
         assertNotSame("Check service reference inequality", refFoo, refBar);
 
+<<<<<<< HEAD
         FooService fs = (FooService) osgiHelper.getServiceObject(refFoo);
         assertTrue("Check fs invocation", fs.foo());
         fs = null;
@@ -148,6 +196,13 @@ public class TestExposition extends Common {
         BarService bs = (BarService) osgiHelper.getServiceObject(refBar);
         assertTrue("Check bs invocation", bs.bar());
         bs = null;
+=======
+        FooService fs = (FooService) osgiHelper.getRawServiceObject(refFoo);
+        assertTrue("Check fs invocation", fs.foo());
+
+        BarService bs = (BarService) osgiHelper.getRawServiceObject(refBar);
+        assertTrue("Check bs invocation", bs.bar());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // Check properties
         String baz1 = (String) refFoo.getProperty("baz");
@@ -158,10 +213,17 @@ public class TestExposition extends Common {
 
         fooBarProvider3.stop();
 
+<<<<<<< HEAD
         refFoo = ipojoHelper.getServiceReferenceByName(FooService.class.getName(), fooBarProvider3.getInstanceName());
         refBar = ipojoHelper.getServiceReferenceByName(BarService.class.getName(), fooBarProvider3.getInstanceName());
         assertNull("Check the absence of the FS from " + fooBarProvider.getInstanceName(), refFoo);
         assertNull("Check the absence of the BS from " + fooBarProvider.getInstanceName(), refBar);
+=======
+        assertFalse("Check the absence of the FS from " + fooBarProvider3.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(FooService.class.getName(), fooBarProvider3.getInstanceName()));
+        assertFalse("Check the absence of the BS from " + fooBarProvider3.getInstanceName(),
+                ipojoHelper.isServiceAvailableByName(BarService.class.getName(), fooBarProvider3.getInstanceName()));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 

@@ -85,7 +85,7 @@ public class LogWrapper
     public static final int LOG_DEBUG = 4;
 
     // A set containing the currently available LogServices. Furthermore used as lock
-    private final Set m_loggerRefs = new HashSet();
+    private final Set<ServiceReference> m_loggerRefs = new HashSet<ServiceReference>();
 
     // Only null while not set and m_loggerRefs is empty hence, only needs to be
     // checked in case m_loggerRefs is empty otherwise it will not be null.
@@ -135,6 +135,7 @@ public class LogWrapper
     public static void setContext( final BundleContext context )
     {
         LogWrapper logWrapper = LogWrapperLoader.m_singleton;
+<<<<<<< HEAD
 
         // context is removed, unregister and drop references
         if ( context == null )
@@ -158,6 +159,32 @@ public class LogWrapper
                 ServiceListener listener = new ServiceListener()
                 {
                     // Add a newly available LogService reference to the singleton.
+=======
+
+        // context is removed, unregister and drop references
+        if ( context == null )
+        {
+            if ( logWrapper.m_logServiceListener != null )
+            {
+                logWrapper.m_context.removeServiceListener( logWrapper.m_logServiceListener );
+                logWrapper.m_logServiceListener = null;
+            }
+            logWrapper.removeLoggerRefs();
+        }
+
+        // set field
+        logWrapper.setBundleContext( context );
+
+        // context is set, register and get existing services
+        if ( context != null )
+        {
+            try
+            {
+                ServiceListener listener = new ServiceListener()
+                {
+                    // Add a newly available LogService reference to the singleton.
+                    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     public void serviceChanged( final ServiceEvent event )
                     {
                         if ( ServiceEvent.REGISTERED == event.getType() )
@@ -254,9 +281,13 @@ public class LogWrapper
             {
                 // There is at least one LogService available hence, we can use the
                 // class as well.
-                for (Iterator iter = m_loggerRefs.iterator(); iter.hasNext();)
+                for (Iterator<ServiceReference> iter = m_loggerRefs.iterator(); iter.hasNext();)
                 {
+<<<<<<< HEAD
                     final ServiceReference next = (ServiceReference) iter.next();
+=======
+                    final ServiceReference next = iter.next();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                     org.osgi.service.log.LogService logger =
                         (org.osgi.service.log.LogService) m_context.getService(next);
@@ -306,9 +337,13 @@ public class LogWrapper
             {
                 // There is at least one LogService available hence, we can use the
                 // class as well.
-                for (Iterator iter = m_loggerRefs.iterator(); iter.hasNext();)
+                for (Iterator<ServiceReference> iter = m_loggerRefs.iterator(); iter.hasNext();)
                 {
+<<<<<<< HEAD
                     final ServiceReference next = (ServiceReference) iter.next();
+=======
+                    final ServiceReference next = iter.next();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                     org.osgi.service.log.LogService logger =
                         (org.osgi.service.log.LogService) m_context.getService(next);
@@ -358,9 +393,13 @@ public class LogWrapper
             {
                 // There is at least one LogService available hence, we can use the
                 // class as well.
-                for (Iterator iter = m_loggerRefs.iterator(); iter.hasNext();)
+                for (Iterator<ServiceReference> iter = m_loggerRefs.iterator(); iter.hasNext();)
                 {
+<<<<<<< HEAD
                     final ServiceReference next = (ServiceReference) iter.next();
+=======
+                    final ServiceReference next = iter.next();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                     org.osgi.service.log.LogService logger =
                         (org.osgi.service.log.LogService) m_context.getService(next);
@@ -405,16 +444,24 @@ public class LogWrapper
             {
                 return; // don't log
             }
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             final String logMsg = "EventAdmin: " + msg;
 
             if (!m_loggerRefs.isEmpty())
             {
                 // There is at least one LogService available hence, we can use the
                 // class as well.
-                for (Iterator iter = m_loggerRefs.iterator(); iter.hasNext();)
+                for (Iterator<ServiceReference> iter = m_loggerRefs.iterator(); iter.hasNext();)
                 {
+<<<<<<< HEAD
                        final ServiceReference next = (ServiceReference) iter.next();
+=======
+                       final ServiceReference next = iter.next();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                     org.osgi.service.log.LogService logger =
                         (org.osgi.service.log.LogService) m_context.getService(next);

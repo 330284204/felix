@@ -28,10 +28,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+<<<<<<< HEAD
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
+=======
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.log.LogService;
 
 public class Main implements Runnable
@@ -46,9 +53,15 @@ public class Main implements Runnable
     private volatile AtomicInteger _counter = new AtomicInteger();
     private volatile Random _rnd = new Random();
     private volatile LogService _logService;
+<<<<<<< HEAD
     private ScrService _scr;
     private volatile Thread _thread;
     private volatile boolean _running;
+=======
+    private volatile Thread _thread;
+    private volatile boolean _running;
+    private ServiceComponentRuntime _scr;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Helper used to randomly enable or disable a list of components.
@@ -120,7 +133,11 @@ public class Main implements Runnable
         }
     }
 
+<<<<<<< HEAD
     void bindSCR(ScrService scr)
+=======
+    void bindSCR(ServiceComponentRuntime scr)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         _scr = scr;
     }
@@ -246,6 +263,7 @@ public class Main implements Runnable
 
     private void dumpState(StringWriter sw, String name)
     {
+<<<<<<< HEAD
         org.apache.felix.scr.Component[] comps = _scr.getComponents(name);
         if (comps == null || comps.length == 0) 
         {
@@ -290,4 +308,13 @@ public class Main implements Runnable
             return "?";
         }
     }
+=======
+        ComponentDescriptionDTO c = _scr.getComponentDescriptionDTO(_ctx.getBundleContext().getBundle(), name);
+        if ( c != null )
+        {
+            sw.append( name ).append( "[" ).append( _scr.isComponentEnabled(c)? "enabled":"disabled" ).append( "] " );
+        }
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

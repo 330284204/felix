@@ -23,6 +23,7 @@ import org.apache.felix.ipojo.manipulator.metadata.annotation.model.AnnotationTy
 import org.apache.felix.ipojo.manipulator.metadata.annotation.model.parser.replay.AnnotationVisitorPlayback;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
+<<<<<<< HEAD
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
@@ -35,6 +36,22 @@ public class AnnotationTypeVisitor extends EmptyVisitor implements ClassVisitor 
 
     private AnnotationType annotationType;
 
+=======
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+/**
+ *
+ */
+public class AnnotationTypeVisitor extends ClassVisitor {
+
+    private AnnotationType annotationType;
+
+    public AnnotationTypeVisitor() {
+        super(Opcodes.ASM5);
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         annotationType = new AnnotationType(Type.getObjectType(name));

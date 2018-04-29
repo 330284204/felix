@@ -16,10 +16,19 @@
  */
 package org.apache.felix.utils.properties;
 
+<<<<<<< HEAD
+=======
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -235,7 +244,125 @@ public class PropertiesTest extends TestCase {
         assertTrue(sw.toString(), sw.toString().endsWith(RESULT3));
         List<String> rawValue = properties.getRaw(KEY1);
         assertEquals(2, rawValue.size());
+<<<<<<< HEAD
         assertEquals(KEY1A + " = " + VALUE1 + "\\", rawValue.get(0));
         assertEquals(VALUE1, rawValue.get(1));
     }
+=======
+        assertEquals(KEY1A + " = " + VALUE1, rawValue.get(0));
+        assertEquals(VALUE1, rawValue.get(1));
+    }
+
+    public void testEntrySetValue() throws Exception {
+        properties.put(KEY1, VALUE1);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        properties.save(baos);
+
+        properties = new Properties();
+        properties.load(new ByteArrayInputStream(baos.toByteArray()));
+        assertEquals(VALUE1, properties.get(KEY1));
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            entry.setValue(entry.getValue() + "x");
+        }
+        assertEquals(VALUE1 + "x", properties.get(KEY1));
+
+        baos = new ByteArrayOutputStream();
+        properties.save(baos);
+
+        properties = new Properties();
+        properties.load(new ByteArrayInputStream(baos.toByteArray()));
+        assertEquals(VALUE1 + "x", properties.get(KEY1));
+    }
+
+    public void testMultiValueEscaping() throws IOException {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("fruits                           apple, banana, pear, \\");
+        pw.println("                                 cantaloupe, watermelon, \\");
+        pw.println("                                 kiwi, mango");
+
+        java.util.Properties p = new java.util.Properties();
+        p.load(new StringReader(sw.toString()));
+        assertEquals("apple, banana, pear, cantaloupe, watermelon, kiwi, mango", p.getProperty("fruits"));
+
+        Properties props = new Properties();
+        props.load(new StringReader(sw.toString()));
+        assertEquals("apple, banana, pear, cantaloupe, watermelon, kiwi, mango", props.getProperty("fruits"));
+        List<String> raw = props.getRaw("fruits");
+        assertNotNull(raw);
+        assertEquals(3, raw.size());
+        assertEquals("fruits                           apple, banana, pear, ", raw.get(0));
+
+        props = new Properties();
+        props.put("fruits", props.getComments("fruits"), Arrays.asList(
+                "fruits                           apple, banana, pear, ",
+                "                                 cantaloupe, watermelon, ",
+                "                                 kiwi, mango"));
+        assertEquals("apple, banana, pear, cantaloupe, watermelon, kiwi, mango", props.getProperty("fruits"));
+        raw = props.getRaw("fruits");
+        assertNotNull(raw);
+        assertEquals(3, raw.size());
+        assertEquals("fruits                           apple, banana, pear, ", raw.get(0));
+
+        sw = new StringWriter();
+        props.save(sw);
+        props = new Properties();
+        props.load(new StringReader(sw.toString()));
+        assertEquals("apple, banana, pear, cantaloupe, watermelon, kiwi, mango", props.getProperty("fruits"));
+        raw = props.getRaw("fruits");
+        assertNotNull(raw);
+        assertEquals(3, raw.size());
+        assertEquals("fruits                           apple, banana, pear, ", raw.get(0));
+
+        props = new Properties();
+        props.put("fruits", props.getComments("fruits"), Arrays.asList(
+                "                           apple, banana, pear, ",
+                "                                 cantaloupe, watermelon, ",
+                "                                 kiwi, mango"));
+        assertEquals("apple, banana, pear, cantaloupe, watermelon, kiwi, mango", props.getProperty("fruits"));
+        raw = props.getRaw("fruits");
+        assertNotNull(raw);
+        assertEquals(3, raw.size());
+        assertEquals("fruits =                            apple, banana, pear, ", raw.get(0));
+    }
+
+    public void testUpdate() throws Exception {
+        Properties p1 = new Properties();
+        p1.put("fruits", Arrays.asList("#", "# List of fruits", "#"), Arrays.asList(
+                "                           apple, banana, pear, ",
+                "                                 cantaloupe, watermelon, ",
+                "                                 kiwi, mango"));
+        p1.put("trees", Arrays.asList("#", "# List of trees", "#"), Arrays.asList(
+                "                           fir, oak, maple"));
+        p1.put("vegetables", Arrays.asList("#", "# List of vegetables", "#"), Arrays.asList(
+                "                           potatoes"
+        ));
+
+        Properties p2 = new Properties();
+        p2.put("fruits", Arrays.asList("#", "# List of good fruits", "#"), Arrays.asList(
+                "                           apple, banana, pear"));
+        p2.put("trees", "fir, oak, maple");
+        p1.update(p2);
+
+        assertEquals(2, p1.size());
+        assertEquals(Arrays.asList("#", "# List of trees", "#"), p1.getComments("trees"));
+        assertEquals("fir, oak, maple", p1.getProperty("trees"));
+        assertEquals(Arrays.asList("#", "# List of good fruits", "#"), p1.getComments("fruits"));
+        assertEquals("apple, banana, pear", p1.getProperty("fruits"));
+    }
+
+    public void testSubstitution() throws IOException
+    {
+        String str = "port = 4141\n" +
+                "host = localhost\n" +
+                "url = https://${host}:${port}/service\n";
+        Properties properties = new Properties();
+        properties.load(new StringReader(str));
+        properties.put("url", "https://localhost:4141/service");
+        StringWriter sw = new StringWriter();
+        properties.save(sw);
+        assertEquals(str, sw.toString());
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

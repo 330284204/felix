@@ -1,3 +1,44 @@
+<<<<<<< HEAD
+=======
+Changes from the 1.12.0 to 1.12.1
+---------------------------------
+
+** Bug
+    * [FELIX-4612] - @PostRegistration is not being called
+    * [FELIX-4620] - Warning should be removed when @Configuration is used
+    * [FELIX-4668] - Can not use @Stereotype annotated annotation from another bundle (unless its package is included or re-exported)
+    * [FELIX-4725] - Inner Class Manipulation uses the wrong 'access level'
+
+Changes from the 1.11.2 to 1.12.0
+---------------------------------
+
+** Improvement
+    * [FELIX-4482] - Use scope=provided for OSGi APIs dependencies
+
+** New Feature
+    * [FELIX-4476] - Java 8 Support
+
+** Sub-task
+    * [FELIX-4508] - Update to ASM 5.0.2
+    * [FELIX-4509] - Change the frame computation strategy
+
+Changes from the 1.11.1 to 1.11.2
+---------------------------------
+
+** Bug
+    * [FELIX-4453] - Introduce manipulator BOM (Bill of Material)
+
+** Improvement
+    * [FELIX-4454] - Online manipulator should be able to take advantage of Stereotypes
+
+Changes from the 1.11.0 to 1.11.1
+---------------------------------
+
+** Bug
+    * [FELIX-4340] - Flex iPOJO online manipulator error if metadata.xml file not supplied
+    * [FELIX-4347] -  should ignore inner classes that are assigned to static fields
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from the 1.10.1 to 1.11.0
 ---------------------------------
 

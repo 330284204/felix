@@ -35,6 +35,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import org.apache.felix.cm.PersistenceManager;
 import org.osgi.framework.BundleContext;
@@ -111,6 +112,12 @@ public class FilePersistenceManager implements PersistenceManager
     public static final String DEFAULT_CONFIG_DIR = "config";
 
     /**
+     * The name of this persistence manager when registered in the service registry.
+     * (value is "file").
+     */
+    public static final String DEFAULT_PERSISTENCE_MANAGER_NAME = "file";
+
+    /**
      * The extension of the configuration files.
      */
     private static final String FILE_EXT = ".config";
@@ -134,6 +141,12 @@ public class FilePersistenceManager implements PersistenceManager
      * The abstract path name of the configuration files.
      */
     private final File location;
+
+    /**
+     * Flag indicating whether this instance is running on a Windows
+     * platform or not.
+     */
+    private final boolean isWin;
 
     // sets up this class defining the set of valid characters in path
     // set getFile(String) for details.
@@ -160,61 +173,45 @@ public class FilePersistenceManager implements PersistenceManager
     }
 
 
-    /**
-     * Encodes a Service PID to a filesystem path as described in the class
-     * JavaDoc above.
-     * <p>
-     * This method is not part of the API of this class and is declared package
-     * private to enable JUnit testing on it. This method may be removed or
-     * modified at any time without notice.
-     *
-     * @param pid The Service PID to encode into a relative path name.
-     *
-     * @return The relative path name corresponding to the Service PID.
-     */
-    static String encodePid( String pid )
     {
+        // Windows Specific Preparation (FELIX-4302)
+        // According to the GetJavaProperties method in
+        // jdk/src/windows/native/java/lang/java_props_md.c the os.name
+        // system property on all Windows platforms start with the string
+        // "Windows" hence we assume a Windows platform in thus case.
+        final String osName = System.getProperty( "os.name" );
+        isWin = osName != null && osName.startsWith( "Windows" );
+    }
 
-        // replace dots by File.separatorChar
-        pid = pid.replace( '.', File.separatorChar );
-
-        // replace slash by File.separatorChar if different
-        if ( File.separatorChar != '/' )
-        {
-            pid = pid.replace( '/', File.separatorChar );
+    private static boolean equalsNameWithPrefixPlusOneDigit( String name, String prefix) {
+        if ( name.length() != prefix.length() + 1 ) {
+            return false;
         }
-
-        // scan for first non-valid character (if any)
-        int first = 0;
-        while ( first < pid.length() && VALID_PATH_CHARS.get( pid.charAt( first ) ) )
-        {
-            first++;
+        if ( !name.startsWith(prefix) ) {
+            return false;
         }
+        char charAfterPrefix = name.charAt( prefix.length() );
+        return charAfterPrefix > '0' && charAfterPrefix < '9';
+    }
 
-        // check whether we exhausted
-        if ( first < pid.length() )
-        {
-            StringBuffer buf = new StringBuffer( pid.substring( 0, first ) );
-
-            for ( int i = first; i < pid.length(); i++ )
-            {
-                char c = pid.charAt( i );
-                if ( VALID_PATH_CHARS.get( c ) )
-                {
-                    buf.append( c );
-                }
-                else
-                {
-                    String val = "000" + Integer.toHexString( c );
-                    buf.append( '%' );
-                    buf.append( val.substring( val.length() - 4 ) );
-                }
-            }
-
-            pid = buf.toString();
+    private static boolean isWinReservedName(String name) {
+        String upperCaseName = name.toUpperCase();
+        if ( "CON".equals( upperCaseName ) ) {
+            return true;
+        } else if ( "PRN".equals( upperCaseName ) ){
+            return true;
+        } else if ( "AUX".equals( upperCaseName ) ){
+            return true;
+        } else if ( "CLOCK$".equals( upperCaseName ) ){
+            return true;
+        } else if ( "NUL".equals( upperCaseName ) ){
+            return true;
+        } else if ( equalsNameWithPrefixPlusOneDigit( upperCaseName, "COM") ) {
+            return true;
+        } else if ( equalsNameWithPrefixPlusOneDigit( upperCaseName, "LPT") ){
+            return true;
         }
-
-        return pid;
+        return false;
     }
 
 
@@ -357,6 +354,91 @@ public class FilePersistenceManager implements PersistenceManager
 
 
     /**
+     * Encodes a Service PID to a filesystem path as described in the class
+     * JavaDoc above.
+     * <p>
+     * This method is not part of the API of this class and is declared package
+     * private to enable JUnit testing on it. This method may be removed or
+     * modified at any time without notice.
+     *
+     * @param pid The Service PID to encode into a relative path name.
+     *
+     * @return The relative path name corresponding to the Service PID.
+     */
+    String encodePid( String pid )
+    {
+
+        // replace dots by File.separatorChar
+        pid = pid.replace( '.', File.separatorChar );
+
+        // replace slash by File.separatorChar if different
+        if ( File.separatorChar != '/' )
+        {
+            pid = pid.replace( '/', File.separatorChar );
+        }
+
+        // scan for first non-valid character (if any)
+        int first = 0;
+        while ( first < pid.length() && VALID_PATH_CHARS.get( pid.charAt( first ) ) )
+        {
+            first++;
+        }
+
+        // check whether we exhausted
+        if ( first < pid.length() )
+        {
+            StringBuilder buf = new StringBuilder( pid.substring( 0, first ) );
+
+            for ( int i = first; i < pid.length(); i++ )
+            {
+                char c = pid.charAt( i );
+                if ( VALID_PATH_CHARS.get( c ) )
+                {
+                    buf.append( c );
+                }
+                else
+                {
+                    appendEncoded( buf, c );
+                }
+            }
+
+            pid = buf.toString();
+        }
+
+        // Prefix special device names on Windows (FELIX-4302)
+        if ( isWin )
+        {
+            final StringTokenizer segments = new StringTokenizer( pid, File.separator, true );
+            final StringBuilder pidBuffer = new StringBuilder( pid.length() );
+            while ( segments.hasMoreTokens() )
+            {
+                final String segment = segments.nextToken();
+                if ( isWinReservedName(segment) )
+                {
+                    appendEncoded( pidBuffer, segment.charAt( 0 ) );
+                    pidBuffer.append( segment.substring( 1 ) );
+                }
+                else
+                {
+                    pidBuffer.append( segment );
+                }
+            }
+            pid = pidBuffer.toString();
+        }
+
+        return pid;
+    }
+
+
+    private void appendEncoded( StringBuilder buf, final char c )
+    {
+        String val = "000" + Integer.toHexString( c );
+        buf.append( '%' );
+        buf.append( val.substring( val.length() - 4 ) );
+    }
+
+
+    /**
      * Returns the directory in which the configuration files are written as
      * a <code>File</code> object.
      *
@@ -378,6 +460,8 @@ public class FilePersistenceManager implements PersistenceManager
      * @return an enumeration of configuration data returned as instances of
      *      the <code>Dictionary</code> class.
      */
+    @SuppressWarnings("rawtypes")
+    @Override
     public Enumeration getDictionaries()
     {
         return new DictionaryEnumeration();
@@ -389,6 +473,10 @@ public class FilePersistenceManager implements PersistenceManager
      *
      * @param pid The identifier of the configuration file to delete.
      */
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void delete( final String pid )
     {
         if ( System.getSecurityManager() != null )
@@ -404,8 +492,14 @@ public class FilePersistenceManager implements PersistenceManager
 
     private void _privilegedDelete( final String pid )
     {
+<<<<<<< HEAD
         AccessController.doPrivileged( new PrivilegedAction()
         {
+=======
+        AccessController.doPrivileged( new PrivilegedAction<Object>()
+        {
+            @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             public Object run()
             {
                 _delete( pid );
@@ -432,6 +526,7 @@ public class FilePersistenceManager implements PersistenceManager
      *
      * @return <code>true</code> if the file exists
      */
+<<<<<<< HEAD
     public boolean exists( final String pid )
     {
         if ( System.getSecurityManager() != null )
@@ -448,6 +543,26 @@ public class FilePersistenceManager implements PersistenceManager
         final Object result = AccessController.doPrivileged( new PrivilegedAction()
         {
             public Object run()
+=======
+    @Override
+    public boolean exists( final String pid )
+    {
+        if ( System.getSecurityManager() != null )
+        {
+            return _privilegedExists( pid );
+        }
+
+        return _exists( pid );
+    }
+
+
+    private boolean _privilegedExists( final String pid )
+    {
+        final Object result = AccessController.doPrivileged( new PrivilegedAction<Boolean>()
+        {
+            @Override
+            public Boolean run()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             {
                 // FELIX-2771: Boolean.valueOf(boolean) is not in Foundation
                 return _exists( pid ) ? Boolean.TRUE : Boolean.FALSE;
@@ -476,6 +591,8 @@ public class FilePersistenceManager implements PersistenceManager
      *      may be empty if the file contains no configuration information
      *      or is not properly formatted.
      */
+    @SuppressWarnings("rawtypes")
+    @Override
     public Dictionary load( String pid ) throws IOException
     {
         final File cfgFile = getFile( pid );
@@ -489,19 +606,34 @@ public class FilePersistenceManager implements PersistenceManager
     }
 
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private Dictionary _privilegedLoad( final File cfgFile ) throws IOException
     {
         try
         {
+<<<<<<< HEAD
             Object result = AccessController.doPrivileged( new PrivilegedExceptionAction()
             {
                 public Object run() throws IOException
+=======
+            Dictionary result = AccessController.doPrivileged( new PrivilegedExceptionAction<Dictionary>()
+            {
+                @Override
+                public Dictionary run() throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 {
                     return _load( cfgFile );
                 }
             } );
 
+<<<<<<< HEAD
             return ( Dictionary ) result;
+=======
+            return result;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch ( PrivilegedActionException pae )
         {
@@ -523,6 +655,10 @@ public class FilePersistenceManager implements PersistenceManager
      * @throws IOException
      *             If an error occurrs reading the configuration file.
      */
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     Dictionary _load( File cfgFile ) throws IOException
     {
         // this method is not part of the API of this class but is made
@@ -571,6 +707,11 @@ public class FilePersistenceManager implements PersistenceManager
      *
      * @throws IOException If an error occurrs writing the configuration data.
      */
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void store( final String pid, final Dictionary props ) throws IOException
     {
         if ( System.getSecurityManager() != null )
@@ -584,12 +725,22 @@ public class FilePersistenceManager implements PersistenceManager
     }
 
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private void _privilegedStore( final String pid, final Dictionary props ) throws IOException
     {
         try
         {
+<<<<<<< HEAD
             AccessController.doPrivileged( new PrivilegedExceptionAction()
             {
+=======
+            AccessController.doPrivileged( new PrivilegedExceptionAction<Object>()
+            {
+                @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 public Object run() throws IOException
                 {
                     _store( pid, props );
@@ -605,6 +756,10 @@ public class FilePersistenceManager implements PersistenceManager
     }
 
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private void _store( final String pid, final Dictionary props ) throws IOException
     {
         OutputStream out = null;
@@ -701,9 +856,13 @@ public class FilePersistenceManager implements PersistenceManager
      * This enumeration loads configuration lazily with a look ahead of one
      * dictionary.
      */
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     class DictionaryEnumeration implements Enumeration
     {
-        private Stack dirStack;
+        private Stack<File> dirStack;
         private File[] fileList;
         private int idx;
         private Dictionary next;
@@ -711,7 +870,7 @@ public class FilePersistenceManager implements PersistenceManager
 
         DictionaryEnumeration()
         {
-            dirStack = new Stack();
+            dirStack = new Stack<>();
             fileList = null;
             idx = 0;
 
@@ -720,12 +879,14 @@ public class FilePersistenceManager implements PersistenceManager
         }
 
 
+        @Override
         public boolean hasMoreElements()
         {
             return next != null;
         }
 
 
+        @Override
         public Object nextElement()
         {
             if ( next == null )
@@ -752,14 +913,25 @@ public class FilePersistenceManager implements PersistenceManager
 
         protected Dictionary _privilegedSeek()
         {
+<<<<<<< HEAD
             Object result = AccessController.doPrivileged( new PrivilegedAction()
             {
                 public Object run()
+=======
+            Dictionary result = AccessController.doPrivileged( new PrivilegedAction<Dictionary>()
+            {
+                @Override
+                public Dictionary run()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 {
                     return _seek();
                 }
             } );
+<<<<<<< HEAD
             return ( Dictionary ) result;
+=======
+            return result;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
 
@@ -769,7 +941,7 @@ public class FilePersistenceManager implements PersistenceManager
             {
                 if ( fileList == null || idx >= fileList.length )
                 {
-                    File dir = ( File ) dirStack.pop();
+                    File dir = dirStack.pop();
                     fileList = dir.listFiles();
                     idx = 0;
                 }
