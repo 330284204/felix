@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+<<<<<<< HEAD
 import java.security.ProtectionDomain;
 import java.util.*;
 
@@ -111,6 +112,114 @@ class BundleImpl implements Bundle, BundleRevisions
         return m_archive;
     }
 
+=======
+import java.security.AccessControlContext;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.felix.framework.cache.BundleArchive;
+import org.apache.felix.framework.util.SecurityManagerEx;
+import org.apache.felix.framework.util.ShrinkableCollection;
+import org.apache.felix.framework.util.StringMap;
+import org.apache.felix.framework.util.Util;
+import org.osgi.dto.DTO;
+import org.osgi.framework.AdaptPermission;
+import org.osgi.framework.AdminPermission;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServicePermission;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
+import org.osgi.framework.hooks.bundle.CollisionHook;
+import org.osgi.framework.startlevel.BundleStartLevel;
+import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.framework.wiring.BundleRevisions;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
+
+class BundleImpl implements Bundle, BundleRevisions
+{
+    // No one should use this field directly, use getFramework() instead.
+    private final Felix __m_felix;
+
+    private final BundleArchive m_archive;
+    private final List<BundleRevisionImpl> m_revisions = new ArrayList<BundleRevisionImpl>(0);
+    private volatile int m_state;
+    private boolean m_useDeclaredActivationPolicy;
+    private BundleActivator m_activator = null;
+    private volatile BundleContext m_context = null;
+    private final Map m_cachedHeaders = new HashMap();
+    private Map m_uninstalledHeaders = null;
+    private long m_cachedHeadersTimestamp;
+    private final Bundle m_installingBundle;
+
+    // Indicates whether the bundle is stale, meaning that it has
+    // been refreshed and completely removed from the framework.
+    private boolean m_stale = false;
+    // Used for bundle locking.
+    private int m_lockCount = 0;
+    private Thread m_lockThread = null;
+
+    /**
+     * This constructor is used by the system bundle (i.e., the framework),
+     * since it needs a constructor that does not throw an exception.
+    **/
+    BundleImpl()
+    {
+        __m_felix = null;
+        m_archive = null;
+        m_state = Bundle.INSTALLED;
+        m_useDeclaredActivationPolicy = false;
+        m_stale = false;
+        m_activator = null;
+        m_context = null;
+        m_installingBundle = null;
+    }
+
+    BundleImpl(Felix felix, Bundle installingBundle, BundleArchive archive) throws Exception
+    {
+        __m_felix = felix;
+        m_archive = archive;
+        m_state = Bundle.INSTALLED;
+        m_useDeclaredActivationPolicy = false;
+        m_stale = false;
+        m_activator = null;
+        m_context = null;
+        m_installingBundle = installingBundle;
+
+        BundleRevisionImpl revision = createRevision(false);
+        addRevision(revision);
+    }
+
+    // This method exists because the system bundle extends BundleImpl
+    // and cannot pass itself into the BundleImpl constructor. All methods
+    // in BundleImpl should use this method to get the framework and should
+    // not access the field directly.
+    Felix getFramework()
+    {
+        return __m_felix;
+    }
+
+    BundleArchive getArchive()
+    {
+        return m_archive;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 // Only called when the framework is stopping. Don't need to clean up dependencies.
     synchronized void close()
     {
@@ -132,6 +241,7 @@ class BundleImpl implements Bundle, BundleRevisions
 // and when refreshing an uninstalled bundle. Only need to clear up dependencies
 // for last case.
     synchronized void closeAndDelete() throws Exception
+<<<<<<< HEAD
     {
         if (!m_stale)
         {
@@ -214,8 +324,93 @@ class BundleImpl implements Bundle, BundleRevisions
     synchronized void setActivator(BundleActivator activator)
     {
         m_activator = activator;
+=======
+    {
+        if (!m_stale)
+        {
+            // Mark the bundle as stale, since it is being deleted.
+            m_stale = true;
+            // Close all revisions.
+            closeRevisions();
+            // Delete bundle archive, which will close revisions.
+            m_archive.closeAndDelete();
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
+// Called from BundleImpl.close(), BundleImpl.closeAndDelete(), and BundleImpl.refresh()
+    private void closeRevisions()
+    {
+        // Remove the bundle's associated revisions from the resolver state
+        // and close them.
+        for (BundleRevisionImpl br : m_revisions)
+        {
+            // Remove the revision from the resolver state.
+            getFramework().getResolver().removeRevision(br);
+
+            // Close the revision's content.
+            br.close();
+        }
+    }
+
+// Called when refreshing a bundle. Must clean up dependencies beforehand.
+    synchronized void refresh() throws Exception
+    {
+        if (isExtension() && (getFramework().getState() != Bundle.STOPPING))
+        {
+            getFramework().getLogger().log(this, Logger.LOG_WARNING,
+                "Framework restart on extension bundle refresh not implemented.");
+        }
+        else
+        {
+            // Get current revision, since we can reuse it.
+            BundleRevisionImpl current = adapt(BundleRevisionImpl.class);
+            // Close all existing revisions.
+            closeRevisions();
+            // Clear all revisions.
+            m_revisions.clear();
+
+            // Purge all old archive revisions, only keeping the newest one.
+            m_archive.purge();
+
+            // Reset the content of the current bundle revision.
+            current.resetContent(m_archive.getCurrentRevision().getContent());
+            // Re-add the revision to the bundle.
+            addRevision(current);
+
+            // Reset the bundle state.
+            m_state = Bundle.INSTALLED;
+            m_stale = false;
+
+            synchronized (m_cachedHeaders)
+            {
+                m_cachedHeaders.clear();
+                m_cachedHeadersTimestamp = 0;
+            }
+        }
+    }
+
+    synchronized boolean isDeclaredActivationPolicyUsed()
+    {
+        return m_useDeclaredActivationPolicy;
+    }
+
+    synchronized void setDeclaredActivationPolicyUsed(boolean b)
+    {
+        m_useDeclaredActivationPolicy = b;
+    }
+
+    synchronized BundleActivator getActivator()
+    {
+        return m_activator;
+    }
+
+    synchronized void setActivator(BundleActivator activator)
+    {
+        m_activator = activator;
+    }
+
+    @Override
     public BundleContext getBundleContext()
     {
         Object sm = System.getSecurityManager();
@@ -234,6 +429,7 @@ class BundleImpl implements Bundle, BundleRevisions
         m_context = context;
     }
 
+    @Override
     public long getBundleId()
     {
         try
@@ -251,6 +447,7 @@ class BundleImpl implements Bundle, BundleRevisions
         }
     }
 
+    @Override
     public URL getEntry(String name)
     {
         Object sm = System.getSecurityManager();
@@ -271,6 +468,7 @@ class BundleImpl implements Bundle, BundleRevisions
         return getFramework().getBundleEntry(this, name);
     }
 
+    @Override
     public Enumeration getEntryPaths(String path)
     {
         Object sm = System.getSecurityManager();
@@ -291,6 +489,7 @@ class BundleImpl implements Bundle, BundleRevisions
         return getFramework().getBundleEntryPaths(this, path);
     }
 
+    @Override
     public Enumeration findEntries(String path, String filePattern, boolean recurse)
     {
         Object sm = System.getSecurityManager();
@@ -312,11 +511,13 @@ class BundleImpl implements Bundle, BundleRevisions
                 this, path, filePattern, recurse);
     }
 
+    @Override
     public Dictionary getHeaders()
     {
         return getHeaders(Locale.getDefault().toString());
     }
 
+    @Override
     public Dictionary getHeaders(String locale)
     {
         Object sm = System.getSecurityManager();
@@ -333,6 +534,226 @@ class BundleImpl implements Bundle, BundleRevisions
         }
 
         return getFramework().getBundleHeaders(this, locale);
+<<<<<<< HEAD
+    }
+
+    Map getCurrentLocalizedHeader(String locale)
+    {
+        Map result = null;
+
+        // Spec says empty local returns raw headers.
+        if (locale.length() == 0)
+        {
+            result = new StringMap(adapt(BundleRevisionImpl.class).getHeaders());
+        }
+
+        // If we have no result, try to get it from the cached headers.
+        if (result == null)
+        {
+            synchronized (m_cachedHeaders)
+            {
+                // If the bundle is uninstalled, then we should always return
+                // the uninstalled headers, which are the default locale as per
+                // the spec.
+                if (m_uninstalledHeaders != null)
+                {
+                    result = m_uninstalledHeaders;
+                }
+                // If the bundle has been updated, clear the cached headers.
+                else if (getLastModified() > m_cachedHeadersTimestamp)
+                {
+                    m_cachedHeaders.clear();
+                }
+                // Otherwise, returned the cached headers if they exist.
+                else
+                {
+                    // Check if headers for this locale have already been resolved
+                    if (m_cachedHeaders.containsKey(locale))
+                    {
+                        result = (Map) m_cachedHeaders.get(locale);
+                    }
+                }
+            }
+        }
+
+        // If the requested locale is not cached, then try to create it.
+        if (result == null)
+        {
+            // Get a modifiable copy of the raw headers.
+            Map headers = new StringMap(adapt(BundleRevisionImpl.class).getHeaders());
+            // Assume for now that this will be the result.
+            result = headers;
+
+            // Check to see if we actually need to localize anything
+            boolean localize = false;
+            for (Iterator it = headers.values().iterator(); !localize && it.hasNext(); )
+            {
+                if (((String) it.next()).startsWith("%"))
+                {
+                    localize = true;
+                }
+            }
+
+            if (!localize)
+            {
+                // If localization is not needed, just cache the headers and return
+                // them as-is. Not sure if this is useful
+                updateHeaderCache(locale, headers);
+            }
+            else
+            {
+                // Do localization here and return the localized headers
+                String basename = (String) headers.get(Constants.BUNDLE_LOCALIZATION);
+                if (basename == null)
+                {
+                    basename = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
+                }
+
+                // Create ordered list of revisions to search for localization
+                // property resources.
+                List<BundleRevision> revisionList = createLocalizationRevisionList(
+                    adapt(BundleRevisionImpl.class));
+
+                // Create ordered list of files to load properties from
+                List<String> resourceList = createLocalizationResourceList(basename, locale);
+
+                // Create a merged props file with all available props for this locale
+                boolean found = false;
+                Properties mergedProperties = new Properties();
+                for (BundleRevision br : revisionList)
+                {
+                    for (String res : resourceList)
+                    {
+                        URL temp = ((BundleRevisionImpl) br).getEntry(res + ".properties");
+                        if (temp != null)
+                        {
+                            found = true;
+                            try
+                            {
+                                mergedProperties.load(
+                                    temp.openConnection().getInputStream());
+                            }
+                            catch (IOException ex)
+                            {
+                                // File doesn't exist, just continue loop
+                            }
+                        }
+                    }
+                }
+
+                // If the specified locale was not found, then the spec says we should
+                // return the default localization.
+                if (!found && !locale.equals(Locale.getDefault().toString()))
+                {
+                    result = getCurrentLocalizedHeader(Locale.getDefault().toString());
+                }
+                // Otherwise, perform the localization based on the discovered
+                // properties and cache the result.
+                else
+                {
+                    // Resolve all localized header entries
+                    for (Iterator it = headers.entrySet().iterator(); it.hasNext(); )
+                    {
+                        Map.Entry entry = (Map.Entry) it.next();
+                        String value = (String) entry.getValue();
+                        if (value.startsWith("%"))
+                        {
+                            String newvalue;
+                            String key = value.substring(value.indexOf("%") + 1);
+                            newvalue = mergedProperties.getProperty(key);
+                            if (newvalue==null)
+                            {
+                                newvalue = key;
+                            }
+                            entry.setValue(newvalue);
+                        }
+                    }
+
+                    updateHeaderCache(locale, headers);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void updateHeaderCache(String locale, Map localizedHeaders)
+    {
+        synchronized (m_cachedHeaders)
+        {
+            if (m_uninstalledHeaders == null)
+            {
+                m_cachedHeaders.put(locale, localizedHeaders);
+                m_cachedHeadersTimestamp = System.currentTimeMillis();
+            }
+        }
+    }
+
+    private static List<BundleRevision> createLocalizationRevisionList(BundleRevision br)
+    {
+        // If the revision is a fragment, then we actually need
+        // to search its host and associated fragments for its
+        // localization information. So, check to see if there
+        // are any hosts and then use the one with the highest
+        // version instead of the fragment itself. If there are
+        // no hosts, but the revision is a fragment, then just
+        // search the revision itself.
+        if (Util.isFragment(br))
+        {
+            if (br.getWiring() != null)
+            {
+                List<BundleWire> hostWires = br.getWiring().getRequiredWires(null);
+                if ((hostWires != null) && (hostWires.size() > 0))
+                {
+                    br = hostWires.get(0).getProviderWiring().getRevision();
+                    for (int hostIdx = 1; hostIdx < hostWires.size(); hostIdx++)
+                    {
+                        if (br.getVersion().compareTo(
+                            hostWires.get(hostIdx).getProviderWiring().getRevision().getVersion()) < 0)
+                        {
+                            br = hostWires.get(hostIdx).getProviderWiring().getRevision();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create a list of the revision and any attached fragment revisions.
+        List<BundleRevision> result = new ArrayList<BundleRevision>();
+        result.add(br);
+        BundleWiring wiring = br.getWiring();
+        if (wiring != null)
+        {
+            List<BundleRevision> fragments = Util.getFragments(wiring);
+            if (fragments != null)
+            {
+                result.addAll(fragments);
+            }
+        }
+        return result;
+    }
+
+    private static List<String> createLocalizationResourceList(String basename, String locale)
+    {
+        List<String> result = new ArrayList(4);
+
+        StringTokenizer tokens;
+        StringBuffer tempLocale = new StringBuffer(basename);
+
+        result.add(tempLocale.toString());
+
+        if (locale.length() > 0)
+        {
+            tokens = new StringTokenizer(locale, "_");
+            while (tokens.hasMoreTokens())
+            {
+                tempLocale.append("_").append(tokens.nextToken());
+                result.add(tempLocale.toString());
+            }
+        }
+        return result;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     Map getCurrentLocalizedHeader(String locale)
@@ -552,6 +973,7 @@ class BundleImpl implements Bundle, BundleRevisions
         return result;
     }
 
+    @Override
     public long getLastModified()
     {
         try
@@ -585,6 +1007,7 @@ class BundleImpl implements Bundle, BundleRevisions
         }
     }
 
+    @Override
     public String getLocation()
     {
         Object sm = System.getSecurityManager();
@@ -619,6 +1042,7 @@ class BundleImpl implements Bundle, BundleRevisions
      *
      * @return a URL to named resource, or null if not found.
     **/
+    @Override
     public URL getResource(String name)
     {
         Object sm = System.getSecurityManager();
@@ -639,6 +1063,7 @@ class BundleImpl implements Bundle, BundleRevisions
         return getFramework().getBundleResource(this, name);
     }
 
+    @Override
     public Enumeration getResources(String name) throws IOException
     {
         Object sm = System.getSecurityManager();
@@ -668,6 +1093,7 @@ class BundleImpl implements Bundle, BundleRevisions
      *
      * @return an array of service references or null.
     **/
+    @Override
     public ServiceReference[] getRegisteredServices()
     {
         Object sm = System.getSecurityManager();
@@ -711,6 +1137,7 @@ class BundleImpl implements Bundle, BundleRevisions
         }
     }
 
+    @Override
     public ServiceReference[] getServicesInUse()
     {
         Object sm = System.getSecurityManager();
@@ -752,6 +1179,7 @@ class BundleImpl implements Bundle, BundleRevisions
         return getFramework().getBundleServicesInUse(this);
     }
 
+    @Override
     public int getState()
     {
         return m_state;
@@ -845,7 +1273,16 @@ class BundleImpl implements Bundle, BundleRevisions
     {
         try
         {
+<<<<<<< HEAD
             return m_archive.getStartLevel();
+=======
+            int level = m_archive.getStartLevel();
+            if ( level == -1 )
+            {
+                level = defaultLevel;
+            }
+            return level;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch (Exception ex)
         {
@@ -856,6 +1293,7 @@ class BundleImpl implements Bundle, BundleRevisions
                 ex);
             return defaultLevel;
         }
+<<<<<<< HEAD
     }
 
     void setStartLevel(int i)
@@ -889,29 +1327,75 @@ class BundleImpl implements Bundle, BundleRevisions
             }
         }
         return false;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
+    void setStartLevel(int i)
+    {
+        try
+        {
+            m_archive.setStartLevel(i);
+        }
+        catch (Exception ex)
+        {
+            getFramework().getLogger().log(
+                this,
+                Logger.LOG_ERROR,
+                "Error writing start level to bundle archive.",
+                ex);
+        }
+    }
+
+    synchronized boolean isStale()
+    {
+        return m_stale;
+    }
+
+    synchronized boolean isExtension()
+    {
+        for (BundleRevisionImpl revision : m_revisions)
+        {
+            if (revision.isExtension())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String getSymbolicName()
     {
         return adapt(BundleRevisionImpl.class).getSymbolicName();
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public Version getVersion()
     {
         return adapt(BundleRevisionImpl.class).getVersion();
     }
 
+    @Override
     public boolean hasPermission(Object obj)
     {
         return getFramework().bundleHasPermission(this, obj);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public Map getSignerCertificates(int signersType)
     {
         // TODO: SECURITY - This needs to be adapted to our security mechanisms.
         return (Map) getFramework().getSignerMatcher(this, signersType);
     }
 
+    @Override
     public Class loadClass(String name) throws ClassNotFoundException
     {
         if (isExtension())
@@ -937,11 +1421,16 @@ class BundleImpl implements Bundle, BundleRevisions
         return getFramework().loadBundleClass(this, name);
     }
 
+    @Override
     public void start() throws BundleException
     {
         start(0);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void start(int options) throws BundleException
     {
         Object sm = System.getSecurityManager();
@@ -955,11 +1444,13 @@ class BundleImpl implements Bundle, BundleRevisions
         getFramework().startBundle(this, options);
     }
 
+    @Override
     public void update() throws BundleException
     {
         update(null);
     }
 
+    @Override
     public void update(InputStream is) throws BundleException
     {
         Object sm = System.getSecurityManager();
@@ -973,11 +1464,16 @@ class BundleImpl implements Bundle, BundleRevisions
         getFramework().updateBundle(this, is);
     }
 
+    @Override
     public void stop() throws BundleException
     {
         stop(0);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void stop(int options) throws BundleException
     {
         Object sm = System.getSecurityManager();
@@ -991,6 +1487,7 @@ class BundleImpl implements Bundle, BundleRevisions
         getFramework().stopBundle(this, ((options & Bundle.STOP_TRANSIENT) == 0));
     }
 
+    @Override
     public void uninstall() throws BundleException
     {
         Object sm = System.getSecurityManager();
@@ -1001,6 +1498,14 @@ class BundleImpl implements Bundle, BundleRevisions
                 AdminPermission.LIFECYCLE));
         }
 
+<<<<<<< HEAD
+=======
+        Map headers = getCurrentLocalizedHeader(Locale.getDefault().toString());
+
+        // Uninstall the bundle.
+        getFramework().uninstallBundle(this);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // After a bundle is uninstalled, the spec says getHeaders() should
         // return the localized headers for the default locale at the time of
         // of uninstall. So, let's clear the existing header cache to throw
@@ -1013,6 +1518,7 @@ class BundleImpl implements Bundle, BundleRevisions
         {
             if (m_uninstalledHeaders == null)
             {
+<<<<<<< HEAD
                 m_uninstalledHeaders = getCurrentLocalizedHeader(Locale.getDefault().toString());
                 m_cachedHeaders.clear();
             }
@@ -1020,6 +1526,12 @@ class BundleImpl implements Bundle, BundleRevisions
 
         // Uninstall the bundle.
         getFramework().uninstallBundle(this);
+=======
+                m_uninstalledHeaders = headers;
+                m_cachedHeaders.clear();
+            }
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private static final SecurityManagerEx m_smEx = new SecurityManagerEx();
@@ -1040,10 +1552,22 @@ class BundleImpl implements Bundle, BundleRevisions
         }
     }
 
+<<<<<<< HEAD
     public synchronized <A> A adapt(Class<A> type)
     {
         checkAdapt(type);
         if (type == BundleStartLevel.class)
+=======
+    @Override
+    public synchronized <A> A adapt(Class<A> type)
+    {
+        checkAdapt(type);
+        if (type == BundleContext.class)
+        {
+            return (A) m_context;
+        }
+        else if (type == BundleStartLevel.class)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             return (A) getFramework().adapt(FrameworkStartLevelImpl.class)
                 .createBundleStartLevel(this);
@@ -1075,14 +1599,44 @@ class BundleImpl implements Bundle, BundleRevisions
             }
             return (A) m_revisions.get(0).getWiring();
         }
+<<<<<<< HEAD
         return null;
     }
 
+=======
+        else if ( type == AccessControlContext.class)
+        {
+            if (m_state == Bundle.UNINSTALLED)
+            {
+                return null;
+            }
+            final ProtectionDomain pd = this.getProtectionDomain();
+            if (pd == null)
+            {
+                return null;
+            }
+            return (A) new AccessControlContext(new ProtectionDomain[] {pd});
+
+        }
+        else if (DTO.class.isAssignableFrom(type) ||
+                DTO[].class.isAssignableFrom(type))
+        {
+            return DTOFactory.createDTO(this, type);
+        }
+        return null;
+    }
+
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public File getDataFile(String filename)
     {
         return getFramework().getDataFile(this, filename);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public int compareTo(Bundle t)
     {
         long thisBundleId = this.getBundleId();
@@ -1110,11 +1664,19 @@ class BundleImpl implements Bundle, BundleRevisions
     // Revision management.
     //
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public Bundle getBundle()
     {
         return this;
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public synchronized List<BundleRevision> getRevisions()
     {
         return new ArrayList<BundleRevision>(m_revisions);
@@ -1138,7 +1700,11 @@ class BundleImpl implements Bundle, BundleRevisions
         m_archive.revise(location, is);
         try
         {
+<<<<<<< HEAD
             BundleRevision revision = createRevision();
+=======
+            BundleRevisionImpl revision = createRevision(true);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             addRevision(revision);
         }
         catch (Exception ex)
@@ -1165,13 +1731,21 @@ class BundleImpl implements Bundle, BundleRevisions
     // system bundle needs to add its revision directly to the bundle,
     // since it doesn't have an archive from which it will be created,
     // which is the normal case.
+<<<<<<< HEAD
     synchronized void addRevision(BundleRevision revision) throws Exception
+=======
+    synchronized void addRevision(BundleRevisionImpl revision) throws Exception
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         m_revisions.add(0, revision);
 
         try
         {
+<<<<<<< HEAD
             getFramework().setBundleProtectionDomain(this, (BundleRevisionImpl) revision);
+=======
+            getFramework().setBundleProtectionDomain(revision);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch (Exception ex)
         {
@@ -1189,7 +1763,11 @@ class BundleImpl implements Bundle, BundleRevisions
         }
     }
 
+<<<<<<< HEAD
     private BundleRevision createRevision() throws Exception
+=======
+    private BundleRevisionImpl createRevision(boolean isUpdate) throws Exception
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         // Get and parse the manifest from the most recent revision and
         // create an associated revision object for it.
@@ -1208,7 +1786,11 @@ class BundleImpl implements Bundle, BundleRevisions
         String allowMultiple =
             (String) getFramework().getConfig().get(Constants.FRAMEWORK_BSNVERSION);
         allowMultiple = (allowMultiple == null)
+<<<<<<< HEAD
             ? Constants.FRAMEWORK_BSNVERSION_SINGLE
+=======
+            ? Constants.FRAMEWORK_BSNVERSION_MANAGED
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             : allowMultiple;
         if (revision.getManifestVersion().equals("2")
             && !allowMultiple.equals(Constants.FRAMEWORK_BSNVERSION_MULTIPLE))
@@ -1217,12 +1799,17 @@ class BundleImpl implements Bundle, BundleRevisions
             bundleVersion = (bundleVersion == null) ? Version.emptyVersion : bundleVersion;
             String symName = revision.getSymbolicName();
 
+<<<<<<< HEAD
+=======
+            List<Bundle> collisionCanditates = new ArrayList<Bundle>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             Bundle[] bundles = getFramework().getBundles();
             for (int i = 0; (bundles != null) && (i < bundles.length); i++)
             {
                 long id = ((BundleImpl) bundles[i]).getBundleId();
                 if (id != getBundleId())
                 {
+<<<<<<< HEAD
                     String sym = bundles[i].getSymbolicName();
                     Version ver = bundles[i].getVersion();
                     if ((symName != null)
@@ -1236,6 +1823,51 @@ class BundleImpl implements Bundle, BundleRevisions
                     }
                 }
             }
+=======
+                    if (symName.equals(bundles[i].getSymbolicName())
+                        && bundleVersion.equals(bundles[i].getVersion()))
+                    {
+                        collisionCanditates.add(bundles[i]);
+                    }
+                }
+            }
+            if (!collisionCanditates.isEmpty() && allowMultiple.equals(Constants.FRAMEWORK_BSNVERSION_MANAGED))
+            {
+                Set<ServiceReference<CollisionHook>> hooks = getFramework().getHookRegistry().getHooks(CollisionHook.class);
+                if (!hooks.isEmpty())
+                {
+                    Collection<Bundle> shrinkableCollisionCandidates = new ShrinkableCollection<Bundle>(collisionCanditates);
+                    for (ServiceReference<CollisionHook> hook : hooks)
+                    {
+                        CollisionHook ch = getFramework().getService(getFramework(), hook, false);
+                        if (ch != null)
+                        {
+                            int operationType;
+                            Bundle target;
+                            if (isUpdate)
+                            {
+                                operationType = CollisionHook.UPDATING;
+                                target = this;
+                            }
+                            else
+                            {
+                                operationType = CollisionHook.INSTALLING;
+                                target = m_installingBundle == null ? this : m_installingBundle;
+                            }
+
+                            Felix.m_secureAction.invokeBundleCollisionHook(ch, operationType, target,
+                                    shrinkableCollisionCandidates);
+                        }
+                    }
+                }
+            }
+            if (!collisionCanditates.isEmpty())
+            {
+                throw new BundleException(
+                    "Bundle symbolic name and version are not unique: "
+                    + symName + ':' + bundleVersion, BundleException.DUPLICATE_BUNDLE_ERROR);
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
         return revision;
@@ -1247,8 +1879,12 @@ class BundleImpl implements Bundle, BundleRevisions
 
         for (int i = m_revisions.size() - 1; (i >= 0) && (pd == null); i--)
         {
+<<<<<<< HEAD
             pd = (ProtectionDomain)
                 ((BundleRevisionImpl) m_revisions.get(i)).getProtectionDomain();
+=======
+            pd = m_revisions.get(i).getProtectionDomain();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
         return pd;

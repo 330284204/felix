@@ -20,17 +20,31 @@ package org.apache.felix.bundlerepository.impl;
 
 import java.util.Dictionary;
 import java.util.HashSet;
+<<<<<<< HEAD
+=======
+import java.util.Map;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.felix.bundlerepository.Capability;
+<<<<<<< HEAD
+=======
+import org.apache.felix.bundlerepository.LocalResource;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+<<<<<<< HEAD
 
 public class LocalResourceImpl extends ResourceImpl
+=======
+import org.osgi.framework.wiring.BundleRevision;
+
+public class LocalResourceImpl extends ResourceImpl implements LocalResource
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 {
     private Bundle m_bundle = null;
 
@@ -87,6 +101,7 @@ public class LocalResourceImpl extends ResourceImpl
                 }
             }
 
+<<<<<<< HEAD
 /* TODO: OBR - Fix system capabilities.
             // Create a case-insensitive map.
             Map map = new TreeMap(new Comparator() {
@@ -130,6 +145,23 @@ public class LocalResourceImpl extends ResourceImpl
             }
             bundleMap.put("capability", capMaps);
 */
+=======
+            // Add all the OSGi capabilities from the system bundle as repo capabilities
+            BundleRevision br = m_bundle.adapt(BundleRevision.class);
+            for (org.osgi.resource.Capability cap : br.getCapabilities(null))
+            {
+                CapabilityImpl bcap = new CapabilityImpl(cap.getNamespace());
+                for (Map.Entry<String, Object> entry : cap.getAttributes().entrySet())
+                {
+                    bcap.addProperty(new FelixPropertyAdapter(entry));
+                }
+                for (Map.Entry<String, String> entry : cap.getDirectives().entrySet())
+                {
+                    bcap.addDirective(entry.getKey(), entry.getValue());
+                }
+                addCapability(bcap);
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     }
 

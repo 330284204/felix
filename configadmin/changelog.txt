@@ -1,3 +1,104 @@
+<<<<<<< HEAD
+=======
+Changes in 1.9.0
+----------------
+** Improvement
+    * [FELIX-5288] - Implement RFC 227 (OSGi R7 Update)
+    * [FELIX-5351] - Implement coordinations (OSGi R7)
+    * [FELIX-5289] - Alias PID Handling of Factory Configurations (OSGi R7)
+    * [FELIX-5290] - Locking Configuration Records (OSGi R7)
+    * [FELIX-5291] - Improve Configuration Updates (OSGi R7)
+    * [FELIX-5292] - Capabilities (OSGi R7)
+    * [FELIX-5293] - Improved ConfigurationPlugin Support (OSGi R7)
+    * [FELIX-5468] - Refactor persistence handling
+    * [FELIX-5693] - Improve persistence manager handling
+    * [FELIX-5695] - Use Java 7 as base version
+    * [FELIX-5778] - Refactor factory configuration handling
+** Bug
+    * [FELIX-5745] - Empty collections should be allowed as property value
+
+
+Changes from 1.8.14 to 1.8.16
+-----------------------------
+** Bug
+    * [FELIX-5669] : Registering a PersistenceManager causes duplicate caches.
+
+
+Changes from 1.8.12 to 1.8.14
+-----------------------------
+** Bug
+    * [FELIX-5443] - Frequent Changes cause UpdateThread to ConcurrentModificationException
+    * [FELIX-5435] - Service does not get loaded with updated properties that have been modified on file system after felix framework restart
+
+
+Changes from 1.8.10 to 1.8.12
+-----------------------------
+
+** Improvement
+    * [FELIX-5380] - Reduce quite useless log verbosity
+    * [FELIX-5366] - Additional Unit Tests for ConfigurationHandler
+
+** Bug
+    * [FELIX-5368] - ConfigurationManager ignores NotCachablePersistenceManager marker interface
+    * [FELIX-5385] - ConfigAdmin uses wrong security when calling ManagedServices
+
+
+Changes from 1.8.8 to 1.8.10
+----------------------------
+
+** Improvement
+    * [FELIX-5088] - CaseSensitiveDictionary should implement equals()
+    * [FELIX-5211] - Use provide/require capabilities instead of obsolete and meaningless import-export service headers
+
+** Bug
+    * [FELIX-5301] - ConfigurationPlugin support is not spec compliant
+
+
+Changes from 1.8.6 to 1.8.8
+---------------------------
+
+** Improvement
+    * [FELIX-4917] - FilePersistenceManager doesn't support comments
+
+** Bug
+    * [FELIX-4962] - Configadmin leaks caller's security context downstream
+    * [FELIX-4945] - Escaped folder names makes ConfigAdmin incompatible and factory configs not always work
+
+
+Changes from 1.8.4 to 1.8.6
+---------------------------
+
+** Improvement
+    * [FELIX-4844] - Store configuration data in a diff-tool friendly way
+    * [FELIX-4884] - Avoid unnecessary array creation if listConfigurations does not find anything
+
+
+Changes from 1.8.2 to 1.8.4
+---------------------------
+
+** Bug
+    * [FELIX-4846] - Wrong exception type in list operation
+    * [FELIX-4851] - ConfigAdmin only forwards ConfigurationEvents to ConfigurationListeners which are provided by bundles that are in state ACTIVE
+    * [FELIX-4855] - ConfigAdmin does not update ManagedServiceFactory on framework restart
+
+
+Changes from 1.8.0 to 1.8.2
+----------------------------
+
+** Bug
+    * [FELIX-4302] - Config Admin can create illegal names on windows
+    * [FELIX-4360] - Ensure ordered property values in configurations
+    * [FELIX-4362] - Security ConfigAdmin permissions are inherited on the stack
+    * [FELIX-4385] - NPE in Configuration Admin Service when deleting configuration
+    * [FELIX-4408] - CaseInsensitiveDictionary is platform/locale dependant
+    * [FELIX-4566] - Consistency in PersistenceManager and Cache is not guaranteed
+
+** Improvement
+    * [FELIX-4316] - Packages imported dynamically should also be imported statically with an optional flag
+    * [FELIX-4811] - Optimize ConfigurationManager#listConfigurations
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 1.6.0 to 1.8.0
 ----------------------------
 

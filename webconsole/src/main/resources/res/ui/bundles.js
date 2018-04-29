@@ -60,10 +60,21 @@ function renderData( eventData, filter )  {
     initStaticWidgets();
 
 	var cv = getCookie("bundlelist");
+<<<<<<< HEAD
 	if (cv) {
 	    bundlesTable.trigger('sorton', [cv]);
 	}
 
+=======
+	if (cv && bundlesTable.find("tr").size() > 1) {
+	    bundlesTable.trigger('sorton', [cv]);
+	}
+
+	if (bundlesBody.find('tr').size() == 0) {
+		bundlesBody.html('<tr><td colspan="6">' + i18n.filterNoMatch + '</td></tr>');
+	}
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	// show dialog on error
 	if (eventData.error) bundleOpError.dialog('open').find('pre').text(eventData.error)
 }

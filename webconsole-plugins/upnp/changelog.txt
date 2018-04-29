@@ -1,3 +1,35 @@
+<<<<<<< HEAD
+=======
+Changes from 1.0.6 to 1.0.8
+---------------------------
+** Improvement
+    * [FELIX-5510] - Remove usage of org.json form web console plugins
+
+
+Changes from 1.0.4 to 1.0.6
+---------------------------
+** Bug
+    * [FELIX-4747] - Executing actions with parameters on UPnP devices does not work
+
+Changes from 1.0.2 to 1.0.4
+---------------------------
+
+** Bug
+    * [FELIX-3589] - The service id link for UPnP devices doesn't work
+    * [FELIX-3595] - NPE in ControlServlet.addingService
+    * [FELIX-3669] - NPE in ControlServlet.deviceToJSON
+    * [FELIX-4012] - Sometimes the UPnP plugin fails to start due to device being removed from network
+    * [FELIX-4013] - Incorrect usage of ServiceTracker.size() in UPnP Plugin
+    * [FELIX-4032] - UPnP Plugin small refactoring
+    * [FELIX-4560] - Unsynchonized access to map can cause infinite loop in UPnP web console plugin
+    * [FELIX-4733] - UPnP plugin native2ascii plugin conflicts with Eclipse m2e
+
+** Improvement
+    * [FELIX-3861] - Set felix.webconsole.category on Web Console plugins
+    * [FELIX-4016] - Provide more meta data to the UPnP action arguments
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 1.0.0 to 1.0.2
 ---------------------------
 

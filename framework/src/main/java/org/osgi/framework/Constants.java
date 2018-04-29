@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) OSGi Alliance (2000, 2012). All Rights Reserved.
+=======
+ * Copyright (c) OSGi Alliance (2000, 2014). All Rights Reserved.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +20,10 @@
 
 package org.osgi.framework;
 
+<<<<<<< HEAD
+=======
+import org.osgi.annotation.versioning.ProviderType;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.hooks.bundle.CollisionHook;
 import org.osgi.framework.launch.Framework;
 
@@ -28,10 +36,16 @@ import org.osgi.framework.launch.Framework;
  * otherwise indicated.
  * 
  * @since 1.1
+<<<<<<< HEAD
  * @noimplement
  * @version $Id: 6d07a4c3e29a5cd93b3daf0f9fcdab5472b357f6 $
  */
 
+=======
+ * @author $Id: 6873c6f7d537ddbe39a6a2eba107ca3c2de49ce5 $
+ */
+@ProviderType
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public interface Constants {
 	/**
 	 * Location identifier of the OSGi <i>system bundle </i>, which is defined
@@ -48,6 +62,17 @@ public interface Constants {
 	String	SYSTEM_BUNDLE_SYMBOLICNAME				= "system.bundle";
 
 	/**
+<<<<<<< HEAD
+=======
+	 * Identifier of the OSGi <i>system bundle </i>, which is defined to be
+	 * {@code 0}.
+	 * 
+	 * @since 1.8
+	 */
+	long	SYSTEM_BUNDLE_ID						= 0L;
+
+	/**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * Manifest header identifying the bundle's category.
 	 * <p>
 	 * The header value may be retrieved from the {@code Dictionary} object
@@ -196,7 +221,11 @@ public interface Constants {
 	String	BUNDLE_CONTACTADDRESS					= "Bundle-ContactAddress";
 
 	/**
+<<<<<<< HEAD
 	 * Manifest header attribute identifying the bundle's activator class.
+=======
+	 * Manifest header identifying the bundle's activator class.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * 
 	 * <p>
 	 * If present, this header specifies the name of the bundle resource class
@@ -211,6 +240,22 @@ public interface Constants {
 	String	BUNDLE_ACTIVATOR						= "Bundle-Activator";
 
 	/**
+<<<<<<< HEAD
+=======
+	 * Manifest header identifying the extension bundle's activator class.
+	 * 
+	 * <p>
+	 * If present, this header specifies the name of the extension bundle
+	 * resource class that implements the {@code BundleActivator} interface and
+	 * whose {@code start} and {@code stop} methods are called by the Framework
+	 * when the Framework is initialized and shutdown, respectively.
+	 * 
+	 * @since 1.8
+	 */
+	String	EXTENSION_BUNDLE_ACTIVATOR				= "ExtensionBundle-Activator";
+
+	/**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * Manifest header identifying the location from which a new bundle version
 	 * is obtained during a bundle update operation.
 	 * 
@@ -387,7 +432,12 @@ public interface Constants {
 	 * like:
 	 * 
 	 * <pre>
+<<<<<<< HEAD
 	 *     Bundle-SymbolicName: com.acme.module.test; fragment-attachment:=&quot;resolve-time&quot;
+=======
+	 *     Bundle-SymbolicName: com.acme.module.test;
+	 *       fragment-attachment:=&quot;resolve-time&quot;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * </pre>
 	 * 
 	 * @see #FRAGMENT_ATTACHMENT_DIRECTIVE
@@ -543,7 +593,12 @@ public interface Constants {
 	 * like:
 	 * 
 	 * <pre>
+<<<<<<< HEAD
 	 *     Import-Package: org.osgi.framework; bundle-symbolic-name=&quot;com.acme.module.test&quot;
+=======
+	 *     Import-Package: org.osgi.framework;
+	 *       bundle-symbolic-name=&quot;com.acme.module.test&quot;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * </pre>
 	 * 
 	 * @see #IMPORT_PACKAGE
@@ -786,6 +841,12 @@ public interface Constants {
 	 *     Fragment-Host: system.bundle; extension:=&quot;framework&quot;
 	 * </pre>
 	 * 
+<<<<<<< HEAD
+=======
+	 * <p>
+	 * The default value is {@link #EXTENSION_FRAMEWORK framework}.
+	 * 
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * @see #FRAGMENT_HOST
 	 * @see #EXTENSION_FRAMEWORK
 	 * @see #EXTENSION_BOOTCLASSPATH
@@ -1257,9 +1318,16 @@ public interface Constants {
 	 * 
 	 * <p>
 	 * The value of this property is assigned by the Framework when a service is
+<<<<<<< HEAD
 	 * registered. The Framework assigns a unique value that is larger than all
 	 * previously assigned values since the Framework was started. These values
 	 * are NOT persistent across restarts of the Framework.
+=======
+	 * registered. The Framework assigns a unique, non-negative value that is
+	 * larger than all previously assigned values since the Framework was
+	 * started. These values are NOT persistent across restarts of the
+	 * Framework.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 */
 	String	SERVICE_ID								= "service.id";
 
@@ -1331,6 +1399,69 @@ public interface Constants {
 	String	SERVICE_DESCRIPTION						= "service.description";
 
 	/**
+<<<<<<< HEAD
+=======
+	 * Service property identifying the {@link Bundle#getBundleId() bundle id}
+	 * of the {@link ServiceReference#getBundle() bundle registering the
+	 * service}.
+	 * 
+	 * <p>
+	 * This property is set by the Framework when a service is registered. The
+	 * value of this property must be of type {@code Long}.
+	 * 
+	 * @since 1.8
+	 */
+	String	SERVICE_BUNDLEID						= "service.bundleid";
+
+	/**
+	 * Service property identifying a service's scope.
+	 * 
+	 * <p>
+	 * This property is set by the Framework when a service is registered. If
+	 * the registered object implements {@link PrototypeServiceFactory}, then
+	 * the value of this service property will be {@link #SCOPE_PROTOTYPE}.
+	 * Otherwise, if the registered object implements {@link ServiceFactory},
+	 * then the value of this service property will be {@link #SCOPE_BUNDLE}.
+	 * Otherwise, the value of this service property will be
+	 * {@link #SCOPE_SINGLETON}.
+	 * 
+	 * @since 1.8
+	 * @see #SCOPE_SINGLETON
+	 * @see #SCOPE_BUNDLE
+	 * @see #SCOPE_PROTOTYPE
+	 */
+	String	SERVICE_SCOPE							= "service.scope";
+
+	/**
+	 * Service scope is singleton. All bundles using the service receive the
+	 * same service object.
+	 * 
+	 * @since 1.8
+	 * @see #SERVICE_SCOPE
+	 */
+	String	SCOPE_SINGLETON							= "singleton";
+
+	/**
+	 * Service scope is bundle. Each bundle using the service receives a
+	 * customized service object.
+	 * 
+	 * @since 1.8
+	 * @see #SERVICE_SCOPE
+	 */
+	String	SCOPE_BUNDLE							= "bundle";
+
+	/**
+	 * Service scope is prototype. Each bundle using the service receives either
+	 * a customized service object or can request multiple customized service
+	 * objects via {@link ServiceObjects}.
+	 * 
+	 * @since 1.8
+	 * @see #SERVICE_SCOPE
+	 */
+	String	SCOPE_PROTOTYPE							= "prototype";
+
+	/**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 	 * Framework environment property identifying the Framework's universally
 	 * unique identifier (UUID). A UUID represents a 128-bit value. A new UUID
 	 * is generated by the {@link Framework#init()} method each time a framework
@@ -1700,4 +1831,29 @@ public interface Constants {
 	 * @see BundleException#DUPLICATE_BUNDLE_ERROR
 	 */
 	String	FRAMEWORK_BSNVERSION_MANAGED			= "managed";
+<<<<<<< HEAD
+=======
+
+	/**
+	 * Manifest header identifying the bundle's icon URLs.
+	 * 
+	 * <p>
+	 * The header value may be retrieved from the {@code Dictionary} object
+	 * returned by the {@code Bundle.getHeaders} method.
+	 * 
+	 * @since 1.8
+	 */
+	String	BUNDLE_ICON								= "Bundle-Icon";
+
+	/**
+	 * Manifest header identifying the bundle's license information.
+	 * 
+	 * <p>
+	 * The header value may be retrieved from the {@code Dictionary} object
+	 * returned by the {@code Bundle.getHeaders} method.
+	 * 
+	 * @since 1.8
+	 */
+	String	BUNDLE_LICENSE							= "Bundle-License";
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

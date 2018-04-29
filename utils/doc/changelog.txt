@@ -1,3 +1,88 @@
+<<<<<<< HEAD
+=======
+Changes from 1.10.2 to 1.10.4
+----------------------------
+** Bug
+    * [FELIX-5691] - Fix whitespace handling in TypedProperties
+    * [FELIX-5692] - TypedProperties is missing a method to add a raw value
+
+Changes from 1.10.0 to 1.10.2
+----------------------------
+** Bug
+    * [FELIX-4743] - Have to escape '=' characters in quoted values in *.config files
+    * [FELIX-5145] - FileInstall writes .config files back with backslashes escaping spaces in config values
+    * [FELIX-5306] - User friendly syntax for floats and doubles in FileInstall
+    * [FELIX-5675] JSONParser needs a little bit more context when reporting an error
+    * [FELIX-5688] - TypedProperties#put method is not idempotent
+
+Changes from 1.9.0 to 1.10.0
+----------------------------
+** New Feature
+    * [FELIX-5608 New TypedProperties object to support typed properties file
+
+** Bug
+    * [FELIX-5555] JSONParser is not handling escape char properly
+    * [FELIX-5577] JSONParser is not able to parse an array as root object] 
+
+
+Changes from 1.8.6 to 1.9.0
+---------------------------
+** Improvement
+    * [FELIX-5534] - Add simple JSONWriter
+    * [FELIX-5508] - Add simple JSON Parser
+
+
+Changes from 1.8.4 to 1.8.6
+---------------------------
+** Improvement
+    * [FELIX-5474] - Do not call no-arg Bundle.getHeaders() method
+    * [FELIX-5434] - Add an update method to Properties
+** Bug
+    * [FELIX-5487] - Utils code requires Java 6 - should be Java 5
+
+
+Changes from 1.8.4 to 1.8.6
+---------------------------
+** Bug
+    * [FELIX-5370] - Error parsing clauses with values containing ':='
+
+
+Changes from 1.8.0 to 1.8.2
+---------------------------
+** Bug
+    * [FELIX-5156] - Felix Properties doesn't handle multi value properties correctly
+
+Changes from 1.6.0 to 1.8.0
+---------------------------
+** Bug
+    * [FELIX-4761] - Modifications on Properties#entrySet() are not properly reflected in the layout
+
+** Improvement
+    * [FELIX-4708] - Provide more substitution options
+    * [FELIX-4820] - Optimize version range parsing a bit
+
+** New Feature
+    * [FELIX-4759] - Support env:XXX subtitution for environment variables
+    * [FELIX-4760] - Support default/alternate values for variable substitution
+
+Changes from 1.4.2 to 1.6.0
+---------------------------
+** Improvement
+    * [FELIX-4433] - Provide more control over the substitution
+    * [FELIX-4434] - Require JDK 5
+    * [FELIX-4435] - Add a method to do substitution without any callback
+
+Changes from 1.4.0 to 1.4.2
+---------------------------
+** Bug
+    * [FELIX-4326] - Possible Invalid BundleContext exception when shutting down the extender
+    * [FELIX-4341] - The Properties object does not follow the spec wrt spaces
+    * [FELIX-4342] - Substitution is dependent on the order of the map
+
+** Improvement
+    * [FELIX-4339] - Make the use of escape characters deterministic
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 Changes from 1.2.0 to 1.4.0
 ---------------------------
 ** Bug

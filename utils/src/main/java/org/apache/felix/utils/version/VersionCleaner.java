@@ -33,8 +33,13 @@ public final class VersionCleaner {
      * the version syntax. This method cleans up such a version to match an OSGi
      * version.
      *
+<<<<<<< HEAD
      * @param version
      * @return
+=======
+     * @param version The version to clean
+     * @return The cleaned version
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      */
     public static String clean(String version)
     {
@@ -42,6 +47,14 @@ public final class VersionCleaner {
         {
             return "0.0.0";
         }
+<<<<<<< HEAD
+=======
+        String clean = fastSyntax(version);
+        if (clean != null)
+        {
+            return clean;
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         StringBuffer result = new StringBuffer();
         Matcher m = FUZZY_VERSION.matcher(version);
         if (m.matches())
@@ -108,4 +121,48 @@ public final class VersionCleaner {
         }
     }
 
+<<<<<<< HEAD
+=======
+    private static String fastSyntax(String version) {
+        int state = 0;
+        for (int i = 0, l = version.length(); i < l; i++) {
+            char ch = version.charAt(i);
+            switch (state) {
+            case 0:
+            case 2:
+            case 4:
+                if (ch < '0' || ch > '9') {
+                    return null;
+                }
+                state++;
+                break;
+            case 1:
+            case 3:
+            case 5:
+                if (ch == '.') {
+                    state++;
+                } else if (ch < '0' || ch > '9') {
+                    return null;
+                }
+                break;
+            case 6:
+                if (ch == '.') {
+                    return null;
+                }
+                break;
+            }
+        }
+        switch (state) {
+        case 0:
+        case 1:
+            return version + ".0.0";
+        case 2:
+        case 3:
+            return version + ".0";
+        default:
+            return version;
+        }
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

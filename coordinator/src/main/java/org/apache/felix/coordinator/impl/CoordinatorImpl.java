@@ -18,6 +18,7 @@
  */
 package org.apache.felix.coordinator.impl;
 
+<<<<<<< HEAD
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.TimerTask;
@@ -38,11 +39,41 @@ public class CoordinatorImpl implements Coordinator
 
     private final HashSet<Coordination> coordinations;
 
+=======
+import java.security.Permission;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TimerTask;
+
+import org.osgi.framework.Bundle;
+import org.osgi.service.coordinator.Coordination;
+import org.osgi.service.coordinator.CoordinationException;
+import org.osgi.service.coordinator.CoordinationPermission;
+import org.osgi.service.coordinator.Coordinator;
+import org.osgi.service.coordinator.Participant;
+
+/**
+ * The coordinator implementation is a per bundle wrapper for the
+ * coordination manager.
+ */
+public class CoordinatorImpl implements Coordinator
+{
+
+    /** The bundle that requested this service. */
+    private final Bundle owner;
+
+    /** The coordination mgr. */
+    private final CoordinationMgr mgr;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     CoordinatorImpl(final Bundle owner, final CoordinationMgr mgr)
     {
         this.owner = owner;
         this.mgr = mgr;
+<<<<<<< HEAD
         this.coordinations = new HashSet<Coordination>();
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -56,6 +87,7 @@ public class CoordinatorImpl implements Coordinator
      */
     void dispose()
     {
+<<<<<<< HEAD
         final Coordination[] active;
         synchronized (coordinations)
         {
@@ -101,6 +133,131 @@ public class CoordinatorImpl implements Coordinator
     {
         // TODO: check permission
         CoordinationImpl current = (CoordinationImpl) peek();
+=======
+        this.mgr.dispose(this.owner);
+    }
+
+    /**
+     * Ensures the <code>name</code> complies with the <em>symbolic-name</em>
+     * production of the OSGi core specification (1.3.2):
+     *
+     * <pre>
+     * symbolic-name :: = token('.'token)*
+     * digit    ::= [0..9]
+     * alpha    ::= [a..zA..Z]
+     * alphanum ::= alpha | digit
+     * token    ::= ( alphanum | ’_’ | ’-’ )+
+     * </pre>
+     *
+     * If the key does not comply an <code>IllegalArgumentException</code> is
+     * thrown.
+     *
+     * @param key
+     *            The configuration property key to check.
+     * @throws IllegalArgumentException
+     *             if the key does not comply with the symbolic-name production.
+     */
+    private void checkName( final String name )
+    {
+        // check for empty string
+        if ( name.length() == 0 )
+        {
+            throw new IllegalArgumentException( "Name must not be an empty string" );
+        }
+        final String[] parts = name.split("\\.");
+        for(final String p : parts)
+        {
+        	boolean valid = true;
+        	if ( p.length() == 0 )
+        	{
+        		valid = false;
+        	}
+        	else
+        	{
+	            for(int i=0; i<p.length(); i++)
+	            {
+	            	final char c = p.charAt(i);
+	            	if ( c >= '0' && c <= '9') {
+	            		continue;
+	            	}
+	            	if ( c >= 'a' && c <= 'z') {
+	            		continue;
+	            	}
+	            	if ( c >= 'A' && c <= 'Z') {
+	            		continue;
+	            	}
+	            	if ( c == '_' || c == '-') {
+	            		continue;
+	            	}
+	            	valid = false;
+	            	break;
+	            }
+        	}
+        	if ( !valid )
+        	{
+                throw new IllegalArgumentException( "Name [" + name + "] does not comply with the symbolic-name definition." );
+        	}
+        }
+    }
+
+    public void checkPermission(final String coordinationName, final String actions )
+    {
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null)
+        {
+            final Permission permission = new CoordinationPermission(coordinationName, this.owner, actions);
+            securityManager.checkPermission(permission);
+        }
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#create(java.lang.String, long)
+     */
+    public Coordination create(final String name, final long timeout)
+    {
+        this.checkPermission(name, CoordinationPermission.INITIATE);
+
+    	// check arguments
+    	checkName(name);
+    	if ( timeout < 0 )
+    	{
+    		throw new IllegalArgumentException("Timeout must not be negative");
+    	}
+
+    	// create coordination
+        final CoordinationMgr.CreationResult result = mgr.create(this, name, timeout);
+
+        return result.holder;
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#getCoordinations()
+     */
+    public Collection<Coordination> getCoordinations()
+    {
+        final Collection<Coordination> result = mgr.getCoordinations();
+        final Iterator<Coordination> i = result.iterator();
+        while ( i.hasNext() )
+        {
+            final Coordination c = i.next();
+            try {
+                this.checkPermission(c.getName(), CoordinationPermission.ADMIN);
+            }
+            catch (final SecurityException se)
+            {
+                i.remove();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#fail(java.lang.Throwable)
+     */
+    public boolean fail(final Throwable reason)
+    {
+        CoordinationImpl current = (CoordinationImpl)mgr.peek();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         if (current != null)
         {
             return current.fail(reason);
@@ -108,6 +265,7 @@ public class CoordinatorImpl implements Coordinator
         return false;
     }
 
+<<<<<<< HEAD
     public Coordination peek()
     {
         // TODO: check permission
@@ -129,6 +287,60 @@ public class CoordinatorImpl implements Coordinator
     public boolean addParticipant(Participant participant) throws CoordinationException
     {
         // TODO: check permission
+=======
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#peek()
+     */
+    public Coordination peek()
+    {
+        Coordination c = mgr.peek();
+        if ( c != null )
+        {
+            c = ((CoordinationImpl)c).getHolder();
+        }
+        return c;
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#begin(java.lang.String, long)
+     */
+    public Coordination begin(final String name, final long timeout)
+    {
+        this.checkPermission(name, CoordinationPermission.INITIATE);
+
+        // check arguments
+        checkName(name);
+        if ( timeout < 0 )
+        {
+            throw new IllegalArgumentException("Timeout must not be negative");
+        }
+
+        // create coordination
+        final CoordinationMgr.CreationResult result  = mgr.create(this, name, timeout);
+        this.mgr.push(result.coordination);
+        return result.holder;
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#pop()
+     */
+    public Coordination pop()
+    {
+        Coordination c = mgr.pop();
+        if ( c != null )
+        {
+            checkPermission(c.getName(), CoordinationPermission.INITIATE);
+            c = ((CoordinationImpl)c).getHolder();
+        }
+        return c;
+    }
+
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#addParticipant(org.osgi.service.coordinator.Participant)
+     */
+    public boolean addParticipant(final Participant participant)
+    {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         Coordination current = peek();
         if (current != null)
         {
@@ -138,14 +350,34 @@ public class CoordinatorImpl implements Coordinator
         return false;
     }
 
+<<<<<<< HEAD
     public Coordination getCoordination(long id)
     {
         // TODO: check permission
         return mgr.getCoordinationById(id);
+=======
+    /**
+     * @see org.osgi.service.coordinator.Coordinator#getCoordination(long)
+     */
+    public Coordination getCoordination(final long id)
+    {
+        Coordination c = mgr.getCoordinationById(id);
+        if ( c != null )
+        {
+            try {
+                checkPermission(c.getName(), CoordinationPermission.ADMIN);
+                c = ((CoordinationImpl)c).getHolder();
+            } catch (final SecurityException e) {
+                c = null;
+            }
+        }
+        return c;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     //----------
 
+<<<<<<< HEAD
     Coordination push(Coordination c)
     {
         // TODO: check permission
@@ -159,6 +391,16 @@ public class CoordinatorImpl implements Coordinator
         {
             coordinations.remove(c);
         }
+=======
+    void push(final CoordinationImpl c)
+    {
+        mgr.push(c);
+    }
+
+    void unregister(final CoordinationImpl c, final boolean removeFromStack)
+    {
+        mgr.unregister(c, removeFromStack);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     void schedule(final TimerTask task, final long deadLine)
@@ -175,4 +417,22 @@ public class CoordinatorImpl implements Coordinator
     {
         mgr.releaseParticipant(p);
     }
+<<<<<<< HEAD
+=======
+
+    Bundle getBundle()
+    {
+        return this.owner;
+    }
+
+	Coordination getEnclosingCoordination(final CoordinationImpl c)
+	{
+		return mgr.getEnclosingCoordination(c);
+	}
+
+	CoordinationException endNestedCoordinations(final CoordinationImpl c)
+	{
+		return this.mgr.endNestedCoordinations(c);
+	}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

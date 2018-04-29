@@ -18,13 +18,45 @@
  */
 package org.apache.felix.framework;
 
+import org.apache.felix.framework.cache.Content;
+import org.apache.felix.framework.cache.DirectoryContent;
+import org.apache.felix.framework.cache.JarContent;
+import org.apache.felix.framework.ext.ClassPathExtenderFactory;
+import org.apache.felix.framework.util.FelixConstants;
+import org.apache.felix.framework.util.ImmutableList;
+import org.apache.felix.framework.util.StringMap;
+import org.apache.felix.framework.util.Util;
+import org.apache.felix.framework.util.manifestparser.ManifestParser;
+import org.apache.felix.framework.util.manifestparser.NativeLibrary;
+import org.apache.felix.framework.util.manifestparser.NativeLibraryClause;
+import org.apache.felix.framework.wiring.BundleCapabilityImpl;
+import org.apache.felix.framework.wiring.BundleWireImpl;
+import org.osgi.framework.AdminPermission;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.Version;
+import org.osgi.framework.namespace.NativeNamespace;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRequirement;
+import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
+
+import java.io.File;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.net.InetAddress;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
+import java.security.AccessController;
 import java.security.AllPermission;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -35,7 +67,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.Set;
+<<<<<<< HEAD
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.ImmutableList;
 import org.apache.felix.framework.util.StringMap;
@@ -57,6 +92,8 @@ import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /**
  * The ExtensionManager class is used in several ways.
@@ -81,6 +118,7 @@ import org.osgi.framework.wiring.BundleWiring;
 // with the parent classloader and one instance per framework instance that
 // keeps track of extension bundles and systembundle exports for that framework
 // instance.
+<<<<<<< HEAD
 class ExtensionManager extends URLStreamHandler implements Content
 {
     // The private instance that is added to Felix.class.getClassLoader() -
@@ -114,13 +152,81 @@ class ExtensionManager extends URLStreamHandler implements Content
         {
             // extension bundles will not be supported.
             extensionManager = null;
+=======
+class ExtensionManager implements Content
+{
+    static final ClassPathExtenderFactory.ClassPathExtender m_extenderFramework;
+    static final ClassPathExtenderFactory.ClassPathExtender m_extenderBoot;
+
+    static
+    {
+        ClassPathExtenderFactory.ClassPathExtender extenderFramework = null;
+        ClassPathExtenderFactory.ClassPathExtender extenderBoot = null;
+
+        if (!"true".equalsIgnoreCase(Felix.m_secureAction.getSystemProperty(FelixConstants.FELIX_EXTENSIONS_DISABLE, "false")))
+        {
+            ServiceLoader<ClassPathExtenderFactory> loader = ServiceLoader.load(ClassPathExtenderFactory.class,
+                    ExtensionManager.class.getClassLoader());
+
+
+            for (Iterator<ClassPathExtenderFactory> iter = loader.iterator();
+                 iter.hasNext() && (extenderFramework == null || extenderBoot == null); )
+            {
+                try
+                {
+                    ClassPathExtenderFactory factory = iter.next();
+
+                    if (extenderFramework == null)
+                    {
+                        try
+                        {
+                            extenderFramework = factory.getExtender(ExtensionManager.class.getClassLoader());
+                        }
+                        catch (Throwable t)
+                        {
+                            // Ignore
+                        }
+                    }
+                    if (extenderBoot == null)
+                    {
+                        try
+                        {
+                            extenderBoot = factory.getExtender(null);
+                        }
+                        catch (Throwable t)
+                        {
+                            // Ignore
+                        }
+                    }
+                }
+                catch (Throwable t)
+                {
+                    // Ignore
+                }
+            }
+
+            try
+            {
+                if (extenderFramework == null)
+                {
+                    extenderFramework = new ClassPathExtenderFactory.DefaultClassLoaderExtender()
+                            .getExtender(ExtensionManager.class.getClassLoader());
+                }
+            }
+            catch (Throwable t) {
+                // Ignore
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
-        m_extensionManager = extensionManager;
+
+        m_extenderFramework = extenderFramework;
+        m_extenderBoot = extenderBoot;
     }
 
     private final Logger m_logger;
     private final Map m_configMap;
     private final Map m_headerMap = new StringMap();
+<<<<<<< HEAD
     private final BundleRevision m_systemBundleRevision;
     private volatile List<BundleCapability> m_capabilities = Collections.EMPTY_LIST;
     private volatile Set<String> m_exportNames = Collections.EMPTY_SET;
@@ -141,6 +247,26 @@ class ExtensionManager extends URLStreamHandler implements Content
         m_extensionsCache = new Bundle[0];
         m_names = new HashSet();
         m_sourceToExtensions = new HashMap();
+=======
+    private final BundleRevisionImpl m_systemBundleRevision;
+    private volatile List<BundleCapability> m_capabilities = Collections.EMPTY_LIST;
+    private volatile Set<String> m_exportNames = Collections.EMPTY_SET;
+    private volatile Object m_securityContext = null;
+    private final List<ExtensionTuple> m_extensionTuples = Collections.synchronizedList(new ArrayList<ExtensionTuple>());
+
+    private static class ExtensionTuple
+    {
+        private final BundleActivator m_activator;
+        private final Bundle m_bundle;
+        private volatile boolean m_failed;
+        private volatile boolean m_started;
+
+        public ExtensionTuple(BundleActivator activator, Bundle bundle)
+        {
+            m_activator = activator;
+            m_bundle = bundle;
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -151,18 +277,21 @@ class ExtensionManager extends URLStreamHandler implements Content
      * instance.
      *
      * @param logger the logger to use.
-     * @param config the configuration to read properties from.
-     * @param systemBundleInfo the info to change if we need to add exports.
+     * @param configMap the configuration to read properties from.
+     * @param felix the framework.
      */
     ExtensionManager(Logger logger, Map configMap, Felix felix)
     {
         m_logger = logger;
         m_configMap = configMap;
         m_systemBundleRevision = new ExtensionManagerRevision(felix);
+<<<<<<< HEAD
         m_extensions = null;
         m_extensionsCache = null;
         m_names = null;
         m_sourceToExtensions = null;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 // TODO: FRAMEWORK - Not all of this stuff really belongs here, probably only exports.
         // Populate system bundle header map.
@@ -178,13 +307,20 @@ class ExtensionManager extends URLStreamHandler implements Content
             "org.osgi.service.startlevel.StartLevel," +
             "org.osgi.service.url.URLHandlers");
 
+        Properties configProps = Util.toProperties(m_configMap);
         // The system bundle exports framework packages as well as
         // arbitrary user-defined packages from the system class path.
         // We must construct the system bundle's export metadata.
         // Get configuration property that specifies which class path
         // packages should be exported by the system bundle.
         String syspkgs =
+<<<<<<< HEAD
             (String) m_configMap.get(FelixConstants.FRAMEWORK_SYSTEMPACKAGES);
+=======
+            "true".equalsIgnoreCase(configProps.getProperty(FelixConstants.USE_PROPERTY_SUBSTITUTION_IN_SYSTEMPACKAGES)) ?
+                Util.getPropertyWithSubs(configProps, FelixConstants.FRAMEWORK_SYSTEMPACKAGES) :
+                configProps.getProperty(FelixConstants.FRAMEWORK_SYSTEMPACKAGES);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // If no system packages were specified, load our default value.
         syspkgs = (syspkgs == null)
             ? Util.getDefaultProperty(logger, Constants.FRAMEWORK_SYSTEMPACKAGES)
@@ -192,9 +328,17 @@ class ExtensionManager extends URLStreamHandler implements Content
         syspkgs = (syspkgs == null) ? "" : syspkgs;
         // If any extra packages are specified, then append them.
         String pkgextra =
+<<<<<<< HEAD
             (String) m_configMap.get(FelixConstants.FRAMEWORK_SYSTEMPACKAGES_EXTRA);
         syspkgs = ((pkgextra == null) || (pkgextra.trim().length() == 0))
             ? syspkgs : syspkgs + "," + pkgextra;
+=======
+            "true".equalsIgnoreCase(configProps.getProperty(FelixConstants.USE_PROPERTY_SUBSTITUTION_IN_SYSTEMPACKAGES)) ?
+                Util.getPropertyWithSubs(configProps, FelixConstants.FRAMEWORK_SYSTEMPACKAGES_EXTRA) :
+                configProps.getProperty(FelixConstants.FRAMEWORK_SYSTEMPACKAGES_EXTRA);
+        syspkgs = ((pkgextra == null) || (pkgextra.trim().length() == 0))
+            ? syspkgs : syspkgs + (pkgextra.trim().startsWith(",") ? pkgextra : "," + pkgextra);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_headerMap.put(FelixConstants.BUNDLE_MANIFESTVERSION, "2");
         m_headerMap.put(FelixConstants.EXPORT_PACKAGE, syspkgs);
 
@@ -204,7 +348,11 @@ class ExtensionManager extends URLStreamHandler implements Content
         // configuration property that specifies which capabilities should
         // be provided by the system bundle.
         String syscaps =
+<<<<<<< HEAD
             (String) m_configMap.get(FelixConstants.FRAMEWORK_SYSTEMCAPABILITIES);
+=======
+            (String) Util.getPropertyWithSubs(configProps, FelixConstants.FRAMEWORK_SYSTEMCAPABILITIES);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // If no system capabilities were specified, load our default value.
         syscaps = (syscaps == null)
             ? Util.getDefaultProperty(logger, Constants.FRAMEWORK_SYSTEMCAPABILITIES)
@@ -212,15 +360,25 @@ class ExtensionManager extends URLStreamHandler implements Content
         syscaps = (syscaps == null) ? "" : syscaps;
         // If any extra capabilities are specified, then append them.
         String capextra =
+<<<<<<< HEAD
             (String) m_configMap.get(FelixConstants.FRAMEWORK_SYSTEMCAPABILITIES_EXTRA);
         syscaps = ((capextra == null) || (capextra.trim().length() == 0))
             ? syscaps : syscaps + "," + capextra;
+=======
+            (String) Util.getPropertyWithSubs(configProps, FelixConstants.FRAMEWORK_SYSTEMCAPABILITIES_EXTRA);
+        syscaps = ((capextra == null) || (capextra.trim().length() == 0))
+            ? syscaps : syscaps + (capextra.trim().startsWith(",") ? capextra : "," + capextra);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_headerMap.put(FelixConstants.PROVIDE_CAPABILITY, syscaps);
         try
         {
             ManifestParser mp = new ManifestParser(
                 m_logger, m_configMap, m_systemBundleRevision, m_headerMap);
             List<BundleCapability> caps = aliasSymbolicName(mp.getCapabilities());
+<<<<<<< HEAD
+=======
+            caps.add(buildNativeCapabilites());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             appendCapabilities(caps);
         }
         catch (Exception ex)
@@ -230,7 +388,43 @@ class ExtensionManager extends URLStreamHandler implements Content
                 Logger.LOG_ERROR,
                 "Error parsing system bundle export statement: "
                 + syspkgs, ex);
+<<<<<<< HEAD
+=======
         }
+    }
+
+    protected BundleCapability buildNativeCapabilites() {
+        String osArchitecture = (String)m_configMap.get(FelixConstants.FRAMEWORK_PROCESSOR);
+        String osName = (String)m_configMap.get(FelixConstants.FRAMEWORK_OS_NAME);
+        String osVersion = (String)m_configMap.get(FelixConstants.FRAMEWORK_OS_VERSION);
+        String userLang = (String)m_configMap.get(FelixConstants.FRAMEWORK_LANGUAGE);
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        
+        //Add all startup properties so we can match selection-filters
+        attributes.putAll(m_configMap);
+
+        if( osArchitecture != null )
+        {
+            attributes.put(NativeNamespace.CAPABILITY_PROCESSOR_ATTRIBUTE, NativeLibraryClause.getProcessorWithAliases(osArchitecture));
+        }
+
+        if( osName != null)
+        {
+            attributes.put(NativeNamespace.CAPABILITY_OSNAME_ATTRIBUTE, NativeLibraryClause.getOsNameWithAliases(osName));
+        }
+
+        if( osVersion != null)
+        {
+            attributes.put(NativeNamespace.CAPABILITY_OSVERSION_ATTRIBUTE, new Version(NativeLibraryClause.normalizeOSVersion(osVersion)));
+        }
+
+        if( userLang != null)
+        {
+            attributes.put(NativeNamespace.CAPABILITY_LANGUAGE_ATTRIBUTE, userLang);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+        }
+
+        return new BundleCapabilityImpl(getRevision(), NativeNamespace.NATIVE_NAMESPACE, Collections.<String, String> emptyMap(), attributes);
     }
 
     private static List<BundleCapability> aliasSymbolicName(List<BundleCapability> caps)
@@ -295,7 +489,11 @@ class ExtensionManager extends URLStreamHandler implements Content
         return aliasCaps;
     }
 
+<<<<<<< HEAD
     public BundleRevision getRevision()
+=======
+    public BundleRevisionImpl getRevision()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         return m_systemBundleRevision;
     }
@@ -342,15 +540,38 @@ class ExtensionManager extends URLStreamHandler implements Content
         String directive = ManifestParser.parseExtensionBundleHeader((String)
             ((BundleRevisionImpl) bundle.adapt(BundleRevision.class))
                 .getHeaders().get(Constants.FRAGMENT_HOST));
+<<<<<<< HEAD
+=======
 
+        final ClassPathExtenderFactory.ClassPathExtender extender;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+        if (m_extenderBoot != null && Constants.EXTENSION_BOOTCLASSPATH.equals(directive))
+        {
+            extender = m_extenderBoot;
+        }
         // We only support classpath extensions (not bootclasspath).
+<<<<<<< HEAD
         if (!Constants.EXTENSION_FRAMEWORK.equals(directive))
         {
             throw new BundleException("Unsupported Extension Bundle type: " +
                 directive, new UnsupportedOperationException(
                 "Unsupported Extension Bundle type!"));
+=======
+        else if (!Constants.EXTENSION_FRAMEWORK.equals(directive))
+        {
+           throw new BundleException("Unsupported Extension Bundle type: " +
+                    directive, new UnsupportedOperationException(
+                    "Unsupported Extension Bundle type!"));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
+        else if (m_extenderFramework == null)
+        {
+            // We don't support extensions
+            m_logger.log(bundle, Logger.LOG_WARNING,
+                    "Unable to add extension bundle - Maybe ClassLoader is not supported (on java9, try --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED)?");
 
+<<<<<<< HEAD
         try
         {
             // Merge the exported packages with the exported packages of the systembundle.
@@ -377,12 +598,75 @@ class ExtensionManager extends URLStreamHandler implements Content
 
             // Add the bundle as extension if we support extensions
             if (m_extensionManager != null)
+=======
+            throw new UnsupportedOperationException(
+                    "Unable to add extension bundle.");
+        }
+        else
+        {
+            extender = m_extenderFramework;
+        }
+
+        Content content = bundle.adapt(BundleRevisionImpl.class).getContent();
+        final File file;
+        if (content instanceof JarContent)
+        {
+            file = ((JarContent) content).getFile();
+        }
+        else if (content instanceof DirectoryContent)
+        {
+            file = ((DirectoryContent) content).getFile();
+        }
+        else
+        {
+            file = null;
+        }
+        if (file == null)
+        {
+            // We don't support revision type for extension
+            m_logger.log(bundle, Logger.LOG_WARNING,
+                    "Unable to add extension bundle - wrong revision type?");
+
+            throw new UnsupportedOperationException(
+                    "Unable to add extension bundle.");
+        }
+        try
+        {
+            // Merge the exported packages with the exported packages of the systembundle.
+            List<BundleCapability> exports = null;
+            if (Constants.EXTENSION_FRAMEWORK.equals(directive))
             {
-                // This needs to be the private instance.
-                m_extensionManager.addExtension(felix, bundle);
+                try
+                {
+                    exports = ManifestParser.parseExportHeader(
+                            m_logger, m_systemBundleRevision,
+                            (String) bundle.adapt(BundleRevisionImpl.class).getHeaders().get(Constants.EXPORT_PACKAGE),
+                            m_systemBundleRevision.getSymbolicName(), m_systemBundleRevision.getVersion());
+                    exports = aliasSymbolicName(exports);
+                }
+                catch (Exception ex)
+                {
+                    m_logger.log(
+                            bundle,
+                            Logger.LOG_ERROR,
+                            "Error parsing extension bundle export statement: "
+                                    + bundle.adapt(BundleRevisionImpl.class).getHeaders().get(Constants.EXPORT_PACKAGE), ex);
+                    return;
+                }
             }
-            else
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Void>()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             {
+                @Override
+                public Void run() throws Exception
+                {
+                    extender.add(file);
+                    return null;
+                }
+            });
+            if (exports != null)
+            {
+<<<<<<< HEAD
                 // We don't support extensions (i.e., the parent is not an URLClassLoader).
                 m_logger.log(bundle, Logger.LOG_WARNING,
                     "Unable to add extension bundle to FrameworkClassLoader - Maybe not an URLClassLoader?");
@@ -390,13 +674,21 @@ class ExtensionManager extends URLStreamHandler implements Content
                     "Unable to add extension bundle to FrameworkClassLoader - Maybe not an URLClassLoader?");
             }
             appendCapabilities(exports);
+=======
+                appendCapabilities(exports);
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch (Exception ex)
         {
             throw ex;
         }
 
+<<<<<<< HEAD
         BundleRevisionImpl bri = (BundleRevisionImpl) bundle.adapt(BundleRevision.class);
+=======
+        BundleRevisionImpl bri = bundle.adapt(BundleRevisionImpl.class);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         List<BundleRequirement> reqs = bri.getDeclaredRequirements(BundleRevision.HOST_NAMESPACE);
         List<BundleCapability> caps = getCapabilities(BundleRevision.HOST_NAMESPACE);
         BundleWire bw = new BundleWireImpl(bri, reqs.get(0), m_systemBundleRevision, caps.get(0));
@@ -423,12 +715,24 @@ class ExtensionManager extends URLStreamHandler implements Content
      */
     void startExtensionBundle(Felix felix, BundleImpl bundle)
     {
+<<<<<<< HEAD
         String activatorClass = (String)
             ((BundleRevisionImpl) bundle.adapt(BundleRevision.class))
                 .getHeaders().get(FelixConstants.FELIX_EXTENSION_ACTIVATOR);
+=======
+        Map<?,?> headers = bundle.adapt(BundleRevisionImpl.class).getHeaders();
+        String activatorClass = (String) headers.get(Constants.EXTENSION_BUNDLE_ACTIVATOR);
+        boolean felixExtension = false;
+        if (activatorClass == null)
+        {
+            felixExtension = true;
+            activatorClass = (String) headers.get(FelixConstants.FELIX_EXTENSION_ACTIVATOR);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         if (activatorClass != null)
         {
+            ExtensionTuple tuple = null;
             try
             {
 // TODO: SECURITY - Should this consider security?
@@ -436,20 +740,42 @@ class ExtensionManager extends URLStreamHandler implements Content
                     felix.getClass().getClassLoader().loadClass(
                         activatorClass.trim()).newInstance();
 
+<<<<<<< HEAD
 // TODO: EXTENSIONMANAGER - This is kind of hacky, can we improve it?
                 felix.m_activatorList.add(activator);
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 BundleContext context = felix._getBundleContext();
 
                 bundle.setBundleContext(context);
 
+<<<<<<< HEAD
+=======
+// TODO: EXTENSIONMANAGER - This is kind of hacky, can we improve it?
+                if (!felixExtension)
+                {
+                    tuple = new ExtensionTuple(activator, bundle);
+                    m_extensionTuples.add(tuple);
+                }
+                else
+                {
+                    felix.m_activatorList.add(activator);
+                }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 if ((felix.getState() == Bundle.ACTIVE) || (felix.getState() == Bundle.STARTING))
                 {
+                    if (tuple != null)
+                    {
+                        tuple.m_started = true;
+                    }
                     Felix.m_secureAction.startActivator(activator, context);
                 }
             }
             catch (Throwable ex)
             {
+<<<<<<< HEAD
                 m_logger.log(bundle, Logger.LOG_WARNING,
                     "Unable to start Felix Extension Activator", ex);
             }
@@ -473,6 +799,71 @@ class ExtensionManager extends URLStreamHandler implements Content
 
     private List<BundleCapability> getCapabilities(String namespace)
     {
+=======
+                if (tuple != null)
+                {
+                    tuple.m_failed = true;
+                }
+                felix.fireFrameworkEvent(FrameworkEvent.ERROR, bundle,
+                            new BundleException("Unable to start Bundle", ex));
+
+                m_logger.log(bundle, Logger.LOG_WARNING,
+                    "Unable to start Extension Activator", ex);
+            }
+        }
+    }
+
+    void startPendingExtensionBundles(Felix felix)
+    {
+        for (int i = 0;i < m_extensionTuples.size();i++)
+        {
+            if (!m_extensionTuples.get(i).m_started)
+            {
+                m_extensionTuples.get(i).m_started = true;
+                try
+                {
+                    Felix.m_secureAction.startActivator(m_extensionTuples.get(i).m_activator, felix._getBundleContext());
+                }
+                catch (Throwable ex)
+                {
+                    m_extensionTuples.get(i).m_failed = true;
+
+                    felix.fireFrameworkEvent(FrameworkEvent.ERROR, m_extensionTuples.get(i).m_bundle,
+                                new BundleException("Unable to start Bundle", BundleException.ACTIVATOR_ERROR, ex));
+
+                    m_logger.log(m_extensionTuples.get(i).m_bundle, Logger.LOG_WARNING,
+                        "Unable to start Extension Activator", ex);
+                }
+            }
+        }
+    }
+
+    void stopExtensionBundles(Felix felix)
+    {
+        for (int i = m_extensionTuples.size() - 1; i >= 0;i--)
+        {
+            if (m_extensionTuples.get(i).m_started && !m_extensionTuples.get(i).m_failed)
+            {
+                try
+                {
+                    Felix.m_secureAction.stopActivator(m_extensionTuples.get(i).m_activator, felix._getBundleContext());
+                }
+                catch (Throwable ex)
+                {
+                    felix.fireFrameworkEvent(FrameworkEvent.ERROR, m_extensionTuples.get(i).m_bundle,
+                                new BundleException("Unable to stop Bundle", BundleException.ACTIVATOR_ERROR, ex));
+
+                    m_logger.log(m_extensionTuples.get(i).m_bundle, Logger.LOG_WARNING,
+                        "Unable to stop Extension Activator", ex);
+                }
+            }
+        }
+        m_extensionTuples.clear();
+    }
+
+    private List<BundleCapability> getCapabilities(String namespace)
+    {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         List<BundleCapability> caps = m_capabilities;
         List<BundleCapability> result = caps;
         if (namespace != null)
@@ -549,111 +940,9 @@ class ExtensionManager extends URLStreamHandler implements Content
 
         return exportSB.toString();
     }
+<<<<<<< HEAD
 
-    //
-    // Classpath Extension
-    //
-
-    /*
-     * See whether any registered extension provides the class requested. If not
-     * throw an IOException.
-     */
-    public URLConnection openConnection(URL url) throws IOException
-    {
-        String path = url.getPath();
-
-        if (path.trim().equals("/"))
-        {
-            return new URLHandlersBundleURLConnection(url);
-        }
-
-        Bundle[] extensions = m_extensionsCache;
-        URL result = null;
-        for (Bundle extBundle : extensions)
-        {
-            try
-            {
-                BundleRevisionImpl bri =
-                    (BundleRevisionImpl) extBundle.adapt(BundleRevision.class);
-                if (bri != null)
-                {
-                    result = bri.getResourceLocal(path);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Maybe the bundle went away, so ignore this exception.
-            }
-            if (result != null)
-            {
-                return result.openConnection();
-            }
-        }
-
-        return new URLConnection(url)
-            {
-                public void connect() throws IOException
-                {
-                    throw new IOException("Resource not provided by any extension!");
-                }
-            };
-    }
-
-    @Override
-    protected InetAddress getHostAddress(URL u)
-    {
-        // the extension URLs do not address real hosts
-        return null;
-    }
-
-    private synchronized void addExtension(Object source, Bundle extension)
-    {
-        List sourceExtensions = (List) m_sourceToExtensions.get(source);
-
-        if (sourceExtensions == null)
-        {
-            sourceExtensions = new ArrayList();
-            m_sourceToExtensions.put(source, sourceExtensions);
-        }
-
-        sourceExtensions.add(extension);
-
-        _add(extension.getSymbolicName(), extension);
-        m_extensionsCache = (Bundle[])
-                m_extensions.toArray(new Bundle[m_extensions.size()]);
-    }
-
-    private synchronized void _removeExtensions(Object source)
-    {
-        if (m_sourceToExtensions.remove(source) == null)
-        {
-            return;
-        }
-
-        m_extensions.clear();
-        m_names.clear();
-
-        for (Iterator iter = m_sourceToExtensions.values().iterator(); iter.hasNext();)
-        {
-            List extensions = (List) iter.next();
-            for (Iterator extIter = extensions.iterator(); extIter.hasNext();)
-            {
-                Bundle bundle = (Bundle) extIter.next();
-                _add(bundle.getSymbolicName(), bundle);
-            }
-            m_extensionsCache = (Bundle[])
-                m_extensions.toArray(new Bundle[m_extensions.size()]);
-        }
-    }
-
-    private void _add(String name, Bundle extension)
-    {
-        if (!m_names.contains(name))
-        {
-            m_names.add(name);
-            m_extensions.add(extension);
-        }
-    }
+=======
 
     public void close()
     {
@@ -699,6 +988,300 @@ class ExtensionManager extends URLStreamHandler implements Content
     {
         return null;
     }
+
+    public URL getEntryAsURL(String name)
+    {
+        return null;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+    //
+    // Utility methods.
+    //
+
+<<<<<<< HEAD
+    /*
+     * See whether any registered extension provides the class requested. If not
+     * throw an IOException.
+     */
+    public URLConnection openConnection(URL url) throws IOException
+=======
+    class ExtensionManagerRevision extends BundleRevisionImpl
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+    {
+        private final Version m_version;
+        private volatile BundleWiring m_wiring;
+
+        ExtensionManagerRevision(Felix felix)
+        {
+            super(felix, "0");
+            m_version = new Version((String)
+                m_configMap.get(FelixConstants.FELIX_VERSION_PROPERTY));
+        }
+
+<<<<<<< HEAD
+        Bundle[] extensions = m_extensionsCache;
+        URL result = null;
+        for (Bundle extBundle : extensions)
+        {
+            try
+            {
+                BundleRevisionImpl bri =
+                    (BundleRevisionImpl) extBundle.adapt(BundleRevision.class);
+                if (bri != null)
+                {
+                    result = bri.getResourceLocal(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Maybe the bundle went away, so ignore this exception.
+            }
+            if (result != null)
+=======
+        @Override
+        public Map getHeaders()
+        {
+            synchronized (ExtensionManager.this)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+            {
+                return m_headerMap;
+            }
+        }
+
+<<<<<<< HEAD
+        return new URLConnection(url)
+            {
+                public void connect() throws IOException
+                {
+                    throw new IOException("Resource not provided by any extension!");
+                }
+            };
+    }
+
+    @Override
+    protected InetAddress getHostAddress(URL u)
+    {
+        // the extension URLs do not address real hosts
+        return null;
+    }
+=======
+        @Override
+        public List<BundleCapability> getDeclaredCapabilities(String namespace)
+        {
+            return ExtensionManager.this.getCapabilities(namespace);
+        }
+
+        @Override
+        public String getSymbolicName()
+        {
+            return FelixConstants.SYSTEM_BUNDLE_SYMBOLICNAME;
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+        @Override
+        public Version getVersion()
+        {
+            return m_version;
+        }
+
+        @Override
+        public void close()
+        {
+            // Nothing needed here.
+        }
+
+        @Override
+        public Content getContent()
+        {
+            return ExtensionManager.this;
+        }
+
+<<<<<<< HEAD
+        _add(extension.getSymbolicName(), extension);
+        m_extensionsCache = (Bundle[])
+                m_extensions.toArray(new Bundle[m_extensions.size()]);
+    }
+=======
+        @Override
+        public URL getEntry(String name)
+        {
+            // There is no content for the system bundle, so return null.
+            return null;
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+        @Override
+        public boolean hasInputStream(int index, String urlPath)
+        {
+            return (getClass().getClassLoader().getResource(urlPath) != null);
+        }
+
+        @Override
+        public InputStream getInputStream(int index, String urlPath)
+        {
+            return getClass().getClassLoader().getResourceAsStream(urlPath);
+        }
+
+        @Override
+        public URL getLocalURL(int index, String urlPath)
+        {
+            return getClass().getClassLoader().getResource(urlPath);
+        }
+
+        @Override
+        public void resolve(BundleWiringImpl wire)
+        {
+            try
+            {
+                m_wiring = new ExtensionManagerWiring(
+                    m_logger, m_configMap, this);
+            }
+            catch (Exception ex)
+            {
+                // This should never happen.
+            }
+            m_extensionsCache = (Bundle[])
+                m_extensions.toArray(new Bundle[m_extensions.size()]);
+        }
+
+        @Override
+        public BundleWiring getWiring()
+        {
+            return m_wiring;
+        }
+    }
+
+<<<<<<< HEAD
+    public void close()
+    {
+        // Do nothing on close, since we have nothing open.
+    }
+
+    public Enumeration getEntries()
+=======
+    class ExtensionManagerWiring extends BundleWiringImpl
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+    {
+        ExtensionManagerWiring(
+            Logger logger, Map configMap, BundleRevisionImpl revision)
+            throws Exception
+        {
+<<<<<<< HEAD
+            public boolean hasMoreElements()
+            {
+                return false;
+            }
+
+            public Object nextElement() throws NoSuchElementException
+=======
+            super(logger, configMap, null, revision,
+                null, Collections.EMPTY_LIST, null, null);
+        }
+
+        @Override
+        public ClassLoader getClassLoader()
+        {
+            return getClass().getClassLoader();
+        }
+
+        @Override
+        public List<BundleCapability> getCapabilities(String namespace)
+        {
+            return ExtensionManager.this.getCapabilities(namespace);
+        }
+
+        @Override
+        public List<NativeLibrary> getNativeLibraries()
+        {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public Class getClassByDelegation(String name) throws ClassNotFoundException
+        {
+            Class clazz = null;
+            String pkgName = Util.getClassPackage(name);
+            if (shouldBootDelegate(pkgName))
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+            {
+                try
+                {
+                    // Get the appropriate class loader for delegation.
+                    ClassLoader bdcl = getBootDelegationClassLoader();
+                    clazz = bdcl.loadClass(name);
+                    // If this is a java.* package, then always terminate the
+                    // search; otherwise, continue to look locally if not found.
+                    if (pkgName.startsWith("java.") || (clazz != null))
+                    {
+                        return clazz;
+                    }
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    // If this is a java.* package, then always terminate the
+                    // search; otherwise, continue to look locally if not found.
+                    if (pkgName.startsWith("java."))
+                    {
+                        throw ex;
+                    }
+                }
+            }
+            if (clazz == null)
+            {
+                if (!m_exportNames.contains(Util.getClassPackage(name)))
+                {
+                    throw new ClassNotFoundException(name);
+                }
+
+<<<<<<< HEAD
+    public byte[] getEntryAsBytes(String name)
+    {
+        return null;
+    }
+
+    public InputStream getEntryAsStream(String name) throws IOException
+    {
+        return null;
+    }
+
+    public Content getEntryAsContent(String name)
+    {
+        return null;
+    }
+=======
+                clazz = getClass().getClassLoader().loadClass(name);
+            }
+            return clazz;
+        }
+
+        @Override
+        public URL getResourceByDelegation(String name)
+        {
+            return getClass().getClassLoader().getResource(name);
+        }
+
+        @Override
+        public Enumeration getResourcesByDelegation(String name)
+        {
+           try
+           {
+               return getClass().getClassLoader().getResources(name);
+           }
+           catch (IOException ex)
+           {
+               return null;
+           }
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+        @Override
+        public void dispose()
+        {
+            // Nothing needed here.
+        }
+    }
+<<<<<<< HEAD
 
     public URL getEntryAsURL(String name)
     {
@@ -900,4 +1483,6 @@ class ExtensionManager extends URLStreamHandler implements Content
             // Nothing needed here.
         }
     }
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

@@ -101,6 +101,10 @@ public class LogEventAdapter extends AbstractAdapter implements ServiceListener
         }
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void destroy(BundleContext context) {
         context.removeServiceListener(this);
     }
@@ -113,6 +117,7 @@ public class LogEventAdapter extends AbstractAdapter implements ServiceListener
      *
      * @param event The event to adapt.
      */
+    @Override
     public void serviceChanged(final ServiceEvent event)
     {
         if (ServiceEvent.REGISTERED == event.getType())
@@ -146,13 +151,18 @@ public class LogEventAdapter extends AbstractAdapter implements ServiceListener
 
             m_logListener = new org.osgi.service.log.LogListener()
             {
+                @Override
                 public void logged(final org.osgi.service.log.LogEntry entry)
                 {
                     // This is where the assembly as specified in 133.6.6 OSGi R4
                     // compendium is taking place (i.e., the log entry is adapted to
                     // an event and posted via the EventAdmin)
 
+<<<<<<< HEAD
                     final Dictionary properties = new Hashtable();
+=======
+                    final Dictionary<String, Object> properties = new Hashtable<String, Object>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
                     final Bundle bundle = entry.getBundle();
 
@@ -174,7 +184,8 @@ public class LogEventAdapter extends AbstractAdapter implements ServiceListener
 
                     properties.put("log.level", new Integer(entry.getLevel()));
 
-                    properties.put(EventConstants.MESSAGE, entry.getMessage());
+		    properties.put(EventConstants.MESSAGE,
+				   (entry.getMessage()) != null ? entry.getMessage() : "" );
 
                     properties.put(EventConstants.TIMESTAMP, new Long(
                         entry.getTime()));

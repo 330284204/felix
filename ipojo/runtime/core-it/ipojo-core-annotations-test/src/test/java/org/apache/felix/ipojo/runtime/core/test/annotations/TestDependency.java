@@ -19,10 +19,23 @@
 
 package org.apache.felix.ipojo.runtime.core.test.annotations;
 
+<<<<<<< HEAD
 import org.apache.felix.ipojo.metadata.Element;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+=======
+import org.apache.felix.ipojo.ComponentInstance;
+import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.runtime.core.test.services.CheckService;
+import org.junit.Test;
+import org.osgi.framework.ServiceReference;
+import org.ow2.chameleon.testing.helpers.IPOJOHelper;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import static org.junit.Assert.*;
 
 public class TestDependency extends Common {
@@ -30,7 +43,12 @@ public class TestDependency extends Common {
 
     @Test
     public void testDependencyDeclaration() {
+<<<<<<< HEAD
         Element meta = ipojoHelper.getMetadata(getTestBundle(),  "org.apache.felix.ipojo.runtime.core.test.components.Dependency");
+=======
+        Element meta = IPOJOHelper.getMetadata(getTestBundle(),
+                "org.apache.felix.ipojo.runtime.core.test.components.Dependency");
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         Element[] deps = meta.getElements("requires");
 
         // Check fs
@@ -106,6 +124,35 @@ public class TestDependency extends Common {
         assertEquals("Check not proxied", "false", dep.getAttribute("proxy"));
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Reproduce https://issues.apache.org/jira/browse/FELIX-4380.
+     */
+    @Test
+    public void testDependencyUsingSpecification() {
+        ComponentInstance instance = ipojoHelper.createComponentInstance("org.apache.felix.ipojo.runtime.core.test" +
+                ".components.DependencyUsingSpecification");
+
+        ServiceReference ref = ipojoHelper.getServiceReferenceByName(CheckService.class.getName(),
+                instance.getInstanceName());
+
+        assertNotNull(ref);
+
+        CheckService svc = (CheckService) osgiHelper.getRawServiceObject(ref);
+        assertFalse(svc.check());
+
+        // The following instantiation exposes the BarService required by instance.
+        ComponentInstance bar = ipojoHelper.createComponentInstance("org.apache.felix.ipojo.runtime.core.test" +
+                ".components.ProvidesSimple");
+
+        assertTrue(svc.check());
+
+        bar.dispose();
+        assertFalse(svc.check());
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private Element getDependencyById(Element[] deps, String name) {
         for (int i = 0; i < deps.length; i++) {
             String na = deps[i].getAttribute("id");

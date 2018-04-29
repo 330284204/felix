@@ -20,6 +20,7 @@
 
 package org.apache.felix.scr.impl.manager;
 
+<<<<<<< HEAD
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.ServiceReference;
@@ -33,6 +34,21 @@ public class RefPair<T>
     private AtomicReference<T> serviceObjectRef = new AtomicReference<T>();
 
     private boolean failed;
+=======
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceObjects;
+import org.osgi.framework.ServiceReference;
+
+/**
+ * @version $Rev$ $Date$
+ */
+public abstract class RefPair<S, T>
+{
+    private final ServiceReference<T> ref;
+
+    boolean failed;
+    volatile boolean deleted;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     public RefPair( ServiceReference<T> ref )
     {
@@ -44,6 +60,7 @@ public class RefPair<T>
         return ref;
     }
 
+<<<<<<< HEAD
     public T getServiceObject()
     {
         return serviceObjectRef.get();
@@ -63,6 +80,20 @@ public class RefPair<T>
     {
         return serviceObjectRef.getAndSet( null );
     }
+=======
+    public ServiceObjects<T> getServiceObjects()
+    {
+        return null;
+    }
+
+    public abstract boolean getServiceObject( ComponentContextImpl<S> key, BundleContext context );
+
+    public abstract T getServiceObject(ComponentContextImpl<S> key);
+
+    public abstract boolean setServiceObject( ComponentContextImpl<S> key, T serviceObject );
+
+    public abstract T unsetServiceObject(ComponentContextImpl<S> key);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     public void setFailed( )
     {
@@ -74,10 +105,21 @@ public class RefPair<T>
         return failed;
     }
 
+<<<<<<< HEAD
 
     @Override
     public String toString()
     {
         return "[RefPair: ref: [" + ref + "] service: [" + serviceObjectRef.get() + "]]";
+=======
+    public boolean isDeleted()
+    {
+        return deleted;
+    }
+
+    public void markDeleted()
+    {
+        this.deleted = true;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

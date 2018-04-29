@@ -21,6 +21,10 @@ package org.apache.felix.bundlerepository.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+<<<<<<< HEAD
+=======
+import java.net.URI;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -36,21 +40,50 @@ public class PullParser extends RepositoryParser
     {
     }
 
+<<<<<<< HEAD
     public RepositoryImpl parseRepository(InputStream is) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+=======
+    public RepositoryImpl parseRepository(InputStream is, URI baseUri) throws Exception
+    {
+        XmlPullParser reader = new KXmlParser();
+
+        // The spec-based Repository XML uses namespaces, so switch this on...
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(is, null);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !REPOSITORY.equals(reader.getName()))
         {
             throw new Exception("Expected element 'repository' at the root of the document");
         }
+<<<<<<< HEAD
         return parse(reader);
+=======
+
+        RepositoryImpl repo;
+        if ("http://www.osgi.org/xmlns/repository/v1.0.0".equals(reader.getNamespace())) {
+            // TODO there are a bunch of other methods here that create a parser, should they be updated too?
+            // at the very least they should be made namespace-aware too, so that parsing is the same no matter
+            // how its initiated.
+            return SpecXMLPullParser.parse(reader, baseUri);
+        } else {
+            // We're parsing the old
+            return parse(reader);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public RepositoryImpl parseRepository(Reader r) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+<<<<<<< HEAD
+=======
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(r);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !REPOSITORY.equals(reader.getName()))
@@ -63,6 +96,11 @@ public class PullParser extends RepositoryParser
     public ResourceImpl parseResource(Reader r) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+<<<<<<< HEAD
+=======
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(r);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !RESOURCE.equals(reader.getName()))
@@ -75,6 +113,11 @@ public class PullParser extends RepositoryParser
     public CapabilityImpl parseCapability(Reader r) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+<<<<<<< HEAD
+=======
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(r);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !CAPABILITY.equals(reader.getName()))
@@ -87,6 +130,11 @@ public class PullParser extends RepositoryParser
     public PropertyImpl parseProperty(Reader r) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+<<<<<<< HEAD
+=======
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(r);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !P.equals(reader.getName()))
@@ -99,6 +147,11 @@ public class PullParser extends RepositoryParser
     public RequirementImpl parseRequirement(Reader r) throws Exception
     {
         XmlPullParser reader = new KXmlParser();
+<<<<<<< HEAD
+=======
+        reader.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         reader.setInput(r);
         int event = reader.nextTag();
         if (event != XmlPullParser.START_TAG || !REQUIRE.equals(reader.getName()))
@@ -148,7 +201,11 @@ public class PullParser extends RepositoryParser
         return repository;
     }
 
+<<<<<<< HEAD
     private void sanityCheckEndElement(XmlPullParser reader, int event, String element)
+=======
+    static void sanityCheckEndElement(XmlPullParser reader, int event, String element)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         if (event != XmlPullParser.END_TAG || !element.equals(reader.getName()))
         {
@@ -367,7 +424,11 @@ public class PullParser extends RepositoryParser
         return requirement;
     }
 
+<<<<<<< HEAD
     public void ignoreTag(XmlPullParser reader) throws IOException, XmlPullParserException {
+=======
+    static void ignoreTag(XmlPullParser reader) throws IOException, XmlPullParserException {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         int level = 1;
         while (level > 0)
         {

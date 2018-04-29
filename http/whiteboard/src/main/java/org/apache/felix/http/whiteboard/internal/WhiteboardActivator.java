@@ -16,6 +16,7 @@
  */
 package org.apache.felix.http.whiteboard.internal;
 
+<<<<<<< HEAD
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
@@ -29,10 +30,23 @@ import org.apache.felix.http.base.internal.AbstractActivator;
 import org.apache.felix.http.base.internal.logger.SystemLogger;
 import java.util.ArrayList;
 import java.util.Hashtable;
+=======
+import java.util.ArrayList;
+
+import org.apache.felix.http.base.internal.AbstractActivator;
+import org.apache.felix.http.base.internal.logger.SystemLogger;
+import org.apache.felix.http.whiteboard.internal.manager.ExtenderManager;
+import org.apache.felix.http.whiteboard.internal.tracker.FilterTracker;
+import org.apache.felix.http.whiteboard.internal.tracker.HttpContextTracker;
+import org.apache.felix.http.whiteboard.internal.tracker.ListenersTracker;
+import org.apache.felix.http.whiteboard.internal.tracker.ServletTracker;
+import org.osgi.util.tracker.ServiceTracker;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 public final class WhiteboardActivator
     extends AbstractActivator
 {
+<<<<<<< HEAD
     private final ArrayList<ServiceTracker> trackers;
     private ExtenderManager manager;
     private ServiceRegistration httpPlugin;
@@ -64,21 +78,52 @@ public final class WhiteboardActivator
     }
 
     private void addTracker(ServiceTracker tracker)
+=======
+    private final ArrayList<ServiceTracker<?, ?>> trackers = new ArrayList<>();
+
+    @Override
+    protected void doStart()
+        throws Exception
+    {
+        final ExtenderManager manager = new ExtenderManager();
+        addTracker(new HttpContextTracker(getBundleContext(), manager));
+        addTracker(new FilterTracker(getBundleContext(), manager));
+        addTracker(new ServletTracker(getBundleContext(), manager));
+        addTracker(new ListenersTracker(getBundleContext(), manager));
+
+        SystemLogger.info("Apachde Felix Http Whiteboard Service started");
+    }
+
+    private void addTracker(ServiceTracker<?,?> tracker)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         this.trackers.add(tracker);
         tracker.open();
     }
 
+<<<<<<< HEAD
     protected void doStop()
         throws Exception
     {
         this.httpPlugin.unregister();
 
         for (ServiceTracker tracker : this.trackers) {
+=======
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        for (ServiceTracker<?,?> tracker : this.trackers) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             tracker.close();
         }
 
         this.trackers.clear();
+<<<<<<< HEAD
         this.manager.unregisterAll();
+=======
+
+        SystemLogger.info("Apachde Felix Http Whiteboard Service stopped");
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

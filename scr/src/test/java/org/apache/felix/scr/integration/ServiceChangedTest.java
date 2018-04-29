@@ -19,17 +19,30 @@
 package org.apache.felix.scr.integration;
 
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 
 import org.apache.felix.scr.Component;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.scr.integration.components.SimpleComponent;
 import org.apache.felix.scr.integration.components.SimpleServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+<<<<<<< HEAD
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 
 @RunWith(JUnit4TestRunner.class)
+=======
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+
+import junit.framework.TestCase;
+
+
+@RunWith(PaxExam.class)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class ServiceChangedTest extends ComponentTestBase
 {
     static
@@ -42,6 +55,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_optional_single_dynamic()
     {
         final Component component = findComponentByName( "test_optional_single_dynamic_target" );
@@ -55,6 +69,14 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_optional_single_dynamic() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_optional_single_dynamic_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertEquals( srv1, comp10.m_singleRef );
@@ -74,7 +96,11 @@ public class ServiceChangedTest extends ComponentTestBase
         // set target to not match any more
         srv1.setFilterProperty( "don't match" );
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertSame( comp10, comp11 );
         TestCase.assertNull( comp11.m_singleRef );
@@ -85,7 +111,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertSame( comp10, comp12 );
         TestCase.assertEquals( srv2, comp12.m_singleRef );
@@ -110,6 +140,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_required_single_dynamic()
     {
         final Component component = findComponentByName( "test_required_single_dynamic_target" );
@@ -123,6 +154,14 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_required_single_dynamic() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_required_single_dynamic_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertEquals( srv1, comp10.m_singleRef );
@@ -141,7 +180,11 @@ public class ServiceChangedTest extends ComponentTestBase
 
         // set target to not match any more -> deactivate this component
         srv1.setFilterProperty( "don't match" );
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_UNSATISFIED, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.UNSATISFIED_REFERENCE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         TestCase.assertNull( SimpleComponent.INSTANCE );
         TestCase.assertNull( comp10.m_singleRef );
         TestCase.assertTrue( comp10.m_multiRef.isEmpty() );
@@ -151,7 +194,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertEquals( srv2, comp12.m_singleRef );
@@ -176,6 +223,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_optional_multiple_dynamic()
     {
         final Component component = findComponentByName( "test_optional_multiple_dynamic_target" );
@@ -189,6 +237,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_optional_multiple_dynamic() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_optional_multiple_dynamic_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -208,7 +263,11 @@ public class ServiceChangedTest extends ComponentTestBase
         // set target to not match any more
         srv1.setFilterProperty( "don't match" );
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertSame( comp10, comp11 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -219,7 +278,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertSame( comp10, comp12 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -247,6 +310,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_required_multiple_dynamic()
     {
         final Component component = findComponentByName( "test_required_multiple_dynamic_target" );
@@ -260,6 +324,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_required_multiple_dynamic() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_required_multiple_dynamic_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -279,7 +350,11 @@ public class ServiceChangedTest extends ComponentTestBase
         // set target to not match any more
         srv1.setFilterProperty( "don't match" );
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_UNSATISFIED, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.UNSATISFIED_REFERENCE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertNull( comp11 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -290,7 +365,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertNull( comp12.m_singleRef );
@@ -318,6 +397,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_optional_single_static()
     {
         final Component component = findComponentByName( "test_optional_single_static_target" );
@@ -331,6 +411,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_optional_single_static() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_optional_single_static_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertEquals( srv1, comp10.m_singleRef );
@@ -351,7 +438,11 @@ public class ServiceChangedTest extends ComponentTestBase
         srv1.setFilterProperty( "don't match" );
         delay(); // async reactivation
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp11 );
         TestCase.assertNull( comp11.m_singleRef );
@@ -362,7 +453,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertSame( comp11, comp12 );
@@ -397,6 +492,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_required_single_static()
     {
         final Component component = findComponentByName( "test_required_single_static_target" );
@@ -410,6 +506,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_required_single_static() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_required_single_static_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertEquals( srv1, comp10.m_singleRef );
@@ -428,7 +531,11 @@ public class ServiceChangedTest extends ComponentTestBase
 
         // set target to not match any more -> deactivate this component
         srv1.setFilterProperty( "don't match" );
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_UNSATISFIED, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.UNSATISFIED_REFERENCE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         TestCase.assertNull( SimpleComponent.INSTANCE );
         TestCase.assertNull( comp10.m_singleRef );
         TestCase.assertTrue( comp10.m_multiRef.isEmpty() );
@@ -438,7 +545,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertEquals( srv2, comp12.m_singleRef );
@@ -471,6 +582,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_optional_multiple_static()
     {
         final Component component = findComponentByName( "test_optional_multiple_static_target" );
@@ -484,6 +596,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_optional_multiple_static() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_optional_multiple_static_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -504,7 +623,11 @@ public class ServiceChangedTest extends ComponentTestBase
         srv1.setFilterProperty( "don't match" );
         delay(); // async reactivation (for unbind)
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp11 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -519,7 +642,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding (not expected for an optional static ref)
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertSame( comp11, comp12 );
@@ -541,7 +668,11 @@ public class ServiceChangedTest extends ComponentTestBase
         srv2.setFilterProperty( "don't match" );
         delay(); // allow reactivation delay (for unbind/bind)
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp13 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp13 );
         TestCase.assertSame( comp11, comp13 );
@@ -555,6 +686,7 @@ public class ServiceChangedTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_required_multiple_static()
     {
         final Component component = findComponentByName( "test_required_multiple_static_target" );
@@ -568,6 +700,13 @@ public class ServiceChangedTest extends ComponentTestBase
         delay();
 
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+    public void test_required_multiple_static() throws Exception
+    {
+        final SimpleServiceImpl srv1 = SimpleServiceImpl.create( bundleContext, "srv1" );
+        String name = "test_required_multiple_static_target";
+        getDisabledConfigurationAndEnable(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp10 = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( comp10 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -587,7 +726,11 @@ public class ServiceChangedTest extends ComponentTestBase
         // set target to not match any more
         srv1.setFilterProperty( "don't match" );
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_UNSATISFIED, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.UNSATISFIED_REFERENCE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp11 = SimpleComponent.INSTANCE;
         TestCase.assertNull( comp11 );
         TestCase.assertNull( comp10.m_singleRef );
@@ -598,7 +741,11 @@ public class ServiceChangedTest extends ComponentTestBase
         final SimpleServiceImpl srv2 = SimpleServiceImpl.create( bundleContext, "srv2" );
         delay(); // async binding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp12 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp12 );
         TestCase.assertNull( comp12.m_singleRef );
@@ -619,7 +766,11 @@ public class ServiceChangedTest extends ComponentTestBase
         srv2.setFilterProperty( "don't match" );
         delay(); // allow reactivation/rebinding
 
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_ACTIVE, component.getState() );
+=======
+        findComponentConfigurationByName(name, ComponentConfigurationDTO.ACTIVE);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         final SimpleComponent comp13 = SimpleComponent.INSTANCE;
         TestCase.assertNotSame( comp10, comp13 );
         TestCase.assertNotSame( comp11, comp13 );
@@ -629,5 +780,9 @@ public class ServiceChangedTest extends ComponentTestBase
         TestCase.assertFalse( comp13.m_multiRef.contains( srv2 ) );
         TestCase.assertEquals( 1, comp13.m_multiRefBind );
         TestCase.assertEquals( 0, comp13.m_multiRefUnbind);
+<<<<<<< HEAD
    }
+=======
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

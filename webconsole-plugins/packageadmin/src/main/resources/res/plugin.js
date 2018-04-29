@@ -25,7 +25,30 @@ var dupsTableBody = false;
 var dupsTableTemplate = false;
 var statline = false;
 
+<<<<<<< HEAD
 function linkBundle(bnd) { return '<a href="{0}/bundles/{1}">{2} ({3})</a>'.msgFormat(appRoot, bnd.bid, bnd.bsn, bnd.bid) }
+=======
+function linkBundle(bnd) { return '<a href="{0}/bundles/{1}">{2} ({3})</a>'.msgFormat(appRoot, bnd.bid, bnd.bsn, bnd.bid) }
+function uses(uses) {
+    var result = ""; 
+    if (uses) {
+        resul = "<table>";
+        for(var i in uses) {
+            result += "<tr><td>";
+            result += linkBundle(uses[i]);
+            result += "</td><td>";
+            if (uses[i].ver) {
+                result += uses[i].ver;
+            } else {
+                result += "&mdash;";
+            }
+            result += "</td></tr>";
+        }
+        result += "</table>";
+    }
+    return result;
+}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 $(function() {
 	findField = $('#findField');
@@ -63,7 +86,12 @@ $(function() {
 						var tr = findTableTemplate.clone()
 							.find('td.pkg').text(pkg.name).end()
 							.find('td.ver').text(exp.version).end()
+<<<<<<< HEAD
 							.find('td.bnd').html(linkBundle(exp)).end()
+=======
+							.find('td.bnd').html(linkBundle(exp)).end()
+							.find('td.use').html(uses(exp.importers)).end()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 							.appendTo(findTableBody);
 						if (response.maven && response.maven[exp.bid]) {
 							var mvn = response.maven[exp.bid];
@@ -100,8 +128,12 @@ $(function() {
 						.find('td.ver').text(exp.version).end()
 						.find('td.exp').html(linkBundle(exp)).end();
 					if (exp.importers) {
+<<<<<<< HEAD
 						var txt = ''; for(var j in exp.importers) txt += linkBundle(exp.importers[j]) + '<br/>';
 						td.find('td.imp').html( txt );
+=======
+						td.find('td.imp').html(uses(exp.importers));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 					}
 					if (i==0) {
 						td.find('td.pkg').attr('rowspan', pkg.entries.length);

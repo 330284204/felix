@@ -30,8 +30,15 @@ import java.io.PushbackReader;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.BitSet;
 import java.util.Collection;
+=======
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -73,6 +80,8 @@ public class ConfigurationHandler
     protected static final int TOKEN_VAL_OPEN = '"'; // '{';
     protected static final int TOKEN_VAL_CLOS = '"'; // '}';
 
+    protected static final int TOKEN_COMMENT = '#';
+
     // simple types (string & primitive wrappers)
     protected static final int TOKEN_SIMPLE_STRING = 'T';
     protected static final int TOKEN_SIMPLE_INTEGER = 'I';
@@ -95,9 +104,16 @@ public class ConfigurationHandler
     protected static final int TOKEN_PRIMITIVE_BOOLEAN = 'b';
 
     protected static final String CRLF = "\r\n";
+    protected static final String INDENT = "  ";
+    protected static final String COLLECTION_LINE_BREAK = " \\\r\n";
 
+<<<<<<< HEAD
     protected static final Map code2Type;
     protected static final Map type2Code;
+=======
+    protected static final Map<Integer, Class<?>> code2Type;
+    protected static final Map<Class<?>, Integer> type2Code;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // set of valid characters for "symblic-name"
     private static final BitSet NAME_CHARS;
@@ -105,7 +121,7 @@ public class ConfigurationHandler
 
     static
     {
-        type2Code = new HashMap();
+        type2Code = new HashMap<Class<?>, Integer>();
 
         // simple (exclusive String whose type code is not written)
         type2Code.put( Integer.class, new Integer( TOKEN_SIMPLE_INTEGER ) );
@@ -130,10 +146,9 @@ public class ConfigurationHandler
         // reverse map to map type codes to classes, string class mapping
         // to be added manually, as the string type code is not written and
         // hence not included in the type2Code map
-        code2Type = new HashMap();
-        for ( Iterator ti = type2Code.entrySet().iterator(); ti.hasNext(); )
+        code2Type = new HashMap<Integer, Class<?>>();
+        for(final Map.Entry<Class<?>, Integer> entry : type2Code.entrySet())
         {
-            Map.Entry entry = ( Map.Entry ) ti.next();
             code2Type.put( entry.getValue(), entry.getKey() );
         }
         code2Type.put( new Integer( TOKEN_SIMPLE_STRING ), String.class );
@@ -186,21 +201,33 @@ public class ConfigurationHandler
      * given <code>OutputStream</code>.
      * <p>
      * This method writes at the current location in the stream and does not
+<<<<<<< HEAD
      * close the outputstream.
      *
      * @param out
      *            The <code>OutputStream</code> to write the configurtion data
+=======
+     * close the output stream.
+     *
+     * @param out
+     *            The <code>OutputStream</code> to write the configuration data
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      *            to.
      * @param properties
      *            The <code>Dictionary</code> to write.
      * @throws IOException
+<<<<<<< HEAD
      *             If an error occurrs writing to the output stream.
+=======
+     *             If an error occurs writing to the output stream.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      */
+    @SuppressWarnings("rawtypes")
     public static void write( OutputStream out, Dictionary properties ) throws IOException
     {
         BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( out, ENCODING ) );
 
-        for ( Enumeration ce = properties.keys(); ce.hasMoreElements(); )
+        for ( Enumeration ce = orderedKeys(properties); ce.hasMoreElements(); )
         {
             String key = ( String ) ce.nextElement();
 
@@ -214,12 +241,39 @@ public class ConfigurationHandler
         bw.flush();
     }
 
+    /**
+     * Generates an <code>Enumeration</code> for the given
+     * <code>Dictionary</code> where the keys of the <code>Dictionary</code>
+     * are provided in sorted order.
+     *
+     * @param properties
+     *                   The <code>Dictionary</code> that keys are sorted.
+     * @return An <code>Enumeration</code> that provides the keys of
+     *         properties in an ordered manner.
+     */
+    @SuppressWarnings("rawtypes")
+    private static Enumeration orderedKeys(Dictionary properties) {
+        String[] keyArray = new String[properties.size()];
+        int i = 0;
+        for ( Enumeration ce = properties.keys(); ce.hasMoreElements(); )
+        {
+            keyArray[i] = ( String ) ce.nextElement();
+            i++;
+        }
+        Arrays.sort(keyArray);
+        return Collections.enumeration( Arrays.asList( keyArray ) );
+    }
+
 
     /**
      * Reads configuration data from the given <code>InputStream</code> and
      * returns a new <code>Dictionary</code> object containing the data.
      * <p>
+<<<<<<< HEAD
      * This method reads from the current location in the stream upto the end of
+=======
+     * This method reads from the current location in the stream up to the end of
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * the stream but does not close the stream at the end.
      *
      * @param ins
@@ -229,9 +283,14 @@ public class ConfigurationHandler
      *         data. This object may be empty if the stream contains no
      *         configuration data.
      * @throws IOException
+<<<<<<< HEAD
      *             If an error occurrs reading from the stream. This exception
+=======
+     *             If an error occurs reading from the stream. This exception
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      *             is also thrown if a syntax error is encountered.
      */
+    @SuppressWarnings("rawtypes")
     public static Dictionary read( InputStream ins ) throws IOException
     {
         return new ConfigurationHandler().readInternal( ins );
@@ -252,7 +311,7 @@ public class ConfigurationHandler
     private int pos;
 
 
-    private Dictionary readInternal( InputStream ins ) throws IOException
+    private Dictionary<String, ?> readInternal( InputStream ins ) throws IOException
     {
         BufferedReader br = new BufferedReader( new InputStreamReader( ins, ENCODING ) );
         PushbackReader pr = new PushbackReader( br, 1 );
@@ -262,14 +321,14 @@ public class ConfigurationHandler
         line = 0;
         pos = 0;
 
-        Hashtable configuration = new Hashtable();
+        Dictionary<String, Object> configuration = new Hashtable<String, Object>();
         token = 0;
-        while ( nextToken( pr ) == TOKEN_NAME )
+        while ( nextToken( pr, true ) == TOKEN_NAME )
         {
             String key = tokenValue;
 
             // expect equal sign
-            if ( nextToken( pr ) != TOKEN_EQ )
+            if ( nextToken( pr, false ) != TOKEN_EQ )
             {
                 throw readFailure( token, TOKEN_EQ );
             }
@@ -333,10 +392,17 @@ public class ConfigurationHandler
 
     private Object readArray( int typeCode, PushbackReader pr ) throws IOException
     {
+<<<<<<< HEAD
         List list = new ArrayList();
         for ( ;; )
         {
             int c = read(pr);
+=======
+        List<Object> list = new ArrayList<Object>();
+        for ( ;; )
+        {
+            int c = ignorablePageBreakAndWhiteSpace( pr );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if ( c == TOKEN_VAL_OPEN )
             {
                 Object value = readSimple( typeCode, pr );
@@ -350,12 +416,20 @@ public class ConfigurationHandler
 
                 list.add( value );
 
+<<<<<<< HEAD
                 c = read( pr );
+=======
+                c = ignorablePageBreakAndWhiteSpace( pr );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
 
             if ( c == TOKEN_ARR_CLOS )
             {
+<<<<<<< HEAD
                 Class type = ( Class ) code2Type.get( new Integer( typeCode ) );
+=======
+                Class<?> type = code2Type.get( new Integer( typeCode ) );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 Object array = Array.newInstance( type, list.size() );
                 for ( int i = 0; i < list.size(); i++ )
                 {
@@ -375,12 +449,21 @@ public class ConfigurationHandler
     }
 
 
+<<<<<<< HEAD
     private Collection readCollection( int typeCode, PushbackReader pr ) throws IOException
     {
         Collection collection = new ArrayList();
         for ( ;; )
         {
             int c = read( pr );
+=======
+    private Collection<Object> readCollection( int typeCode, PushbackReader pr ) throws IOException
+    {
+        Collection<Object> collection = new ArrayList<Object>();
+        for ( ;; )
+        {
+            int c = ignorablePageBreakAndWhiteSpace( pr );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if ( c == TOKEN_VAL_OPEN )
             {
                 Object value = readSimple( typeCode, pr );
@@ -394,7 +477,11 @@ public class ConfigurationHandler
 
                 collection.add( value );
 
+<<<<<<< HEAD
                 c = read( pr );
+=======
+                c = ignorablePageBreakAndWhiteSpace( pr );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
 
             if ( c == TOKEN_VEC_CLOS )
@@ -471,6 +558,7 @@ public class ConfigurationHandler
 
 
     private void ensureNext( PushbackReader pr, int expected ) throws IOException
+<<<<<<< HEAD
     {
         int next = read( pr );
         if ( next != expected )
@@ -481,25 +569,20 @@ public class ConfigurationHandler
 
 
     private boolean checkNext( PushbackReader pr, int expected ) throws IOException
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         int next = read( pr );
-        if ( next < 0 )
+        if ( next != expected )
         {
-            return false;
+            readFailure( next, expected );
         }
-
-        if ( next == expected )
-        {
-            return true;
-        }
-
-        return false;
     }
 
 
     private String readQuoted( PushbackReader pr ) throws IOException
     {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for ( ;; )
         {
             int c = read( pr );
@@ -557,8 +640,7 @@ public class ConfigurationHandler
         }
     }
 
-
-    private int nextToken( PushbackReader pr ) throws IOException
+    private int nextToken( PushbackReader pr, final boolean newLine ) throws IOException
     {
         int c = ignorableWhiteSpace( pr );
 
@@ -566,6 +648,22 @@ public class ConfigurationHandler
         if ( c < 0 )
         {
             return ( token = c );
+        }
+
+        // check for comment
+        if ( newLine && c == TOKEN_COMMENT )
+        {
+            // skip everything until end of line
+            do
+            {
+                c = read( pr );
+            } while ( c != -1 && c != '\n' );
+            if ( c == -1 )
+            {
+                return ( token = c);
+            }
+            // and start over
+            return nextToken( pr, true );
         }
 
         // check whether there is a name
@@ -599,6 +697,31 @@ public class ConfigurationHandler
     }
 
 
+<<<<<<< HEAD
+=======
+    private int ignorablePageBreakAndWhiteSpace( PushbackReader pr ) throws IOException
+    {
+        int c = ignorableWhiteSpace( pr );
+        for ( ;; )
+        {
+            if ( c != '\\' )
+            {
+                break;
+            }
+            int c1 = pr.read();
+            if ( c1 == '\r' || c1 == '\n' )
+            {
+                c = ignorableWhiteSpace( pr );
+            } else {
+                pr.unread(c1);
+                break;
+            }
+        }
+        return c;
+    }
+
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private int read( PushbackReader pr ) throws IOException
     {
         int c = pr.read();
@@ -656,14 +779,18 @@ public class ConfigurationHandler
 
     private static void writeValue( Writer out, Object value ) throws IOException
     {
-        Class clazz = value.getClass();
+        Class<?> clazz = value.getClass();
         if ( clazz.isArray() )
         {
             writeArray( out, value );
         }
         else if ( value instanceof Collection )
         {
+<<<<<<< HEAD
             writeCollection( out, ( Collection ) value );
+=======
+            writeCollection( out, ( Collection<?> ) value );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         else
         {
@@ -678,45 +805,75 @@ public class ConfigurationHandler
         int size = Array.getLength( arrayValue );
         writeType( out, arrayValue.getClass().getComponentType() );
         out.write( TOKEN_ARR_OPEN );
+        out.write( COLLECTION_LINE_BREAK );
         for ( int i = 0; i < size; i++ )
         {
-            if ( i > 0 )
-                out.write( TOKEN_COMMA );
-            writeSimple( out, Array.get( arrayValue, i ) );
+            writeCollectionElement(out, Array.get( arrayValue, i ));
         }
+        out.write( INDENT );
         out.write( TOKEN_ARR_CLOS );
     }
 
 
+<<<<<<< HEAD
     private static void writeCollection( Writer out, Collection collection ) throws IOException
+=======
+    private static void writeCollection( Writer out, Collection<?> collection ) throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         if ( collection.isEmpty() )
         {
             out.write( TOKEN_VEC_OPEN );
+<<<<<<< HEAD
+=======
+            out.write( COLLECTION_LINE_BREAK );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             out.write( TOKEN_VEC_CLOS );
         }
         else
         {
+<<<<<<< HEAD
             Iterator ci = collection.iterator();
+=======
+            Iterator<?> ci = collection.iterator();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             Object firstElement = ci.next();
 
             writeType( out, firstElement.getClass() );
             out.write( TOKEN_VEC_OPEN );
+<<<<<<< HEAD
             writeSimple( out, firstElement );
 
             while ( ci.hasNext() )
             {
                 out.write( TOKEN_COMMA );
                 writeSimple( out, ci.next() );
+=======
+            out.write( COLLECTION_LINE_BREAK );
+
+            writeCollectionElement( out, firstElement );
+
+            while ( ci.hasNext() )
+            {
+                writeCollectionElement( out, ci.next() );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
             out.write( TOKEN_VEC_CLOS );
         }
     }
 
 
-    private static void writeType( Writer out, Class valueType ) throws IOException
+    private static void writeCollectionElement(Writer out, Object element) throws IOException {
+        out.write( INDENT );
+        writeSimple( out, element );
+        out.write( TOKEN_COMMA );
+        out.write(COLLECTION_LINE_BREAK);
+    }
+
+
+    private static void writeType( Writer out, Class<?> valueType ) throws IOException
     {
-        Integer code = ( Integer ) type2Code.get( valueType );
+        Integer code = type2Code.get( valueType );
         if ( code != null )
         {
             out.write( ( char ) code.intValue() );

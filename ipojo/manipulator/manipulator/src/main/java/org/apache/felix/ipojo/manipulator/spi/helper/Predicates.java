@@ -198,6 +198,7 @@ public class Predicates {
         public Predicate named(final String expected) {
             return new Predicate() {
                 public boolean matches(BindingContext context) {
+<<<<<<< HEAD
                     if (context.getNode() instanceof FieldNode) {
                         FieldNode field = (FieldNode) context.getNode();
                         return field.name.equals(expected);
@@ -210,6 +211,20 @@ public class Predicates {
 
                     if (context.getNode() instanceof ClassNode) {
                         ClassNode clazz = (ClassNode) context.getNode();
+=======
+                    if (context.getFieldNode() != null) {
+                        FieldNode field = context.getFieldNode();
+                        return field.name.equals(expected);
+                    }
+
+                    if (context.getMethodNode() != null) {
+                        MethodNode method = context.getMethodNode();
+                        return method.name.equals(expected);
+                    }
+
+                    if (context.getClassNode() != null) {
+                        ClassNode clazz = context.getClassNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return clazz.name.equals(expected);
                     }
 

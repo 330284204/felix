@@ -18,6 +18,7 @@
  */
 package org.apache.felix.scr.integration;
 
+<<<<<<< HEAD
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -39,12 +40,29 @@ import org.osgi.service.component.ComponentException;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 
+=======
+import java.util.Dictionary;
+
+import org.apache.felix.scr.integration.components.SimpleComponent;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.component.ComponentFactory;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+
+import junit.framework.TestCase;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /**
  * Tests of nonstandard ComponentFactory behavior
  */
 
+<<<<<<< HEAD
 @RunWith(JUnit4TestRunner.class)
+=======
+@RunWith(PaxExam.class)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class ConfigurationComponentFactoryTest extends ComponentTestBase
 {
 
@@ -58,16 +76,22 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
         // paxRunnerVmOption = DEBUG_VM_OPTION;
     }
 
+<<<<<<< HEAD
 
 
     @Test
     public void test_non_spec_component_factory_with_factory_configuration() throws InvalidSyntaxException, IOException
+=======
+    @Test
+    public void test_non_spec_component_factory_with_factory_configuration() throws Exception
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         // this test is about non-standard behaviour of ComponentFactory services
 
         final String componentname = "factory.component";
         final String componentfactory = "factory.component.factory";
 
+<<<<<<< HEAD
         final Component component = findComponentByName( componentname );
 
         TestCase.assertNotNull( component );
@@ -90,11 +114,21 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
         TestCase.assertNotNull( factory );
 
         final String factoryConfigPid = createFactoryConfiguration( componentname );
+=======
+        getConfigurationsDisabledThenEnable( componentname, 0, -1 );
+
+        TestCase.assertNull( SimpleComponent.INSTANCE );
+
+        final ComponentFactory factory = getComponentFactory( componentfactory );
+
+        final String factoryConfigPid = createFactoryConfiguration( componentname, "?" );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         delay();
 
         TestCase.assertNotNull( SimpleComponent.INSTANCE );
         TestCase.assertEquals( PROP_NAME, SimpleComponent.INSTANCE.getProperty( PROP_NAME ) );
 
+<<<<<<< HEAD
         final Map<?, ?> instanceMap = ( Map<?, ?> ) getFieldValue( component, "m_configuredServices" );
         TestCase.assertNotNull( instanceMap );
         TestCase.assertEquals( 1, instanceMap.size() );
@@ -127,6 +161,14 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
         // modify the configuration
         Configuration config = getConfigurationAdmin().getConfiguration( factoryConfigPid );
         Dictionary props = config.getProperties();
+=======
+        // check registered components
+        checkConfigurationCount( componentname, 1, ComponentConfigurationDTO.ACTIVE );
+
+        // modify the configuration
+        Configuration config = getConfigurationAdmin().getConfiguration( factoryConfigPid, "?" );
+        Dictionary<String, Object> props = config.getProperties();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         props.put( PROP_NAME, PROP_NAME_FACTORY );
         config.update( props );
         delay();
@@ -136,6 +178,7 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
         TestCase.assertEquals( PROP_NAME_FACTORY, SimpleComponent.INSTANCE.getProperty( PROP_NAME ) );
 
         // check registered components
+<<<<<<< HEAD
         allFactoryComponents = findComponentsByName( componentname );
         TestCase.assertNotNull( allFactoryComponents );
         TestCase.assertEquals( 2, allFactoryComponents.length );
@@ -194,12 +237,23 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
                 TestCase.fail( "Unexpected Component " + c );
             }
         }
+=======
+        checkConfigurationCount( componentname, 1, ComponentConfigurationDTO.ACTIVE );
+
+        // disable the factory
+        disableAndCheck( componentname );
+        delay();
+
+        // enabled the factory, factory configuration results in component instance
+        getConfigurationsDisabledThenEnable( componentname, 1, ComponentConfigurationDTO.ACTIVE );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // delete the configuration
         getConfigurationAdmin().getConfiguration( factoryConfigPid ).delete();
         delay();
 
         // factory is enabled but instance has been removed
+<<<<<<< HEAD
         TestCase.assertEquals( Component.STATE_FACTORY, component.getState() );
         TestCase.assertNull( SimpleComponent.INSTANCE );
         TestCase.assertEquals( 0, instanceMap.size() );
@@ -220,6 +274,11 @@ public class ConfigurationComponentFactoryTest extends ComponentTestBase
                 TestCase.fail( "Unexpected Component " + c );
             }
         }
+=======
+
+        // check registered components
+        checkConfigurationCount( componentname, 0, ComponentConfigurationDTO.ACTIVE );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 }

@@ -18,14 +18,20 @@
  */
 package org.apache.felix.deploymentadmin.spi;
 
+<<<<<<< HEAD
 import java.io.IOException;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.InputStream;
 
 import org.apache.felix.deploymentadmin.AbstractDeploymentPackage;
 import org.apache.felix.deploymentadmin.BundleInfoImpl;
 import org.osgi.framework.Bundle;
+<<<<<<< HEAD
 import org.osgi.framework.BundleException;
 import org.osgi.service.deploymentadmin.DeploymentException;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.log.LogService;
 
 /**
@@ -33,7 +39,11 @@ import org.osgi.service.log.LogService;
  */
 public class DropAllBundlesCommand extends Command {
 
+<<<<<<< HEAD
     public void execute(DeploymentSessionImpl session) throws DeploymentException {
+=======
+    protected void doExecute(DeploymentSessionImpl session) throws Exception {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         AbstractDeploymentPackage target = session.getTargetAbstractDeploymentPackage();
         LogService log = session.getLog();
 
@@ -49,14 +59,22 @@ public class DropAllBundlesCommand extends Command {
                     addRollback(new InstallBundleRunnable(bundle, target, log));
                 }
             }
+<<<<<<< HEAD
             catch (BundleException be) {
+=======
+            catch (Exception be) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 log.log(LogService.LOG_WARNING, "Bundle '" + symbolicName + "' could not be uninstalled", be);
             }
         }
     }
 
+<<<<<<< HEAD
     private static class InstallBundleRunnable implements Runnable {
 
+=======
+    private static class InstallBundleRunnable extends AbstractAction {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         private final AbstractDeploymentPackage m_target;
         private final Bundle m_bundle;
         private final LogService m_log;
@@ -67,13 +85,18 @@ public class DropAllBundlesCommand extends Command {
             m_log = log;
         }
 
+<<<<<<< HEAD
         public void run() {
+=======
+        protected void doRun() throws Exception {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             InputStream is = null;
             try {
                 is = m_target.getBundleStream(m_bundle.getSymbolicName());
                 if (is != null) {
                     m_bundle.update(is);
                 }
+<<<<<<< HEAD
                 throw new Exception("Unable to get Inputstream for bundle " + m_bundle.getSymbolicName());
             }
             catch (Exception e) {
@@ -89,5 +112,19 @@ public class DropAllBundlesCommand extends Command {
                 }
             }
         }
+=======
+                else {
+                    throw new RuntimeException("Unable to get inputstream for bundle '" + m_bundle.getSymbolicName() + "'");
+                }
+            }
+            finally {
+                closeSilently(is);
+            }
+        }
+
+        protected void onFailure(Exception e) {
+            m_log.log(LogService.LOG_WARNING, "Could not rollback uninstallation of bundle '" + m_bundle.getSymbolicName() + "'", e);
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

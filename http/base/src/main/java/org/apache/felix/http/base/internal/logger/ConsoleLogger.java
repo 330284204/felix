@@ -18,6 +18,7 @@
  */
 package org.apache.felix.http.base.internal.logger;
 
+<<<<<<< HEAD
 import org.osgi.framework.ServiceReference;
 import java.io.PrintStream;
 
@@ -65,3 +66,66 @@ public final class ConsoleLogger
         }
     }
 }
+=======
+import java.io.PrintStream;
+
+import org.osgi.service.log.LogService;
+
+public final class ConsoleLogger implements InternalLogger
+{
+    @Override
+    public void log(final int level, final String message, final Throwable ex)
+    {
+        if ( isLogEnabled(level) )
+        {
+            // output depending on level
+            final PrintStream out = ( level == LogService.LOG_ERROR )? System.err: System.out;
+
+            // level as a string
+            final StringBuilder buf = new StringBuilder();
+            switch (level)
+            {
+                case ( LogService.LOG_DEBUG ):
+                    buf.append( "[DEBUG] " );
+                    break;
+                case ( LogService.LOG_INFO ):
+                    buf.append( "[INFO] " );
+                    break;
+                case ( LogService.LOG_WARNING ):
+                    buf.append( "[WARN] " );
+                    break;
+                case ( LogService.LOG_ERROR ):
+                    buf.append( "[ERROR] " );
+                    break;
+                default:
+                    buf.append( "UNK  : " );
+                    break;
+            }
+
+            buf.append(message);
+
+            final String msg = buf.toString();
+
+            if ( ex == null )
+            {
+                out.println(msg);
+            }
+            else
+            {
+                // keep the message and the stacktrace together
+                synchronized ( out )
+                {
+                    out.println( msg );
+                    ex.printStackTrace( out );
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isLogEnabled(final int level)
+    {
+        return true;
+    }
+}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368

@@ -5,9 +5,15 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
+<<<<<<< HEAD
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
+=======
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +22,7 @@
  */
 package org.apache.felix.inventory.impl;
 
+<<<<<<< HEAD
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -25,6 +32,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 /**
  * The web console plugin for a inventory printer.
  */
@@ -38,7 +47,11 @@ public class WebConsolePlugin extends AbstractWebConsolePlugin
 
     /**
      * Constructor
+<<<<<<< HEAD
      * 
+=======
+     *
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * @param inventoryPrinterManager The inventory printer manager.
      * @param printerName The name of the printer this plugin is displaying.
      */
@@ -52,6 +65,7 @@ public class WebConsolePlugin extends AbstractWebConsolePlugin
     {
         return this.inventoryPrinterManager.getHandler(this.printerName);
     }
+<<<<<<< HEAD
 
     public static ServiceRegistration register(final BundleContext context, final InventoryPrinterManagerImpl manager,
         final InventoryPrinterDescription desc)
@@ -76,4 +90,6 @@ public class WebConsolePlugin extends AbstractWebConsolePlugin
         }, props);
 
     }
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

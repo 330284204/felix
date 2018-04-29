@@ -23,8 +23,21 @@ import java.lang.annotation.Target;
 
 
 /**
+<<<<<<< HEAD
  * This annotation declares a post-service-registration method.
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
+=======
+ * Declares a method to be <a href="http://felix.apache.org/documentation/subprojects/apache-felix-ipojo/apache-felix-ipojo-userguide/describing-components/providing-osgi-services.html#being-notified-of-the-service-registration-and-unregistration">notified after service registration</a> is effective.
+ *
+ * <pre>
+ *     {@code @PostRegistration}
+ *     public void registered(ServiceReference<?> reference) {
+ *         // Called after the service publication
+ *     }
+ * </pre>
+ * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
+ * @see org.apache.felix.ipojo.annotations.Provides
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface PostRegistration {

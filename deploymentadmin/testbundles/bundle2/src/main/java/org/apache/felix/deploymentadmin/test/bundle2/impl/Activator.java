@@ -43,6 +43,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
     }
 
     public Object addingService(ServiceReference reference) {
+<<<<<<< HEAD
         Object service = m_context.getService(reference);
         System.out.println("Service added: " + service);
         return service;
@@ -54,5 +55,16 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 
     public void removedService(ServiceReference reference, Object service) {
         System.out.println("Service removed: " + service);
+=======
+        return null;
+    }
+
+    public void modifiedService(ServiceReference reference, Object service) {
+        // Nop
+    }
+
+    public void removedService(ServiceReference reference, Object service) {
+        // Nop
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

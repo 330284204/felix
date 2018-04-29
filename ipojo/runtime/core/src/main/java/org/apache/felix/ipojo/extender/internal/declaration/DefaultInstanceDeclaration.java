@@ -21,6 +21,10 @@ package org.apache.felix.ipojo.extender.internal.declaration;
 
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.extender.InstanceDeclaration;
+<<<<<<< HEAD
+=======
+import org.osgi.framework.Bundle;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.BundleContext;
 
 import java.util.Dictionary;
@@ -78,6 +82,19 @@ public class DefaultInstanceDeclaration extends AbstractDeclaration implements I
         return m_instanceName;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Gets the bundle that is declaring this instance.
+     *
+     * @return the bundle object
+     * @since 1.11.2
+     */
+    public Bundle getBundle() {
+        return m_bundleContext.getBundle();
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     @Override
     protected Dictionary<String, ?> getServiceProperties() {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();

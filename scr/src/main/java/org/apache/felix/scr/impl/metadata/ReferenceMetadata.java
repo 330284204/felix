@@ -21,14 +21,22 @@ package org.apache.felix.scr.impl.metadata;
 import java.util.Set;
 import java.util.TreeSet;
 
+<<<<<<< HEAD
 import org.apache.felix.scr.impl.helper.Logger;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 /**
  * Information associated to a dependency
  *
  */
 public class ReferenceMetadata
 {
+<<<<<<< HEAD
+=======
+	public enum ReferenceScope {bundle, prototype, prototype_required}
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     // constant for option single reference - 0..1
     public static final String CARDINALITY_0_1 = "0..1";
 
@@ -42,7 +50,11 @@ public class ReferenceMetadata
     public static final String CARDINALITY_1_N = "1..n";
 
     // set of valid cardinality settings
+<<<<<<< HEAD
     private static final Set CARDINALITY_VALID;
+=======
+    private static final Set<String> CARDINALITY_VALID;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // constant for static policy
     public static final String POLICY_STATIC = "static";
@@ -51,7 +63,11 @@ public class ReferenceMetadata
     public static final String POLICY_DYNAMIC = "dynamic";
 
     // set of valid policy settings
+<<<<<<< HEAD
     private static final Set POLICY_VALID;
+=======
+    private static final Set<String> POLICY_VALID;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // constant for reluctant policy option
     public static final String POLICY_OPTION_RELUCTANT = "reluctant";
@@ -60,6 +76,7 @@ public class ReferenceMetadata
     public static final String POLICY_OPTION_GREEDY = "greedy";
 
     // set of valid policy option settings
+<<<<<<< HEAD
     private static final Set POLICY_OPTION_VALID;
 
     // Name for the reference (required)
@@ -70,11 +87,51 @@ public class ReferenceMetadata
 
     // Cardinality (optional, default="1..1")
     private String m_cardinality = null;
+=======
+    private static final Set<String> POLICY_OPTION_VALID;
+
+    // constant for update field strategy
+    private static final String FIELD_STRATEGY_UPDATE = "update";
+
+    // constant for replace field strategy
+    private static final String FIELD_STRATEGY_REPLACE = "replace";
+
+    // set of valid field strategy settings
+    private static final Set<String> FIELD_STRATEGY_VALID;
+
+    // constant for field value type service
+    public static final String FIELD_VALUE_TYPE_SERVICE = "service";
+
+    // constant for field value type properties
+    public static final String FIELD_VALUE_TYPE_PROPERTIES = "properties";
+
+    // constant for field value type reference
+    public static final String FIELD_VALUE_TYPE_REFERENCE = "reference";
+
+    // constant for field value type serviceobjects
+    public static final String FIELD_VALUE_TYPE_SERVICEOBJECTS = "serviceobjects";
+
+    // constant for field value type tuple
+    public static final String FIELD_VALUE_TYPE_TUPLE = "tuple";
+
+    // set of valid field value type settings
+    private static final Set<String> FIELD_VALUE_TYPE_VALID;
+
+    // Name for the reference (required)
+    private String m_name;
+
+    // Interface name (required)
+    private String m_interface;
+
+    // Cardinality (optional, default="1..1")
+    private String m_cardinality;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // Target (optional)
     private String m_target;
 
     // Name of the bind method (optional)
+<<<<<<< HEAD
     private String m_bind = null;
 
     // Name of the updated method (optional, since DS 1.1-felix)
@@ -91,21 +148,68 @@ public class ReferenceMetadata
 
     // Flag that is set once the component is verified (its properties cannot be changed)
     private boolean m_validated = false;
+=======
+    private String m_bind;
+
+    // Name of the updated method (optional, since DS 1.1-felix)
+    private String m_updated;
+
+    // Name of the unbind method (optional)
+    private String m_unbind;
+
+    // Name of the field (optional, since DS 1.3)
+    private String m_field;
+
+    // Name of the strategy for the field (optional, since DS 1.3)
+    private String m_field_option;
+
+    // Name of the value type for the field (optional, since DS 1.3)
+    // Since 1.4 also used for the parameter collection type (constructor)
+    private String m_collection_type;
+
+    // Policy attribute (optional, default = static)
+    private String m_policy;
+
+    // Policy option attribute (optional, default = reluctant)
+    private String m_policy_option;
+
+    private String m_scopeName;
+    private ReferenceScope m_scope = ReferenceScope.bundle;
+
+    // Parameter value (optional, since DS 1.4)
+    private String m_parameter;
+
+    // Parameter index, set based on {@code m_parameter} after validation
+    // (optional, since DS 1.4)
+    private Integer m_parameterIndex;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // Flags that store the values passed as strings
     private boolean m_isStatic = true;
     private boolean m_isOptional = false;
     private boolean m_isMultiple = false;
     private boolean m_isReluctant = true;
+<<<<<<< HEAD
 
     static
     {
         CARDINALITY_VALID = new TreeSet();
+=======
+    private boolean m_isReplace = true;
+
+    // Flag that is set once the component is verified (its properties cannot be changed)
+    private boolean m_validated = false;
+
+    static
+    {
+        CARDINALITY_VALID = new TreeSet<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         CARDINALITY_VALID.add( CARDINALITY_0_1 );
         CARDINALITY_VALID.add( CARDINALITY_0_N );
         CARDINALITY_VALID.add( CARDINALITY_1_1 );
         CARDINALITY_VALID.add( CARDINALITY_1_N );
 
+<<<<<<< HEAD
         POLICY_VALID = new TreeSet();
         POLICY_VALID.add( POLICY_DYNAMIC );
         POLICY_VALID.add( POLICY_STATIC );
@@ -115,6 +219,27 @@ public class ReferenceMetadata
         POLICY_OPTION_VALID.add( POLICY_OPTION_GREEDY );
     }
 
+=======
+        POLICY_VALID = new TreeSet<>();
+        POLICY_VALID.add( POLICY_DYNAMIC );
+        POLICY_VALID.add( POLICY_STATIC );
+
+        POLICY_OPTION_VALID = new TreeSet<>();
+        POLICY_OPTION_VALID.add( POLICY_OPTION_RELUCTANT );
+        POLICY_OPTION_VALID.add( POLICY_OPTION_GREEDY );
+
+        FIELD_STRATEGY_VALID = new TreeSet<>();
+        FIELD_STRATEGY_VALID.add( FIELD_STRATEGY_REPLACE );
+        FIELD_STRATEGY_VALID.add( FIELD_STRATEGY_UPDATE );
+
+        FIELD_VALUE_TYPE_VALID = new TreeSet<>();
+        FIELD_VALUE_TYPE_VALID.add ( FIELD_VALUE_TYPE_PROPERTIES );
+        FIELD_VALUE_TYPE_VALID.add ( FIELD_VALUE_TYPE_REFERENCE );
+        FIELD_VALUE_TYPE_VALID.add ( FIELD_VALUE_TYPE_SERVICE );
+        FIELD_VALUE_TYPE_VALID.add ( FIELD_VALUE_TYPE_SERVICEOBJECTS );
+        FIELD_VALUE_TYPE_VALID.add ( FIELD_VALUE_TYPE_TUPLE );
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /////////////////////////////////////////////// setters ///////////////////////////////////
 
@@ -273,9 +398,83 @@ public class ReferenceMetadata
     }
 
 
+<<<<<<< HEAD
     /////////////////////////////////////////////// getters ///////////////////////////////////
 
     /**
+=======
+    /**
+     * Setter for the field attribute
+     *
+     * @param field the field name
+     */
+    public void setField( final String field )
+    {
+        if ( m_validated )
+        {
+            return;
+        }
+
+        m_field = field;
+    }
+
+    /**
+     * Setter for the field strategy attribute
+     *
+     * @param strategy the field strategy
+     */
+    public void setFieldOption( final String strategy )
+    {
+        if ( m_validated )
+        {
+            return;
+        }
+
+        m_field_option = strategy;
+
+        m_isReplace = FIELD_STRATEGY_REPLACE.equals(strategy);
+    }
+
+    /**
+     * Setter for the field value type attribute
+     *
+     * @param valuetype the field value type
+     */
+    public void setFieldCollectionType( final String valuetype )
+    {
+        if ( m_validated )
+        {
+            return;
+        }
+
+        m_collection_type = valuetype;
+    }
+
+    public void setScope(String scopeName) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_scopeName = scopeName;
+	}
+
+    /**
+     * Setter for the parameter value
+     * DS 1.4
+     * @param attribute value
+     */
+	public void setParameter(String val) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_parameter = val;
+	}
+
+    /////////////////////////////////////////////// getters ///////////////////////////////////
+
+	/**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Returns the name of the reference
      *
      * @return A string containing the reference's name
@@ -377,6 +576,67 @@ public class ReferenceMetadata
     }
 
 
+<<<<<<< HEAD
+=======
+    /**
+     * Get the name of a field in the component implementation class that is used to hold
+     * the reference
+     *
+     * @return a String with the name of the field
+     */
+    public String getField()
+    {
+        return m_field;
+    }
+
+
+    /**
+     * Get the strategy of a field in the component implementation class that is used to hold
+     * the reference
+     *
+     * @return a String with the strategy name for the field
+     */
+    public String getFieldOption()
+    {
+        return m_field_option;
+    }
+
+    /**
+     * Get the value type of a field in the component implementation class that is used to hold
+     * the reference
+     *
+     * @return a String with the value type for the field
+     */
+    public String getFieldCollectionType()
+    {
+        return m_collection_type;
+    }
+
+    /**
+     * Get the parameter index, if specified.
+     * This method returns the correct value only after this metadata object has been validated
+     * by a call to {@link #validate(ComponentMetadata, Logger)} and the validation has been
+     * successful.
+     * DS 1.4
+     * @return The parameter index , if no parameter is set this returns {@code -null}
+     */
+    public Integer getParameterIndex()
+    {
+    	return m_parameterIndex;
+    }
+
+    /**
+     * Get the value type of a parameter in the component implementation class that is used to hold
+     * the reference
+     * DS 1.4
+     * @return a String with the value type for the parameter
+     */
+    public String getParameterCollectionType()
+    {
+        return m_collection_type;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     // Getters for boolean values that determine both policy and cardinality
 
     /**
@@ -389,7 +649,10 @@ public class ReferenceMetadata
         return m_isStatic;
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Test if dependency is optional (0..1 or 0..n)
      *
@@ -422,6 +685,18 @@ public class ReferenceMetadata
         return m_isReluctant;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Test if field strategy is replace.
+     *
+     * @return true if field strategy is replace
+     */
+    public boolean isReplace()
+    {
+        return m_isReplace;
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Returns the name of the component property referring to the {@link #getTarget() target}
@@ -435,17 +710,40 @@ public class ReferenceMetadata
         return getName() + ".target";
     }
 
+<<<<<<< HEAD
+=======
+    public String getMinCardinalityName()
+    {
+        return getName() + ".cardinality.minimum";
+    }
+
+
+    public ReferenceScope getScope() {
+		return m_scope;
+	}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      *  Method used to verify if the semantics of this metadata are correct
      *
      */
+<<<<<<< HEAD
     void validate( final ComponentMetadata componentMetadata, final Logger logger )
     {
         if ( m_name == null )
         {
             // 112.10 name attribute is optional, defaults to interface since DS 1.1
             if ( !componentMetadata.isDS11() )
+=======
+    void validate(final ComponentMetadata componentMetadata )
+    {
+        final DSVersion dsVersion = componentMetadata.getDSVersion();
+
+        if ( m_name == null )
+        {
+            // 112.10 name attribute is optional, defaults to interface since DS 1.1
+            if ( !dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             {
                 throw componentMetadata.validationFailure( "A name must be declared for the reference" );
             }
@@ -484,20 +782,157 @@ public class ReferenceMetadata
         {
             throw componentMetadata.validationFailure( "Policy option must be one of " + POLICY_OPTION_VALID );
         }
+<<<<<<< HEAD
         else if ( !componentMetadata.isDS12() && !POLICY_OPTION_RELUCTANT.equals( m_policy_option ) )
+=======
+        else if ( !dsVersion.isDS12() && !POLICY_OPTION_RELUCTANT.equals( m_policy_option ) )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             throw componentMetadata.validationFailure( "Policy option must be reluctant for DS < 1.2" );
         }
 
+<<<<<<< HEAD
 
         // updated method is only supported in namespace xxx and later
         if ( m_updated != null && !componentMetadata.isDS11Felix() )
+=======
+        if (m_scopeName != null) {
+        	    if ( !dsVersion.isDS13() )
+        	    {
+        		    throw componentMetadata.validationFailure( "reference scope can be set only for DS >= 1.3");
+        	    }
+            	try
+        	    {
+        		    m_scope = ReferenceScope.valueOf(m_scopeName);
+        	    }
+        	    catch (final IllegalArgumentException e)
+        	    {
+        		    throw componentMetadata.validationFailure( "reference scope must be 'bundle' or 'prototype' not " + m_scopeName);
+        	    }
+        }
+
+        // checks for event based injection
+        // updated method is only supported in namespace xxx and later
+        if ( m_updated != null && !(dsVersion.isDS12() || dsVersion == DSVersion.DS11Felix) )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             // FELIX-3648 validation must fail (instead of just ignore)
             throw componentMetadata.validationFailure( "updated method declaration requires DS 1.2 or later namespace " );
         }
 
+<<<<<<< HEAD
         m_validated = true;
     }
 
+=======
+        // checks for field injection
+        if ( m_field != null )
+        {
+            // field reference requires DS 1.3
+            if ( !dsVersion.isDS13() )
+            {
+                throw componentMetadata.validationFailure( "Field reference requires DS >= 1.3" );
+            }
+
+            // field strategy
+            if ( m_field_option == null )
+            {
+                setFieldOption( FIELD_STRATEGY_REPLACE );
+            }
+            else if ( !FIELD_STRATEGY_VALID.contains( m_field_option ) )
+            {
+                throw componentMetadata.validationFailure( "Field strategy must be one of " + FIELD_STRATEGY_VALID );
+            }
+            if ( !m_isMultiple )
+            {
+                // update is not allowed for unary references
+                if ( m_field_option.equals(FIELD_STRATEGY_UPDATE) )
+                {
+                    throw componentMetadata.validationFailure( "Field strategy update not allowed for unary field references." );
+                }
+            }
+
+            // field value type
+            if ( !m_isMultiple )
+            {
+                // value type must not be specified for unary references
+                if ( m_collection_type != null )
+                {
+                    // spec says to ignore this
+                    this.m_collection_type = null;
+                }
+            }
+            else
+            {
+                if ( m_collection_type == null )
+                {
+                    setFieldCollectionType( FIELD_VALUE_TYPE_SERVICE );
+                }
+                else if ( !FIELD_VALUE_TYPE_VALID.contains( m_collection_type ) )
+                {
+                    throw componentMetadata.validationFailure( "Field value type must be one of " + FIELD_VALUE_TYPE_VALID );
+                }
+            }
+        }
+
+        if ( m_parameter != null )
+        {
+            // parameter requires DS 1.4
+            if ( !dsVersion.isDS14() )
+            {
+                throw componentMetadata.validationFailure( "Reference parameter requires DS >= 1.4" );
+            }
+            try
+            {
+              	m_parameterIndex = Integer.valueOf(m_parameter);
+            }
+            catch ( final NumberFormatException nfe)
+            {
+                throw componentMetadata.validationFailure( "Reference parameter is not a number: " + m_parameter );
+            }
+            if ( m_parameterIndex < 0 )
+            {
+                throw componentMetadata.validationFailure( "Reference parameter value must be zero or higher: " + m_parameter );
+            }
+            // parameter value type
+            if ( !m_isMultiple )
+            {
+                // value type must not be specified for unary references
+                if ( m_collection_type != null )
+                {
+                    // spec says to ignore this
+                    this.m_collection_type = null;
+                }
+            }
+            else
+            {
+                if ( m_collection_type == null )
+                {
+                    setFieldCollectionType( FIELD_VALUE_TYPE_SERVICE );
+                }
+                else if ( !FIELD_VALUE_TYPE_VALID.contains( m_collection_type ) )
+                {
+                    throw componentMetadata.validationFailure( "Collection value type must be one of " + FIELD_VALUE_TYPE_VALID );
+                }
+            }
+        }
+        m_validated = true;
+    }
+
+    public String getDebugInfo()
+    {
+        return getName() +
+                "interface=" + this.getInterface() +
+                ", filter=" + this.getTarget() +
+                ", policy=" + this.getPolicy() +
+                ", cardinality=" + this.getCardinality() +
+                ", bind=" + this.getBind() +
+                ", unbind=" + this.getUnbind() +
+                ", updated=" + this.getUpdated() +
+                ", field=" + this.getField() +
+                ", field-option=" + this.getFieldOption() +
+                ", collection-type=" + this.getFieldCollectionType() +
+                ", parameter=" + this.getParameterIndex();
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

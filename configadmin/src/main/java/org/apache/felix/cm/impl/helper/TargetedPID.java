@@ -20,9 +20,13 @@ package org.apache.felix.cm.impl.helper;
 
 
 import org.osgi.framework.Bundle;
+<<<<<<< HEAD
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+=======
+import org.osgi.framework.ServiceReference;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 
 /**
@@ -55,6 +59,7 @@ public class TargetedPID
      */
     private final short bindingLevel;
 
+<<<<<<< HEAD
 
     /**
      * Returns the bundle's version as required for targeted PIDs: If the
@@ -76,6 +81,8 @@ public class TargetedPID
     }
 
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public TargetedPID( final String rawPid )
     {
         this.rawPid = rawPid;
@@ -173,7 +180,11 @@ public class TargetedPID
 
         // bundle version does not match
 
+<<<<<<< HEAD
         if ( !this.version.equals( getBundleVersion( serviceBundle ) ) )
+=======
+        if ( !this.version.equals( serviceBundle.getVersion().toString() ) )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             return false;
         }

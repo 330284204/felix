@@ -20,7 +20,9 @@ package org.apache.felix.cm.impl;
 
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.apache.felix.cm.PersistenceManager;
@@ -38,7 +40,11 @@ import org.osgi.service.log.LogService;
  * the {@link ConfigurationAdapter} class, whose instances are actually returned
  * to clients.
  */
+<<<<<<< HEAD
 public class ConfigurationImpl extends ConfigurationBase
+=======
+public class ConfigurationImpl
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 {
 
     /*
@@ -95,6 +101,11 @@ public class ConfigurationImpl extends ConfigurationBase
      * been assigned with possible no data.
      */
     private static final String CONFIGURATION_NEW = "_felix_.cm.newConfiguration";
+<<<<<<< HEAD
+=======
+
+    private static final String PROPERTY_LOCKED = ":org.apache.felix.configadmin.locked:";
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * The factory PID of this configuration or <code>null</code> if this
@@ -139,12 +150,48 @@ public class ConfigurationImpl extends ConfigurationBase
      * an instance of this class is created.
      */
     private volatile long revision;
+<<<<<<< HEAD
+
+=======
+
+    private volatile boolean locked;
 
 
-    ConfigurationImpl( ConfigurationManager configurationManager, PersistenceManager persistenceManager,
-        Dictionary properties )
+    /**
+     * The {@link ConfigurationManager configuration manager} instance which
+     * caused this configuration object to be created.
+     */
+    private final ConfigurationManager configurationManager;
+
+    // the persistence manager storing this factory mapping
+    private final PersistenceManager persistenceManager;
+
+    // the basic ID of this instance
+    private final TargetedPID baseId;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+
+
+    public ConfigurationImpl( ConfigurationManager configurationManager, PersistenceManager persistenceManager,
+        Dictionary<String, Object> properties )
     {
+<<<<<<< HEAD
         super( configurationManager, persistenceManager, ( String ) properties.remove( Constants.SERVICE_PID ) );
+=======
+        if ( configurationManager == null )
+        {
+            throw new IllegalArgumentException( "ConfigurationManager must not be null" );
+        }
+
+        if ( persistenceManager == null )
+        {
+            throw new IllegalArgumentException( "PersistenceManager must not be null" );
+        }
+
+        this.configurationManager = configurationManager;
+        this.persistenceManager = persistenceManager;
+        this.baseId = new TargetedPID( ( String ) properties.remove( Constants.SERVICE_PID ) );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         final String factoryPid = ( String ) properties.remove( ConfigurationAdmin.SERVICE_FACTORYPID );
         this.factoryPID = ( factoryPid == null ) ? null : new TargetedPID( factoryPid );
@@ -152,7 +199,11 @@ public class ConfigurationImpl extends ConfigurationBase
 
         // set bundle location from persistence and/or check for dynamic binding
         this.staticBundleLocation = ( String ) properties.remove( ConfigurationAdmin.SERVICE_BUNDLELOCATION ) ;
+<<<<<<< HEAD
         this.dynamicBundleLocation = configurationManager.getDynamicBundleLocation( getBaseId().toString() );
+=======
+        this.dynamicBundleLocation = configurationManager.getDynamicBundleLocation( this.baseId.toString() );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // set the properties internally
         configureFromPersistence( properties );
@@ -162,14 +213,34 @@ public class ConfigurationImpl extends ConfigurationBase
     ConfigurationImpl( ConfigurationManager configurationManager, PersistenceManager persistenceManager, String pid,
         String factoryPid, String bundleLocation ) throws IOException
     {
+<<<<<<< HEAD
         super( configurationManager, persistenceManager, pid );
+=======
+        if ( configurationManager == null )
+        {
+            throw new IllegalArgumentException( "ConfigurationManager must not be null" );
+        }
+
+        if ( persistenceManager == null )
+        {
+            throw new IllegalArgumentException( "PersistenceManager must not be null" );
+        }
+
+        this.configurationManager = configurationManager;
+        this.persistenceManager = persistenceManager;
+        this.baseId = new TargetedPID( pid );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         this.factoryPID = ( factoryPid == null ) ? null : new TargetedPID( factoryPid );
         this.isDeleted = false;
 
         // set bundle location from persistence and/or check for dynamic binding
         this.staticBundleLocation = bundleLocation;
+<<<<<<< HEAD
         this.dynamicBundleLocation = configurationManager.getDynamicBundleLocation( getBaseId().toString() );
+=======
+        this.dynamicBundleLocation = configurationManager.getDynamicBundleLocation( this.baseId.toString() );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // first "update"
         this.properties = null;
@@ -184,6 +255,7 @@ public class ConfigurationImpl extends ConfigurationBase
         }
     }
 
+<<<<<<< HEAD
 
     public void delete() throws IOException
     {
@@ -316,6 +388,181 @@ public class ConfigurationImpl extends ConfigurationBase
      * @return the configuration properties
      */
     public Dictionary getProperties( boolean deepCopy )
+=======
+    /**
+     * Returns <code>true</code> if the ConfigurationManager of this
+     * configuration is still active.
+     */
+    boolean isActive()
+    {
+        return configurationManager.isActive();
+    }
+
+
+    void storeSilently()
+    {
+        try
+        {
+            this.store();
+        }
+        catch ( IOException ioe )
+        {
+            Log.logger.log( LogService.LOG_ERROR, "Persisting ID {0} failed", new Object[]
+                { this.baseId, ioe } );
+        }
+    }
+
+
+    static protected void replaceProperty( Dictionary<String, Object> properties, String key, String value )
+    {
+        if ( value == null )
+        {
+            properties.remove( key );
+        }
+        else
+        {
+            properties.put( key, value );
+        }
+    }
+
+    public void delete() throws IOException
+    {
+        this.isDeleted = true;
+        this.persistenceManager.delete( this.getPidString() );
+        configurationManager.setDynamicBundleLocation( this.getPidString(), null );
+        configurationManager.deleted( this );
+    }
+
+
+    public String getPidString()
+    {
+        return this.baseId.toString();
+    }
+
+
+    public TargetedPID getPid()
+    {
+        return this.baseId;
+    }
+
+
+    public String getFactoryPidString()
+    {
+        return (factoryPID == null) ? null : factoryPID.toString();
+    }
+
+
+    public TargetedPID getFactoryPid()
+    {
+        return factoryPID;
+    }
+
+
+    /**
+     * Returns the "official" bundle location as visible from the outside
+     * world of code calling into the Configuration.getBundleLocation() method.
+     * <p>
+     * In other words: The {@link #getStaticBundleLocation()} is returned if
+     * not <code>null</code>. Otherwise the {@link #getDynamicBundleLocation()}
+     * is returned (which may also be <code>null</code>).
+     */
+    String getBundleLocation()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+    {
+        if ( staticBundleLocation != null )
+        {
+            return staticBundleLocation;
+        }
+
+<<<<<<< HEAD
+        CaseInsensitiveDictionary props = new CaseInsensitiveDictionary( properties, deepCopy );
+=======
+        return dynamicBundleLocation;
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
+
+
+    String getDynamicBundleLocation()
+    {
+        return dynamicBundleLocation;
+    }
+
+
+<<<<<<< HEAD
+=======
+    String getStaticBundleLocation()
+    {
+        return staticBundleLocation;
+    }
+
+
+    void setStaticBundleLocation( final String bundleLocation )
+    {
+        // CM 1.4; needed for bundle location change at the end
+        final String oldBundleLocation = getBundleLocation();
+
+        // 104.15.2.8 The bundle location will be set persistently
+        this.staticBundleLocation = bundleLocation;
+        storeSilently();
+
+        // FELIX-3360: Always clear dynamic binding if a new static
+        // location is set. The static location is the relevant binding
+        // for a configuration unless it is not explicitly set.
+        setDynamicBundleLocation( null, false );
+
+        // CM 1.4
+        this.configurationManager.locationChanged( this, oldBundleLocation );
+    }
+
+
+    void setDynamicBundleLocation( final String bundleLocation, final boolean dispatchConfiguration )
+    {
+        // CM 1.4; needed for bundle location change at the end
+        final String oldBundleLocation = getBundleLocation();
+
+        this.dynamicBundleLocation = bundleLocation;
+        this.configurationManager.setDynamicBundleLocation( this.getPidString(), bundleLocation );
+
+        // CM 1.4
+        if ( dispatchConfiguration )
+        {
+            this.configurationManager.locationChanged( this, oldBundleLocation );
+
+        }
+    }
+
+
+    /**
+     * Dynamically binds this configuration to the given location unless
+     * the configuration is already bound (statically or dynamically). In
+     * the case of this configuration to be dynamically bound a
+     * <code>CM_LOCATION_CHANGED</code> event is dispatched.
+     */
+    void tryBindLocation( final String bundleLocation )
+    {
+        if ( this.getBundleLocation() == null )
+        {
+            Log.logger.log( LogService.LOG_DEBUG, "Dynamically binding config {0} to {1}", new Object[]
+                { getPidString(), bundleLocation } );
+            setDynamicBundleLocation( bundleLocation, true );
+        }
+    }
+
+
+    /**
+     * Returns an optionally deep copy of the properties of this configuration
+     * instance.
+     * <p>
+     * This method returns a copy of the internal dictionary. If the
+     * <code>deepCopy</code> parameter is true array and collection values are
+     * copied into new arrays or collections. Otherwise just a new dictionary
+     * referring to the same objects is returned.
+     *
+     * @param deepCopy
+     *            <code>true</code> if a deep copy is to be returned.
+     * @return the configuration properties
+     */
+    public Dictionary<String, Object> getProperties( boolean deepCopy )
     {
         // no properties yet
         if ( properties == null )
@@ -332,11 +579,13 @@ public class ConfigurationImpl extends ConfigurationBase
     }
 
 
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /* (non-Javadoc)
      * @see org.osgi.service.cm.Configuration#update()
      */
     public void update() throws IOException
     {
+<<<<<<< HEAD
         PersistenceManager localPersistenceManager = getPersistenceManager();
         if ( localPersistenceManager != null )
         {
@@ -358,15 +607,36 @@ public class ConfigurationImpl extends ConfigurationBase
 
             // update the service but do not fire an CM_UPDATED event
             getConfigurationManager().updated( this, false );
+=======
+        // read configuration from persistence (again)
+        if ( persistenceManager.exists( getPidString() ) )
+        {
+            @SuppressWarnings("unchecked")
+            Dictionary<String, Object> properties = persistenceManager.load( getPidString() );
+
+            // ensure serviceReference pid
+            String servicePid = ( String ) properties.get( Constants.SERVICE_PID );
+            if ( servicePid != null && !getPidString().equals( servicePid ) )
+            {
+                throw new IOException( "PID of configuration file does match requested PID; expected " + getPidString()
+                    + ", got " + servicePid );
+            }
+
+            configureFromPersistence( properties );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
+
+        // update the service but do not fire an CM_UPDATED event
+        configurationManager.updated( this, false );
     }
 
 
-    /* (non-Javadoc)
+    /**
      * @see org.osgi.service.cm.Configuration#update(java.util.Dictionary)
      */
-    public void update( Dictionary properties ) throws IOException
+    public void update( Dictionary<String, ?> properties ) throws IOException
     {
+<<<<<<< HEAD
         PersistenceManager localPersistenceManager = getPersistenceManager();
         if ( localPersistenceManager != null )
         {
@@ -392,11 +662,29 @@ public class ConfigurationImpl extends ConfigurationBase
             // update the service and fire an CM_UPDATED event
             getConfigurationManager().updated( this, true );
         }
+=======
+        CaseInsensitiveDictionary newProperties = new CaseInsensitiveDictionary( properties );
+
+        Log.logger.log( LogService.LOG_DEBUG, "Updating config {0} with {1}", new Object[]
+            { getPidString(), newProperties } );
+
+        setAutoProperties( newProperties, true );
+
+        // persist new configuration
+        persistenceManager.store( getPidString(), newProperties );
+
+        // finally assign the configuration for use
+        configure( newProperties );
+
+        // update the service and fire an CM_UPDATED event
+        configurationManager.updated( this, true );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
     //---------- Object overwrites --------------------------------------------
 
+    @Override
     public boolean equals( Object obj )
     {
         if ( obj == this )
@@ -413,12 +701,14 @@ public class ConfigurationImpl extends ConfigurationBase
     }
 
 
+    @Override
     public int hashCode()
     {
         return getPidString().hashCode();
     }
 
 
+    @Override
     public String toString()
     {
         return "Configuration PID=" + getPidString() + ", factoryPID=" + factoryPID + ", bundleLocation=" + getBundleLocation();
@@ -441,7 +731,11 @@ public class ConfigurationImpl extends ConfigurationBase
      */
     void ensureFactoryConfigPersisted() throws IOException
     {
+<<<<<<< HEAD
         if ( this.factoryPID != null && isNew() && !getPersistenceManager().exists( getPidString() ) )
+=======
+        if ( this.factoryPID != null && isNew() && !persistenceManager.exists( getPidString() ) )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             storeNewConfiguration();
         }
@@ -456,6 +750,7 @@ public class ConfigurationImpl extends ConfigurationBase
      */
     private void storeNewConfiguration() throws IOException
     {
+<<<<<<< HEAD
         Dictionary props = new Hashtable();
         setAutoProperties( props, true );
         props.put( CONFIGURATION_NEW, Boolean.TRUE );
@@ -491,6 +786,12 @@ public class ConfigurationImpl extends ConfigurationBase
                 }
             }
         }
+=======
+        Dictionary<String, Object> props = new Hashtable<>();
+        setAutoProperties( props, true );
+        props.put( CONFIGURATION_NEW, Boolean.TRUE );
+        persistenceManager.store( getPidString(), props );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -499,12 +800,16 @@ public class ConfigurationImpl extends ConfigurationBase
         // we don't need a deep copy, since we are not modifying
         // any value in the dictionary itself. we are just adding
         // properties to it, which are required for storing
+<<<<<<< HEAD
         Dictionary props = getProperties( false );
+=======
+        Dictionary<String, Object> props = getProperties( false );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // if this is a new configuration, we just use an empty Dictionary
         if ( props == null )
         {
-            props = new Hashtable();
+            props = new Hashtable<>();
 
             // add automatic properties including the bundle location (if
             // statically bound)
@@ -515,8 +820,20 @@ public class ConfigurationImpl extends ConfigurationBase
             replaceProperty( props, ConfigurationAdmin.SERVICE_BUNDLELOCATION, getStaticBundleLocation() );
         }
 
+        if ( this.locked )
+        {
+            props.put(PROPERTY_LOCKED, this.locked);
+        }
+        else
+        {
+            props.remove(PROPERTY_LOCKED);
+        }
         // only store now, if this is not a new configuration
+<<<<<<< HEAD
         getPersistenceManager().store( getPidString(), props );
+=======
+        persistenceManager.store( getPidString(), props );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -555,7 +872,7 @@ public class ConfigurationImpl extends ConfigurationBase
     }
 
 
-    private void configureFromPersistence( Dictionary properties )
+    private void configureFromPersistence( Dictionary<String, Object> properties )
     {
         // if the this is not an empty/new configuration, accept the properties
         // otherwise just set the properties field to null
@@ -569,11 +886,24 @@ public class ConfigurationImpl extends ConfigurationBase
         }
     }
 
+<<<<<<< HEAD
     private void configure( final Dictionary properties )
     {
         final CaseInsensitiveDictionary newProperties;
         if ( properties == null )
         {
+=======
+    private void configure( final Dictionary<String, Object> properties )
+    {
+        final Object lockedValue = properties == null ? null : properties.get(PROPERTY_LOCKED);
+        if ( lockedValue != null )
+        {
+            this.locked = true;
+        }
+        final CaseInsensitiveDictionary newProperties;
+        if ( properties == null )
+        {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             newProperties = null;
         }
         else
@@ -600,7 +930,7 @@ public class ConfigurationImpl extends ConfigurationBase
     }
 
 
-    void setAutoProperties( Dictionary properties, boolean withBundleLocation )
+    void setAutoProperties( Dictionary<String, Object> properties, boolean withBundleLocation )
     {
         // set pid and factory pid in the properties
         replaceProperty( properties, Constants.SERVICE_PID, getPidString() );
@@ -615,21 +945,245 @@ public class ConfigurationImpl extends ConfigurationBase
         {
             properties.remove( ConfigurationAdmin.SERVICE_BUNDLELOCATION );
         }
+        properties.remove( PROPERTY_LOCKED );
     }
 
 
+<<<<<<< HEAD
     static void setAutoProperties( Dictionary properties, String pid, String factoryPid )
+=======
+    static void setAutoProperties( Dictionary<String, Object> properties, String pid, String factoryPid )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         replaceProperty( properties, Constants.SERVICE_PID, pid );
         replaceProperty( properties, ConfigurationAdmin.SERVICE_FACTORYPID, factoryPid );
         properties.remove( ConfigurationAdmin.SERVICE_BUNDLELOCATION );
+        properties.remove( PROPERTY_LOCKED );
     }
 
 
+<<<<<<< HEAD
     static void clearAutoProperties( Dictionary properties )
     {
         properties.remove( Constants.SERVICE_PID );
         properties.remove( ConfigurationAdmin.SERVICE_FACTORYPID );
         properties.remove( ConfigurationAdmin.SERVICE_BUNDLELOCATION );
+=======
+    private static final String[] AUTO_PROPS = new String[] {
+            Constants.SERVICE_PID,
+            ConfigurationAdmin.SERVICE_FACTORYPID,
+            ConfigurationAdmin.SERVICE_BUNDLELOCATION,
+            PROPERTY_LOCKED
+    };
+
+    static void clearAutoProperties( Dictionary<String, Object> properties )
+    {
+        for(final String p : AUTO_PROPS)
+        {
+            properties.remove( p );
+        }
+    }
+
+
+    public void setLocked(final boolean flag) throws IOException
+    {
+        this.locked = flag;
+        store();
+    }
+
+    /**
+     * Compare the two properties, ignoring auto properties
+     * @param props1 Set of properties
+     * @param props2 Set of properties
+     * @return {@code true} if the set of properties is equal
+     */
+    static boolean equals( Dictionary<String, Object> props1, Dictionary<String, Object> props2)
+    {
+        if (props1 == null) {
+            if (props2 == null) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (props2 == null) {
+            return false;
+        }
+
+        final int count1 = getCount(props1);
+        final int count2 = getCount(props2);
+        if ( count1 != count2 )
+        {
+            return false;
+        }
+
+        final Enumeration<String> keys = props1.keys();
+        while ( keys.hasMoreElements() )
+        {
+            final String key = keys.nextElement();
+            if ( !isAutoProp(key) )
+            {
+                final Object val1 = props1.get(key);
+                final Object val2 = props2.get(key);
+                if ( val1 == null )
+                {
+                    if ( val2 != null )
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if ( val2 == null )
+                    {
+                        return false;
+                    }
+                    // arrays are compared using Arrays.equals
+                    if ( val1.getClass().isArray() )
+                    {
+                        if ( !val2.getClass().isArray() )
+                        {
+                            return false;
+                        }
+                        final Object[] a1 = convertToObjectArray(val1);
+                        final Object[] a2 = convertToObjectArray(val2);
+                        if ( ! Arrays.equals(a1, a2) )
+                        {
+                            return false;
+                        }
+                    }
+                    else if ( !val1.equals(val2) )
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Convert the object to an array
+     * @param value The array
+     * @return an object array
+     */
+    private static Object[] convertToObjectArray(final Object value)
+    {
+        final Object[] values;
+        if (value instanceof long[])
+        {
+            final long[] a = (long[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof int[]) {
+            final int[] a = (int[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        } else if (value instanceof double[])
+        {
+            final double[] a = (double[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof byte[])
+        {
+            final byte[] a = (byte[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof float[])
+        {
+            final float[] a = (float[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof short[])
+        {
+            final short[] a = (short[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof boolean[])
+        {
+            final boolean[] a = (boolean[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else if (value instanceof char[])
+        {
+            final char[] a = (char[])value;
+            values = new Object[a.length];
+            for(int i=0;i<a.length;i++)
+            {
+                values[i] = a[i];
+            }
+        }
+        else
+        {
+            values = (Object[]) value;
+        }
+        return values;
+    }
+
+    static boolean isAutoProp(final String name)
+    {
+        for(final String p : AUTO_PROPS)
+        {
+            if ( p.equals(name) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static int getCount( Dictionary<String, Object> props )
+    {
+        int count = (props == null ? 0 : props.size());
+        if ( props != null )
+        {
+            for(final String p : AUTO_PROPS)
+            {
+                if ( props.get(p) != null )
+                {
+                    count--;
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+
+    final ConfigurationManager getConfigurationManager()
+    {
+        return this.configurationManager;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

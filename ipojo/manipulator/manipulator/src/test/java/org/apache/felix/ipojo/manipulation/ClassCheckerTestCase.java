@@ -19,12 +19,21 @@
 
 package org.apache.felix.ipojo.manipulation;
 
+<<<<<<< HEAD
+=======
+import junit.framework.TestCase;
+import org.apache.felix.ipojo.manipulator.util.Streams;
+import org.objectweb.asm.*;
+import org.osgi.framework.BundleContext;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 import org.apache.felix.ipojo.manipulator.util.Streams;
 import org.objectweb.asm.ClassReader;
@@ -33,6 +42,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.osgi.framework.BundleContext;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -94,7 +105,11 @@ public class ClassCheckerTestCase extends TestCase {
         assertEquals(1, annotations.size());
         ClassChecker.AnnotationDescriptor annotationDescriptor = annotations.get(0);
         MethodVisitor mv = mock(MethodVisitor.class);
+<<<<<<< HEAD
         when(mv.visitAnnotation(desc, true)).thenReturn(new EmptyVisitor());
+=======
+        when(mv.visitAnnotation(desc, true)).thenReturn(new AnnotationVisitor(Opcodes.ASM5) {});
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         annotationDescriptor.visitAnnotation(mv);
     }
 
@@ -109,7 +124,11 @@ public class ClassCheckerTestCase extends TestCase {
     }
 
     private byte[] manipulate(byte[] input) throws Exception {
+<<<<<<< HEAD
         Manipulator manipulator = new Manipulator();
+=======
+        Manipulator manipulator = new Manipulator(this.getClass().getClassLoader());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         manipulator.prepare(input);
         return manipulator.manipulate(input);
     }

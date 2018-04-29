@@ -19,6 +19,7 @@
 package org.apache.felix.scr.integration;
 
 
+<<<<<<< HEAD
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -33,6 +34,21 @@ import org.osgi.service.component.ComponentContext;
 
 
 @RunWith(JUnit4TestRunner.class)
+=======
+import java.util.Collection;
+
+import org.apache.felix.scr.integration.components.SimpleComponent;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+
+@RunWith(PaxExam.class)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class ComponentDisposeTest extends ComponentTestBase
 {
     static
@@ -43,13 +59,18 @@ public class ComponentDisposeTest extends ComponentTestBase
 
 
     @Test
+<<<<<<< HEAD
     public void test_SimpleComponent_factory_configuration()
+=======
+    public void test_SimpleComponent_factory_configuration() throws Exception
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         final String factoryPid = "FactoryConfigurationComponent";
 
         deleteFactoryConfigurations( factoryPid );
         delay();
 
+<<<<<<< HEAD
         // one single component exists without configuration
         final Component[] noConfigurations = findComponentsByName( factoryPid );
         TestCase.assertNotNull( noConfigurations );
@@ -115,6 +136,24 @@ public class ComponentDisposeTest extends ComponentTestBase
         TestCase.assertTrue( SimpleComponent.INSTANCES.containsKey( twoConfigs[0].getId() ) );
         TestCase.assertTrue( SimpleComponent.INSTANCES.containsKey( twoConfigs[1].getId() ) );
 
+=======
+        getConfigurationsDisabledThenEnable(factoryPid, 0, ComponentConfigurationDTO.ACTIVE);//there should be none
+
+        // create two factory configurations expecting two components
+        createFactoryConfiguration( factoryPid, "?" );
+        createFactoryConfiguration( factoryPid, "?" );
+        delay();
+
+        Collection<ComponentConfigurationDTO> ccs = findComponentConfigurationsByName(factoryPid, ComponentConfigurationDTO.ACTIVE);
+        Assert.assertEquals(2, ccs.size());
+        // expect two components, only first is active, second is disabled
+        TestCase.assertEquals( 2, SimpleComponent.INSTANCES.size() );
+        for (ComponentConfigurationDTO cc: ccs)
+        {
+            TestCase.assertTrue(SimpleComponent.INSTANCES.containsKey(cc.id));
+        }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // dispose an instance
         final SimpleComponent anInstance = SimpleComponent.INSTANCE;
         TestCase.assertNotNull( anInstance );
@@ -123,6 +162,7 @@ public class ComponentDisposeTest extends ComponentTestBase
         delay();
 
         // expect one component
+<<<<<<< HEAD
         final Component[] oneConfig = findComponentsByName( factoryPid );
         TestCase.assertNotNull( oneConfig );
         TestCase.assertEquals( 1, oneConfig.length );
@@ -158,5 +198,13 @@ public class ComponentDisposeTest extends ComponentTestBase
             TestCase.fail( "Cannot get ComponentHolder for " + ctx + ": " + t );
             return null; // keep the compiler happy
         }
+=======
+        ComponentConfigurationDTO cc = findComponentConfigurationByName(factoryPid, ComponentConfigurationDTO.ACTIVE);
+
+        TestCase.assertEquals( 1, SimpleComponent.INSTANCES.size() );
+        TestCase.assertTrue(SimpleComponent.INSTANCES.containsKey(cc.id));
+
+        SimpleComponent.INSTANCES.values().iterator().next();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

@@ -17,6 +17,7 @@
  * under the License.
  */
 
+<<<<<<< HEAD
 /**
  * @see: @TODO ref to whiteboard page on felix.apache.org
  */
@@ -26,4 +27,10 @@ package org.apache.felix.http.whiteboard;
 
 import aQute.bnd.annotation.Export;
 import aQute.bnd.annotation.Version;
+=======
+@Version("1.0.1")
+package org.apache.felix.http.whiteboard;
+
+import org.osgi.annotation.versioning.Version;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 

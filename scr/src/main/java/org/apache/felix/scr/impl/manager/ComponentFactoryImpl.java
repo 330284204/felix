@@ -19,7 +19,10 @@
 package org.apache.felix.scr.impl.manager;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Collections;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -27,6 +30,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.impl.BundleComponentActivator;
 import org.apache.felix.scr.impl.TargetedPID;
@@ -34,6 +38,14 @@ import org.apache.felix.scr.impl.config.ComponentHolder;
 import org.apache.felix.scr.impl.helper.ComponentMethods;
 import org.apache.felix.scr.impl.metadata.ComponentMetadata;
 import org.apache.felix.scr.impl.metadata.ReferenceMetadata;
+=======
+import org.apache.felix.scr.component.ExtFactoryComponentInstance;
+import org.apache.felix.scr.impl.BundleComponentActivator;
+import org.apache.felix.scr.impl.inject.ComponentMethods;
+import org.apache.felix.scr.impl.metadata.ComponentMetadata;
+import org.apache.felix.scr.impl.metadata.ReferenceMetadata;
+import org.apache.felix.scr.impl.metadata.TargetedPID;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.ComponentException;
@@ -51,6 +63,7 @@ import org.osgi.service.log.LogService;
  * class directly as the holder for component instances created by the
  * {@link #newInstance(Dictionary)} method.
  * <p>
+<<<<<<< HEAD
  * Finally, if the <code>ds.factory.enabled</code> bundle context property is
  * set to <code>true</code>, component instances can be created by factory
  * configurations. This functionality is present for backwards compatibility
@@ -58,6 +71,14 @@ import org.osgi.service.log.LogService;
  * But keep in mind, that this is non-standard behaviour.
  */
 public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> implements ComponentFactory, ComponentHolder
+=======
+ * This class implements spec-compliant component factories and the felix
+ * "persistent" component factory, where the factory is always registered whether or
+ * not all dependencies are present and the created components also persist whether or
+ * not the dependencies are present to allow the component instance to exist.
+ */
+public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> implements ComponentFactory<S>, ComponentContainer<S>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 {
 
     /**
@@ -77,19 +98,29 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
      * supplied as the base configuration for each component instance created
      * by the {@link #newInstance(Dictionary)} method.
      */
+<<<<<<< HEAD
     private volatile Dictionary<String, Object> m_configuration;
     
+=======
+    private volatile Map<String, Object> m_configuration;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Flag telling if our component factory is currently configured from config admin.
      * We are configured when configuration policy is required and we have received the
      * config admin properties, or when configuration policy is optional or ignored.
      */
     private volatile boolean m_hasConfiguration;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Configuration change count (R5) or imitation (R4)
      */
     protected volatile long m_changeCount = -1;
+<<<<<<< HEAD
     
     protected TargetedPID m_targetedPID;
 
@@ -98,10 +129,33 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
         super( activator, metadata, new ComponentMethods() );
         m_componentInstances = new IdentityHashMap<SingleComponentManager<S>, SingleComponentManager<S>>();
         m_configuration = new Hashtable<String, Object>();
+=======
+
+    protected TargetedPID m_targetedPID;
+
+    public ComponentFactoryImpl( ComponentContainer<S> container, ComponentMethods componentMethods )
+    {
+        super( container, componentMethods );
+        m_componentInstances = new IdentityHashMap<>();
+        m_configuration = new HashMap<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
     @Override
+<<<<<<< HEAD
+=======
+    protected boolean verifyDependencyManagers()
+    {
+        if (!getComponentMetadata().isPersistentFactoryComponent())
+        {
+            return super.verifyDependencyManagers();
+        }
+        return true;
+    }
+
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public boolean isFactory()
     {
         return true;
@@ -110,6 +164,7 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     /* (non-Javadoc)
     * @see org.osgi.service.component.ComponentFactory#newInstance(java.util.Dictionary)
     */
+<<<<<<< HEAD
     public ComponentInstance newInstance( Dictionary<String, ?> dictionary )
     {
         final SingleComponentManager<S> cm = createComponentManager();
@@ -131,6 +186,35 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
             // activation failed, clean up component manager
             cm.dispose( ComponentConstants.DEACTIVATION_REASON_DISPOSED );
             throw new ComponentException( "Failed activating component" );
+=======
+    @Override
+    public ComponentInstance<S> newInstance( Dictionary<String, ?> dictionary )
+    {
+        final SingleComponentManager<S> cm = createComponentManager();
+        getLogger().log( LogService.LOG_DEBUG, "Creating new instance from component factory with configuration {0}",
+                null, dictionary );
+
+        cm.setFactoryProperties( dictionary );
+        //configure the properties
+        cm.reconfigure( m_configuration, false, null );
+        // enable
+        cm.enableInternal();
+
+        ComponentInstance<S> instance;
+        if ( getComponentMetadata().isPersistentFactoryComponent() )
+        {
+            instance = new ModifyComponentInstance<>(cm);
+        }
+        else
+        {
+        	instance = cm.getComponentInstance();
+        	if ( instance == null ||  instance.getInstance() == null )
+        	{
+        		// activation failed, clean up component manager
+        		cm.dispose( ComponentConstants.DEACTIVATION_REASON_DISPOSED );
+        		throw new ComponentException( "Failed activating component" );
+        	}
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
         synchronized ( m_componentInstances )
@@ -141,6 +225,7 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
         return instance;
     }
 
+<<<<<<< HEAD
     /**
      * Compares this {@code ComponentFactoryImpl} object to another object.
      * 
@@ -148,18 +233,66 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
      * A component factory impl is considered to be <b>equal to </b> another component
      * factory impl if the component names are equal(using {@code String.equals}).
      * 
+=======
+    private static class ModifyComponentInstance<S> implements ExtFactoryComponentInstance<S>
+    {
+        private final SingleComponentManager<S> cm;
+
+        public ModifyComponentInstance(SingleComponentManager<S> cm)
+        {
+            this.cm = cm;
+        }
+
+        @Override
+        public void dispose()
+        {
+            cm.dispose();
+        }
+
+        @Override
+        public S getInstance()
+        {
+            final ComponentInstance<S> componentInstance = cm.getComponentInstance();
+            return componentInstance == null? null: componentInstance.getInstance();
+        }
+
+        @Override
+        public void modify(Dictionary<String, ?> properties)
+        {
+            cm.setFactoryProperties( properties );
+            cm.reconfigure(false);
+        }
+
+    }
+
+    /**
+     * Compares this {@code ComponentFactoryImpl} object to another object.
+     *
+     * <p>
+     * A component factory impl is considered to be <b>equal to </b> another component
+     * factory impl if the component names are equal(using {@code String.equals}).
+     *
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * @param object The {@code ComponentFactoryImpl} object to be compared.
      * @return {@code true} if {@code object} is a
      *         {@code ComponentFactoryImpl} and is equal to this object;
      *         {@code false} otherwise.
      */
+<<<<<<< HEAD
    public boolean equals(Object object)
     {
         if (!(object instanceof ComponentFactoryImpl))
+=======
+    @Override
+    public boolean equals(Object object)
+    {
+        if (!(object instanceof ComponentFactoryImpl<?>))
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             return false;
         }
 
+<<<<<<< HEAD
         ComponentFactoryImpl other = (ComponentFactoryImpl) object;
         return getComponentMetadata().getName().equals(other.getComponentMetadata().getName());
     }
@@ -170,11 +303,25 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     * @return An integer which is a hash code value for this object.
     */
    public int hashCode()
+=======
+        ComponentFactoryImpl<?> other = (ComponentFactoryImpl<?>) object;
+        return getComponentMetadata().getName().equals(other.getComponentMetadata().getName());
+    }
+
+   /**
+    * Returns a hash code value for the object.
+    *
+    * @return An integer which is a hash code value for this object.
+    */
+   @Override
+public int hashCode()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
    {
        return getComponentMetadata().getName().hashCode();
    }
 
     /**
+<<<<<<< HEAD
      * The component factory does not have a component to create.
      */
     protected boolean createComponent()
@@ -184,12 +331,18 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
 
 
     /**
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * The component factory does not have a component to delete.
      * <p>
      * But in the backwards compatible case any instances created for factory
      * configuration instances are to disabled as a consequence of deactivating
      * the component factory.
      */
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     protected void deleteComponent( int reason )
     {
     }
@@ -208,9 +361,20 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     }
 
 
+<<<<<<< HEAD
     public Dictionary<String, Object> getProperties()
     {
         Dictionary<String, Object> props = getServiceProperties();
+=======
+    /**
+     * For ComponentFactoryImpl, this is used only for updating targets on the dependency managers, so we don't need any other
+     * properties.
+     */
+    @Override
+    public Map<String, Object> getProperties()
+    {
+        Map<String, Object> props = new HashMap<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // add target properties of references
         List<ReferenceMetadata> depMetaData = getComponentMetadata().getDependencies();
@@ -222,8 +386,13 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
             }
         }
 
+<<<<<<< HEAD
         // add target properties from configuration (if we have one)        
         for ( String key : Collections.list( m_configuration.keys() ) )
+=======
+        // add target properties from configuration (if we have one)
+        for ( String key :  m_configuration.keySet() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             if ( key.endsWith( ".target" ) )
             {
@@ -233,16 +402,41 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
 
         return props;
     }
+<<<<<<< HEAD
     
     public void setServiceProperties( Dictionary serviceProperties )
+=======
+
+    @Override
+    public void setServiceProperties( Dictionary<String, ?> serviceProperties )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         throw new IllegalStateException( "ComponentFactory service properties are immutable" );
     }
 
+<<<<<<< HEAD
 
     public Dictionary<String, Object> getServiceProperties()
     {
         Dictionary<String, Object> props = new Hashtable<String, Object>();
+=======
+    @Override
+    void postRegister()
+    {
+        //do nothing
+    }
+
+    @Override
+    void preDeregister()
+    {
+        //do nothing
+    }
+
+    @Override
+    public Dictionary<String, Object> getServiceProperties()
+    {
+        Dictionary<String, Object> props = new Hashtable<>(getComponentMetadata().getFactoryProperties());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         // 112.5.5 The Component Factory service must register with the following properties
         props.put( ComponentConstants.COMPONENT_NAME, getComponentMetadata().getName() );
@@ -253,16 +447,26 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
         return props;
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     boolean hasInstance()
     {
         return false;
     }
 
+<<<<<<< HEAD
     protected boolean collectDependencies()
+=======
+    @Override
+    protected boolean collectDependencies(ComponentContextImpl<S> componentContext)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         return true;
     }
 
+<<<<<<< HEAD
     <T> void invokeUpdatedMethod( DependencyManager<S, T> dependencyManager, RefPair<T> ref, int trackingCount )
     {
     }
@@ -272,12 +476,28 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     }
 
     <T> void invokeUnbindMethod( DependencyManager<S, T> dependencyManager, RefPair<T> oldRef, int trackingCount )
+=======
+    @Override
+    <T> boolean invokeUpdatedMethod( DependencyManager<S, T> dependencyManager, RefPair<S, T> ref, int trackingCount )
+    {
+    	return false;
+    }
+
+    @Override
+    <T> void invokeBindMethod( DependencyManager<S, T> dependencyManager, RefPair<S, T> reference, int trackingCount )
+    {
+    }
+
+    @Override
+    <T> void invokeUnbindMethod( DependencyManager<S, T> dependencyManager, RefPair<S, T> oldRef, int trackingCount )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
     }
 
     //---------- Component interface
 
 
+<<<<<<< HEAD
     public ComponentInstance getComponentInstance()
     {
         // a ComponentFactory is not a real component and as such does
@@ -447,17 +667,28 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     }
 
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Disposes off all components ever created by this component holder. This
      * method is called if either the Declarative Services runtime is stopping
      * or if the owning bundle is stopped. In both cases all components created
      * by this holder must be disposed off.
      */
+<<<<<<< HEAD
     public void disposeComponents( int reason )
     {
         List<AbstractComponentManager<S>> cms = new ArrayList<AbstractComponentManager<S>>( );
         getComponentManagers( m_componentInstances, cms );
         for ( AbstractComponentManager acm: cms )
+=======
+    @Override
+    public void dispose( int reason )
+    {
+        List<AbstractComponentManager<S>> cms = new ArrayList<>( );
+        getComponentManagers( m_componentInstances, cms );
+        for ( AbstractComponentManager<S> acm: cms )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             acm.dispose( reason );
         }
@@ -468,11 +699,20 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
         }
 
         // finally dispose the component factory itself
+<<<<<<< HEAD
         dispose( reason );
     }
 
 
     public void disposed( SingleComponentManager component )
+=======
+        super.dispose( reason );
+    }
+
+
+    @Override
+    public void disposed( SingleComponentManager<S> component )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         synchronized ( m_componentInstances )
         {
@@ -492,7 +732,11 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
      */
     private SingleComponentManager<S> createComponentManager()
     {
+<<<<<<< HEAD
         return new ComponentFactoryNewInstance<S>( getActivator(), this, getComponentMetadata(), getComponentMethods() );
+=======
+        return new SingleComponentManager<>( this, getComponentMethods(), !getComponentMetadata().isPersistentFactoryComponent() );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -507,6 +751,7 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
         }
     }
 
+<<<<<<< HEAD
     static class ComponentFactoryNewInstance<S> extends SingleComponentManager<S> {
 
         public ComponentFactoryNewInstance( BundleComponentActivator activator, ComponentHolder componentHolder,
@@ -523,4 +768,39 @@ public class ComponentFactoryImpl<S> extends AbstractComponentManager<S> impleme
     }
 
 
+=======
+    public TargetedPID getConfigurationTargetedPID(TargetedPID pid, TargetedPID factoryPid)
+    {
+        return m_targetedPID;
+    }
+
+
+	@Override
+	public void reconfigure(Map<String, Object> configuration, boolean configurationDeleted, TargetedPID factoryPid) {
+	    if ( factoryPid != null ) {
+	        // ignore factory configuration changes for component factories.
+	        return;
+	    }
+		m_configuration = configuration;
+		List<SingleComponentManager<S>> cms;
+		synchronized (m_componentInstances)
+        {
+            cms = new ArrayList<>(m_componentInstances.keySet());
+        }
+		for (SingleComponentManager<S> cm: cms)
+		{
+		    cm.reconfigure( configuration, configurationDeleted, factoryPid);
+		}
+	}
+
+
+    @Override
+    public void getComponentManagers(List<AbstractComponentManager<S>> cms)
+    {
+        synchronized (m_componentInstances)
+        {
+            cms.addAll(m_componentInstances.keySet());
+        }
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

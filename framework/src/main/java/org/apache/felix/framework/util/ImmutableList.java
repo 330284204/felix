@@ -26,6 +26,7 @@ import java.util.RandomAccess;
 
 public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
 {
+<<<<<<< HEAD
     final Object[] elements;
 
     public static <E> ImmutableList<E> newInstance(E... elements)
@@ -33,6 +34,20 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
         return new ImmutableList<E>(elements);
     }
 
+=======
+    @SuppressWarnings("rawtypes")
+    private static final ImmutableList EMPTY_LIST = new ImmutableList();
+    
+    final Object[] elements;
+
+    @SuppressWarnings("unchecked")
+    public static <E> ImmutableList<E> newInstance(E... elements)
+    {
+        return elements.length == 0 ? EMPTY_LIST : new ImmutableList<E>(elements);
+    }
+
+    @SuppressWarnings("unchecked")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public static <E> ImmutableList<E> newInstance(Collection<? extends E> elements)
     {
         if (elements instanceof ImmutableList)
@@ -41,10 +56,22 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
         }
         else
         {
+<<<<<<< HEAD
             return new ImmutableList<E>(elements);
         }
     }
 
+=======
+            return elements.isEmpty() ? EMPTY_LIST : new ImmutableList<E>(elements);
+        }
+    }
+
+    private ImmutableList()
+    {
+        this.elements = new Object[0];
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     protected ImmutableList(E... elements)
     {
         this.elements = elements.clone();
@@ -55,6 +82,10 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
         this.elements = elements.toArray();
     }
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("unchecked")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public E get(int index)
     {
         return (E) elements[index];
@@ -76,6 +107,21 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
     {
         throw new UnsupportedOperationException();
     }
+<<<<<<< HEAD
+=======
+    
+    @Override
+    public void clear()
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public boolean retainAll(java.util.Collection<?> c) 
+    {
+        throw new UnsupportedOperationException();
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     @Override
     public Iterator<E> iterator()
@@ -103,6 +149,10 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
             return cursor != size();
         }
 
+<<<<<<< HEAD
+=======
+        @SuppressWarnings("unchecked")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public E next()
         {
             return (E) elements[cursor++];
@@ -113,6 +163,10 @@ public class ImmutableList<E> extends AbstractList<E> implements RandomAccess
             return cursor != 0;
         }
 
+<<<<<<< HEAD
+=======
+        @SuppressWarnings("unchecked")
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         public E previous()
         {
             return (E) elements[--cursor];

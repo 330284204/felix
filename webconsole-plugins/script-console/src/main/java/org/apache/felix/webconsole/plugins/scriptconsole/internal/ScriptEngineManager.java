@@ -19,6 +19,7 @@
 
 package org.apache.felix.webconsole.plugins.scriptconsole.internal;
 
+<<<<<<< HEAD
 import org.apache.commons.io.IOUtils;
 import org.osgi.framework.*;
 import org.osgi.service.log.LogService;
@@ -27,14 +28,43 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+<<<<<<< HEAD
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+=======
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+
+import org.apache.commons.io.IOUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 /**
  * It is based on org.apache.sling.scripting.core.impl.ScriptEngineManagerFactory
  */
@@ -187,6 +217,7 @@ class ScriptEngineManager implements BundleListener, ServiceTrackerCustomizer
         {
             ins = url.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+<<<<<<< HEAD
             String line;
             while ((line = reader.readLine()) != null)
             {
@@ -206,6 +237,24 @@ class ScriptEngineManager implements BundleListener, ServiceTrackerCustomizer
                     }
                 }
             }
+=======
+            for (String className : getClassNames(reader))
+            {
+                try
+                {
+                    Class<ScriptEngineFactory> clazz = bundle.loadClass(className);
+                    ScriptEngineFactory spi = clazz.newInstance();
+                    registerFactory(mgr, spi, null);
+                    extensions.addAll(spi.getExtensions());
+                }
+                catch (Throwable t)
+                {
+                    log.log(LogService.LOG_ERROR,
+                            "Cannot register ScriptEngineFactory " + className, t);
+                }
+            }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch (IOException ioe)
         {
@@ -244,6 +293,28 @@ class ScriptEngineManager implements BundleListener, ServiceTrackerCustomizer
         }
     }
 
+<<<<<<< HEAD
+=======
+    static List<String> getClassNames(BufferedReader reader) throws IOException {
+        List<String> classNames = new ArrayList<String>();
+        String line;
+        while ((line = reader.readLine()) != null)
+        {
+            if (!line.startsWith("#") && line.trim().length() > 0)
+            {
+                int indexOfHash = line.indexOf('#');
+                if (indexOfHash >= 0)
+                {
+                    line = line.substring(0, indexOfHash);
+                }
+                line = line.trim();
+                classNames.add(line);
+            }
+        }
+        return classNames;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private static Map<Object, Object> getServiceProperties(ServiceReference reference)
     {
         Map<Object, Object> props = new HashMap<Object, Object>();

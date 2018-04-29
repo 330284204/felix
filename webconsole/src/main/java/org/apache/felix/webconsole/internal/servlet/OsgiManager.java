@@ -18,6 +18,12 @@ package org.apache.felix.webconsole.internal.servlet;
 
 import java.io.IOException;
 import java.net.URL;
+<<<<<<< HEAD
+=======
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +56,11 @@ import org.apache.felix.webconsole.AbstractWebConsolePlugin;
 import org.apache.felix.webconsole.BrandingPlugin;
 import org.apache.felix.webconsole.WebConsoleConstants;
 import org.apache.felix.webconsole.WebConsoleSecurityProvider;
+<<<<<<< HEAD
+=======
+import org.apache.felix.webconsole.WebConsoleSecurityProvider2;
+import org.apache.felix.webconsole.WebConsoleSecurityProvider3;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.webconsole.internal.OsgiManagerPlugin;
 import org.apache.felix.webconsole.internal.Util;
 import org.apache.felix.webconsole.internal.core.BundlesServlet;
@@ -119,7 +130,11 @@ public class OsgiManager extends GenericServlet
      */
     private static final String COOKIE_LOCALE = "felix-webconsole-locale"; //$NON-NLS-1$
 
+<<<<<<< HEAD
     private final String FRAMEWORK_PROP_MANAGER_ROOT = "felix.webconsole.manager.root"; //$NON-NLS-1$
+=======
+    private static final String FRAMEWORK_PROP_MANAGER_ROOT = "felix.webconsole.manager.root"; //$NON-NLS-1$
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     private static final String FRAMEWORK_PROP_REALM = "felix.webconsole.realm"; //$NON-NLS-1$
 
@@ -165,6 +180,13 @@ public class OsgiManager extends GenericServlet
 
     static final String DEFAULT_HTTP_SERVICE_SELECTOR = ""; //$NON-NLS-1$
 
+<<<<<<< HEAD
+=======
+    private static final String HEADER_AUTHORIZATION = "Authorization"; //$NON-NLS-1$
+
+    private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate"; //$NON-NLS-1$
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * The default value for the {@link #PROP_MANAGER_ROOT} configuration
      * property (value is "/system/console").
@@ -447,11 +469,41 @@ public class OsgiManager extends GenericServlet
         throws ServletException, IOException
     {
         // don't really expect to be called within a non-HTTP environment
+<<<<<<< HEAD
         service((HttpServletRequest) req, (HttpServletResponse) res);
 
         // ensure response has been sent back and response is committed
         // (we are authorative for our URL space and no other servlet should interfere)
         res.flushBuffer();
+=======
+        try
+        {
+            AccessController.doPrivileged(new PrivilegedExceptionAction()
+            {
+                public Object run() throws Exception
+                {
+                    service((HttpServletRequest) req, (HttpServletResponse) res);
+                    return null;
+                }
+            });
+        }
+        catch (PrivilegedActionException e)
+        {
+            Exception x = e.getException();
+            if (x instanceof IOException)
+            {
+                throw (IOException) x;
+            }
+            else if (x instanceof ServletException)
+            {
+                throw (ServletException) x;
+            }
+            else
+            {
+                throw new IOException(x.toString());
+            }
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private void ensureLocaleCookieSet(HttpServletRequest request, HttpServletResponse response, Locale locale) {
@@ -471,7 +523,11 @@ public class OsgiManager extends GenericServlet
         }
     }
 
+<<<<<<< HEAD
     private void service(HttpServletRequest request, HttpServletResponse response)
+=======
+    void service(HttpServletRequest request, HttpServletResponse response)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         throws ServletException, IOException
     {
         // check whether we are not at .../{webManagerRoot}
@@ -484,11 +540,24 @@ public class OsgiManager extends GenericServlet
                 path = path.concat("/"); //$NON-NLS-1$
             }
             path = path.concat(holder.getDefaultPluginLabel());
+<<<<<<< HEAD
+=======
+            response.setContentLength(0);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             response.sendRedirect(path);
             return;
         }
 
+<<<<<<< HEAD
         int slash = pathInfo.indexOf("/", 1);
+=======
+        if (pathInfo.equals("/logout")) { //$NON-NLS-1$
+            logout(request, response);
+            return;
+        }
+
+        int slash = pathInfo.indexOf("/", 1); //$NON-NLS-1$
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         if (slash < 2)
         {
             slash = pathInfo.length();
@@ -539,6 +608,66 @@ public class OsgiManager extends GenericServlet
         }
     }
 
+<<<<<<< HEAD
+=======
+    private final void logout(HttpServletRequest request, HttpServletResponse response)
+        throws IOException
+    {
+        // check if special logout cookie is set, this is used to prevent
+        // from an endless loop with basic auth
+        Cookie[] cookies = request.getCookies();
+        boolean found = false;
+        if ( cookies != null )
+        {
+            for(int i=0;i<cookies.length;i++)
+            {
+                if ( cookies[i].getName().equals("logout") ) //$NON-NLS-1$
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if ( found )
+        {
+            // redirect to main page
+            String url = request.getRequestURI();
+            final int lastSlash = url.lastIndexOf('/');
+            final Cookie c = new Cookie("logout", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+            c.setMaxAge(0);
+            response.addCookie(c);
+            response.sendRedirect(url.substring(0, lastSlash));
+            return;
+        }
+        Object securityProvider = securityProviderTracker.getService();
+        if (securityProvider instanceof WebConsoleSecurityProvider3)
+        {
+            ((WebConsoleSecurityProvider3) securityProvider).logout(request, response);
+        }
+        else
+        {
+            // if the security provider doesn't support logout, we try to
+            // logout the default basic authentication mechanism
+            // See https://issues.apache.org/jira/browse/FELIX-3006
+
+            // check for basic authentication
+            String auth = request.getHeader(HEADER_AUTHORIZATION); //$NON-NLS-1$
+            if (null != auth && auth.toLowerCase().startsWith("basic ")) { //$NON-NLS-1$
+                Map config = getConfiguration();
+                String realm = ConfigurationUtil.getProperty(config, PROP_REALM, DEFAULT_REALM);
+                response.setHeader(HEADER_WWW_AUTHENTICATE, "Basic realm=\"" +  realm + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+                response.addCookie(new Cookie("logout", "true")); //$NON-NLS-1$ //$NON-NLS-2$
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        }
+
+        // clean-up
+        request.removeAttribute(HttpContext.REMOTE_USER);
+        request.removeAttribute(HttpContext.AUTHORIZATION);
+        request.removeAttribute(WebConsoleSecurityProvider2.USER_ATTRIBUTE);
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     private final AbstractWebConsolePlugin getConsolePlugin(final String label)
     {
         // backwards compatibility for the former "install" action which is
@@ -583,6 +712,13 @@ public class OsgiManager extends GenericServlet
             locale = configuredLocale;
         if (locale == null)
             locale = request.getLocale();
+<<<<<<< HEAD
+=======
+        // this should never happen as request.getLocale()
+        // must return a locale (and not null). But just as a sanity check.
+        if (locale == null)
+            locale = Locale.ENGLISH;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         return locale;
     }

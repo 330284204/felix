@@ -18,12 +18,17 @@
  */
 package org.apache.felix.metatype;
 
+<<<<<<< HEAD
 
 import java.net.URL;
 import java.util.HashMap;
+=======
+import java.net.URL;
+import java.util.ArrayList;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-
 
 /**
  * The <code>MetaData</code> class represents the <code>MetaData</code>
@@ -33,61 +38,68 @@ import java.util.Map;
  */
 public class MetaData extends OptionalAttributes
 {
-
+    private String namespace;
     private String localePrefix;
+<<<<<<< HEAD
     private Map objectClassDefinitions;
     private Map designates;
     private URL source;
 
+=======
+    private Map /* String -> OCD */ objectClassDefinitions;
+    private List /* Designate */ designates;
+    private URL source;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     public String getLocalePrefix()
     {
         return localePrefix;
     }
 
-
-    public void setLocalePrefix( String localePrefix )
+    public void setLocalePrefix(String localePrefix)
     {
         this.localePrefix = localePrefix;
     }
 
-
-    public Map getObjectClassDefinitions()
+    public Map /* <String, OCD> */ getObjectClassDefinitions()
     {
         return objectClassDefinitions;
     }
 
-
-    public void addObjectClassDefinition( OCD objectClassDefinition )
+    public void addObjectClassDefinition(OCD objectClassDefinition)
     {
-        if ( objectClassDefinition != null )
+        if (objectClassDefinition != null)
         {
-            if ( objectClassDefinitions == null )
+            if (objectClassDefinitions == null)
             {
                 objectClassDefinitions = new LinkedHashMap();
             }
 
+<<<<<<< HEAD
             objectClassDefinitions.put( objectClassDefinition.getID(), objectClassDefinition );
             objectClassDefinition.setMetadata( this );
+=======
+            objectClassDefinitions.put(objectClassDefinition.getID(), objectClassDefinition);
+            objectClassDefinition.setMetadata(this);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     }
 
-
-    public Map getDesignates()
+    public List /* <Designate> */ getDesignates()
     {
         return designates;
     }
 
-
-    public void addDesignate( Designate designate )
+    public void addDesignate(Designate designate)
     {
-        if ( designate != null )
+        if (designate != null)
         {
-            if ( designates == null )
+            if (designates == null)
             {
-                designates = new HashMap();
+                designates = new ArrayList();
             }
 
+<<<<<<< HEAD
             if ( designate.getFactoryPid() != null )
             {
                 designates.put( designate.getFactoryPid(), designate );
@@ -100,14 +112,37 @@ public class MetaData extends OptionalAttributes
     }
 
 
+=======
+            designates.add(designate);
+        }
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public URL getSource()
     {
         return source;
     }
 
+<<<<<<< HEAD
 
     public void setSource( URL source )
     {
         this.source = source;
     }
+=======
+    public void setSource(URL source)
+    {
+        this.source = source;
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace)
+    {
+        this.namespace = namespace;
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

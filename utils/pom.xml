@@ -20,6 +20,7 @@
 	<parent>
 		<groupId>org.apache.felix</groupId>
 		<artifactId>felix-parent</artifactId>
+<<<<<<< HEAD
 		<version>2.1</version>
 	</parent>
 	
@@ -71,4 +72,61 @@
 	   </plugin>
     </plugins>
   </build>
+=======
+		<version>4</version>
+		<relativePath />
+	</parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <name>Apache Felix Utils</name>
+    <description>Utility classes for OSGi.</description>
+    <version>1.11.0-SNAPSHOT</version>
+    <artifactId>org.apache.felix.utils</artifactId>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/felix/trunk/utils</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/felix/trunk/utils</developerConnection>
+        <url>http://svn.apache.org/repos/asf/felix/utils</url>
+    </scm>
+
+    <properties>
+        <felix.java.version>7</felix.java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+                        <!-- Exclude all JSON files -->
+                        <exclude>doc/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 </project>

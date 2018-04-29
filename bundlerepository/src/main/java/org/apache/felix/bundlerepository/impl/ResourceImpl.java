@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* 
+=======
+/*
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,8 +22,24 @@
  */
 package org.apache.felix.bundlerepository.impl;
 
+<<<<<<< HEAD
 import java.net.URI;
 import java.util.*;
+=======
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 import org.apache.felix.bundlerepository.Capability;
 import org.apache.felix.bundlerepository.Property;
@@ -91,7 +111,12 @@ public class ResourceImpl implements Resource
 
     public String getPresentationName()
     {
+<<<<<<< HEAD
         return (String) m_map.get(PRESENTATION_NAME);
+=======
+        String pres = (String) m_map.get(PRESENTATION_NAME);
+        return (pres!=null && !pres.isEmpty())? pres : toString();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public String getSymbolicName()
@@ -119,7 +144,66 @@ public class ResourceImpl implements Resource
 
     public Long getSize()
     {
+<<<<<<< HEAD
         return ((Long) m_map.get(Resource.SIZE));
+=======
+        Object sz = m_map.get(Resource.SIZE);
+        if (sz instanceof Long)
+            return ((Long) sz);
+
+        long size = findResourceSize();
+        m_map.put(Resource.SIZE, size);
+        return size;
+    }
+
+    private long findResourceSize()
+    {
+        String uri = getURI();
+        if (uri != null) {
+            try
+            {
+                URL url = new URL(uri);
+                if ("file".equals(url.getProtocol()))
+                    return new File(url.getFile()).length();
+                else
+                    return findResourceSize(url);
+            }
+            catch (Exception e)
+            {
+                // TODO should really log this...
+            }
+        }
+        return -1L;
+    }
+
+    private long findResourceSize(URL url) throws IOException
+    {
+        byte[] bytes = new byte[8192];
+
+        // Not a File URL, stream the whole thing through to find out the size
+        InputStream is = null;
+        long fileSize = 0;
+        try
+        {
+            is = url.openStream();
+
+            int length = 0;
+            while ((length = is.read(bytes)) != -1)
+            {
+                fileSize += length;
+            }
+        }
+        catch (Exception ex)
+        {
+            // should really log this...
+        }
+        finally
+        {
+            if (is != null)
+                is.close();
+        }
+        return fileSize;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public Requirement[] getRequirements()
@@ -169,7 +253,11 @@ public class ResourceImpl implements Resource
     }
 
     /**
+<<<<<<< HEAD
      * Default setter method when setting parsed data from the XML file. 
+=======
+     * Default setter method when setting parsed data from the XML file.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      **/
     public Object put(Object key, Object value)
     {
@@ -244,6 +332,10 @@ public class ResourceImpl implements Resource
 
     public String toString()
     {
+<<<<<<< HEAD
         return getId();
+=======
+        return (getId() == null || getId().isEmpty())?getSymbolicName():getId();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 }

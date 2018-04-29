@@ -18,11 +18,14 @@
  */
 package org.apache.felix.utils.properties;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Dictionary;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -34,6 +37,15 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
+<<<<<<< HEAD
+=======
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Properties;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class MockBundleContext implements BundleContext {
     private Properties properties = new Properties();
 
@@ -131,4 +143,23 @@ public class MockBundleContext implements BundleContext {
     public Filter createFilter(String s) throws InvalidSyntaxException {
         throw new UnsupportedOperationException();
     }
+<<<<<<< HEAD
+=======
+
+    public <S> ServiceRegistration<S> registerService(Class<S> clazz, S service, Dictionary<String, ?> properties) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <S> ServiceReference<S> getServiceReference(Class<S> clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <S> Collection<ServiceReference<S>> getServiceReferences(Class<S> clazz, String filter) throws InvalidSyntaxException {
+        throw new UnsupportedOperationException();
+    }
+
+    public Bundle getBundle(String location) {
+        throw new UnsupportedOperationException();
+    }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

@@ -22,14 +22,25 @@
     <parent>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.http.parent</artifactId>
+<<<<<<< HEAD
         <version>3-SNAPSHOT</version>
+=======
+        <version>9</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <name>Apache Felix Http Samples - Whiteboard</name>
+<<<<<<< HEAD
     <artifactId>org.apache.felix.http.samples.whiteboard</artifactId>
     <version>2.2.3-SNAPSHOT</version>
     <packaging>jar</packaging>
+=======
+    <description>This example shows how to register servlets and filters using the Http Whiteboard Service.</description>
+    <artifactId>org.apache.felix.http.samples.whiteboard</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/felix/trunk/http/samples/whiteboard</connection>
@@ -42,12 +53,18 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+<<<<<<< HEAD
+=======
+                <version>3.0.1</version>
+                <extensions>true</extensions>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 <configuration>
                     <instructions>
                         <Bundle-Activator>
                             org.apache.felix.http.samples.whiteboard.Activator
                         </Bundle-Activator>
                         <Private-Package>
+<<<<<<< HEAD
                             org.apache.felix.http.samples.whiteboard.*
                         </Private-Package>
                         <Import-Package>
@@ -69,12 +86,26 @@
                     </execution>
                 </executions>
             </plugin>
+=======
+                            org.apache.felix.http.samples.whiteboard
+                        </Private-Package>
+                        <Export-Package>
+                           !org.apache.felix.http.samples.whiteboard
+                        </Export-Package>
+                        <Require-Capability>
+                            osgi.contract; filter:="(&amp;(osgi.contract=JavaServlet)(version>=3.1))"
+                        </Require-Capability>
+                    </instructions>
+                </configuration>
+            </plugin>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
+<<<<<<< HEAD
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -90,4 +121,17 @@
         </dependency>
     </dependencies>
 
+=======
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+        </dependency>
+    </dependencies>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 </project>

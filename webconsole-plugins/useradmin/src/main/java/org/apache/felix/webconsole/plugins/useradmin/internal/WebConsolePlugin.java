@@ -18,19 +18,36 @@ package org.apache.felix.webconsole.plugins.useradmin.internal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+<<<<<<< HEAD
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Iterator;
+=======
+import java.security.MessageDigest;
+import java.security.Provider;
+import java.security.Security;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+<<<<<<< HEAD
 import org.apache.felix.webconsole.SimpleWebConsolePlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+=======
+import org.apache.felix.utils.json.JSONParser;
+import org.apache.felix.utils.json.JSONWriter;
+import org.apache.felix.webconsole.SimpleWebConsolePlugin;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.useradmin.Group;
 import org.osgi.service.useradmin.Role;
 import org.osgi.service.useradmin.User;
@@ -60,7 +77,11 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
         TEMPLATE = readTemplateFile("/res/plugin.html"); //$NON-NLS-1$
     }
 
+<<<<<<< HEAD
 
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public String getCategory()
     {
         return CATEGORY;
@@ -69,12 +90,20 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
     /**
      * @see org.apache.felix.webconsole.AbstractWebConsolePlugin#renderContent(HttpServletRequest, HttpServletResponse)
      */
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     protected final void renderContent(HttpServletRequest req,
         HttpServletResponse response) throws ServletException, IOException
     {
         response.getWriter().print(TEMPLATE);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException
     {
@@ -90,6 +119,10 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
 
         try
         {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if ("addMember".equals(action)) { //$NON-NLS-1$
                 final Role xrole = userAdmin.getRole(role);
                 final Group xgroup = (Group) userAdmin.getRole(group);
@@ -108,6 +141,37 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
                 xgroup.removeMember(xrole);
                 toJSON(jw, xgroup, false);
             }
+<<<<<<< HEAD
+=======
+            else if ("toggleMembership".equals(action)) { //$NON-NLS-1$
+                final Role xrole = userAdmin.getRole(role);
+                final Group xgroup = (Group) userAdmin.getRole(group);
+                if (contains(xgroup.getRequiredMembers(), xrole)) // if required
+                {
+                    xgroup.removeMember(xrole);
+                    xgroup.addMember(xrole); // add as basic
+                }
+                else
+                {
+                    xgroup.removeMember(xrole);
+                    xgroup.addRequiredMember(xrole); // add as required
+                }
+                toJSON(jw, xgroup, false);
+            }
+            else if ("getDigestAlgorithms".equals(action)) { //$NON-NLS-1$
+                getMessageDigestAlgorithms(jw);
+            }
+            else if ("digest".equals(action)) { //$NON-NLS-1$
+                final String dataRaw = req.getParameter("data"); //$NON-NLS-1$
+                final String algorithm = req.getParameter("algorithm"); //$NON-NLS-1$
+                final MessageDigest digest = MessageDigest.getInstance(algorithm);
+                final byte[] encoded = digest.digest(dataRaw.getBytes());
+                jw.object();
+                jw.key("encoded"); //$NON-NLS-1$
+                jw.value(encoded);
+                jw.endObject();
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             else if ("del".equals(action)) { //$NON-NLS-1$
                 out.print(userAdmin.removeRole(role));
             }
@@ -117,6 +181,7 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
             }
             else if ("set".equals(action)) { //$NON-NLS-1$
                 final String dataRaw = req.getParameter("data"); //$NON-NLS-1$
+<<<<<<< HEAD
                 final JSONObject data = new JSONObject(dataRaw);
                 Role xrole = userAdmin.getRole(data.getString("name")); //$NON-NLS-1$
                 if (null == xrole)
@@ -124,6 +189,17 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
                     xrole = userAdmin.createRole(//
                         data.getString("name"), //$NON-NLS-1$
                         data.getInt("type")); //$NON-NLS-1$
+=======
+                JSONParser parser = new JSONParser(dataRaw);
+
+                final Map<String, Object> data = parser.getParsed();
+                Role xrole = userAdmin.getRole((String)data.get("name")); //$NON-NLS-1$
+                if (null == xrole)
+                {
+                    xrole = userAdmin.createRole(//
+                        (String)data.get("name"), //$NON-NLS-1$
+                        (int)(long)(Long)data.get("type")); //$NON-NLS-1$
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
                 doSetData(xrole, data);
                 out.print(true);
@@ -135,6 +211,10 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
                 Role[] roles = userAdmin.getRoles(null);
                 toJSON(jw, roles, false);
             }
+<<<<<<< HEAD
+=======
+            jw.flush();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         catch (Exception e)
         {
@@ -142,6 +222,7 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
         }
     }
 
+<<<<<<< HEAD
     private static final void doSetData(Role role, JSONObject data) throws JSONException
     {
         putProps(role.getProperties(), data.optJSONObject("properties")); //$NON-NLS-1$
@@ -153,6 +234,20 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
 
     private static final void putProps(Dictionary dest, JSONObject props)
         throws JSONException
+=======
+    @SuppressWarnings("unchecked")
+    private static final void doSetData(Role role, Map<String, Object> data) throws IOException
+    {
+        putProps(role.getProperties(), (Map<String, Object>)data.get("properties")); //$NON-NLS-1$
+        if (role instanceof User)
+        {
+            putProps(((User) role).getCredentials(), (Map<String, Object>)data.get("credentials")); //$NON-NLS-1$
+        }
+    }
+
+    private static final void putProps(Dictionary dest, Map<String, Object> props)
+        throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         // clear the old properties
         if (!dest.isEmpty())
@@ -163,11 +258,16 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
             }
         }
         // it's empty - don't process it at all
+<<<<<<< HEAD
         if (props == null || props.length() == 0)
+=======
+        if (props == null || props.size() == 0)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             return;
         }
         // append the new one
+<<<<<<< HEAD
         for (Iterator i = props.keys(); i.hasNext();)
         {
             Object key = i.next();
@@ -176,23 +276,47 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
             if (val instanceof JSONArray)
             {
                 val = toArray((JSONArray) val);
+=======
+        for (Iterator i = props.keySet().iterator(); i.hasNext();)
+        {
+            Object key = i.next();
+            Object val = props.get(key);
+
+            if (val instanceof Collection)
+            {
+                val = toArray((Collection) val);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
             dest.put(key, val);
         }
     }
 
+<<<<<<< HEAD
     private static final byte[] toArray(JSONArray array) throws JSONException
     {
         final byte[] ret = new byte[array.length()];
         for (int i = 0; i < ret.length; i++)
         {
             ret[i] = (byte) (array.getInt(i) & 0xff);
+=======
+    private static final byte[] toArray(Collection array) throws IOException
+    {
+        final byte[] ret = new byte[array.size()];
+        Iterator iter = array.iterator();
+        for (int i = 0; i < ret.length; i++)
+        {
+            ret[i] = (byte) ((Long)iter.next() & 0xff);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return ret;
     }
 
     private static final void toJSON(JSONWriter jw, Role role, boolean details)
+<<<<<<< HEAD
         throws JSONException
+=======
+        throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         jw.object();
         jw.key("type"); //$NON-NLS-1$
@@ -244,7 +368,11 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
     }
 
     private static final void toJSON(JSONWriter jw, Dictionary props)
+<<<<<<< HEAD
         throws JSONException
+=======
+        throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         jw.object();
         for (Enumeration e = props.keys(); e.hasMoreElements();)
@@ -258,7 +386,11 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
     }
 
     private static final void toJSON(JSONWriter jw, Role[] roles, boolean details)
+<<<<<<< HEAD
         throws JSONException
+=======
+        throws IOException
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         jw.array();
         for (int i = 0; roles != null && i < roles.length; i++)
@@ -267,4 +399,42 @@ class WebConsolePlugin extends SimpleWebConsolePlugin
         }
         jw.endArray();
     }
+<<<<<<< HEAD
+=======
+
+    private static final String DIGEST_KEY_PREFIX = "MessageDigest."; //$NON-NLS-1$
+
+    private static void getMessageDigestAlgorithms(final JSONWriter jw)
+        throws IOException
+    {
+        Provider[] providers = Security.getProviders();
+        jw.array();
+        for (int i = 0; providers != null && i < providers.length; i++)
+        {
+            for (Iterator keys = providers[i].keySet().iterator(); keys.hasNext();)
+            {
+                final String key = (String) keys.next();
+                if (key.startsWith(DIGEST_KEY_PREFIX) && key.indexOf(' ') == -1)
+                {
+                    jw.value(key.substring(DIGEST_KEY_PREFIX.length()));
+                }
+            }
+        }
+        jw.endArray();
+    }
+
+    private static boolean contains(final Role[] roles, final Role role)
+    {
+        for (int i = 0; roles != null && role != null && i < roles.length; i++)
+        {
+            if (roles[i].getName().equals(role.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

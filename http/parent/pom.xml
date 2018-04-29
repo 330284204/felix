@@ -23,11 +23,16 @@
     <parent>
         <groupId>org.apache.felix</groupId>
         <artifactId>felix-parent</artifactId>
+<<<<<<< HEAD
         <version>2.1</version>
+=======
+        <version>5</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
     <name>Apache Felix Http Parent POM</name>
+<<<<<<< HEAD
     <groupId>org.apache.felix</groupId>
     <artifactId>org.apache.felix.http.parent</artifactId>
     <version>3-SNAPSHOT</version>
@@ -45,6 +50,15 @@
     	<servlet.version>2.5</servlet.version>
 
     	<http.api.version>2.0.4</http.api.version>
+=======
+    <artifactId>org.apache.felix.http.parent</artifactId>
+    <version>11-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+
+    <properties>
+    	<servlet.version>3.1.0</servlet.version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     </properties>
 
     <scm>
@@ -54,6 +68,7 @@
     </scm>
 
     <build>
+<<<<<<< HEAD
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -64,12 +79,18 @@
                 </configuration>
             </plugin>
         </plugins>
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
+<<<<<<< HEAD
                     <version>2.3.6</version>
+=======
+                    <version>3.5.0</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     <executions>
                       <execution>
                         <id>bundle</id>
@@ -78,6 +99,15 @@
                           <goal>bundle</goal>
                         </goals>
                       </execution>
+<<<<<<< HEAD
+=======
+                      <execution>
+                        <id>baseline</id>
+                        <goals>
+                          <goal>baseline</goal>
+                        </goals>
+                      </execution>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     </executions>
                     <configuration>
                         <instructions>
@@ -91,6 +121,7 @@
     </build>
 
     <dependencies>
+<<<<<<< HEAD
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -102,19 +133,47 @@
             <artifactId>mockito-all</artifactId>
             <version>1.8.2</version>
             <scope>test</scope>
+=======
+    <!-- Annotations -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+        </dependency>
+    <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+	        <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
+<<<<<<< HEAD
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet.version}</version>
+=======
+        <!-- Annotations -->
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>3.0.0</version>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
+<<<<<<< HEAD
                 <artifactId>org.osgi.core</artifactId>
                 <version>4.2.0</version>
                 <scope>provided</scope>
@@ -125,6 +184,39 @@
                 <version>4.2.0</version>
                 <scope>provided</scope>
             </dependency>
+=======
+                <artifactId>osgi.annotation</artifactId>
+                <version>6.0.1</version>
+                <scope>provided</scope>
+            </dependency>
+        <!-- Servlet API -->  
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        <!-- OSGi Core -->
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.core</artifactId>
+                <version>6.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+        <!-- Testing -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.17.0</version>
+                <scope>test</scope>
+            </dependency>
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         </dependencies>
     </dependencyManagement>
 </project>

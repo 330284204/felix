@@ -207,10 +207,21 @@ public class PackageAdminImpl implements PackageAdmin
                     List<BundleWire> hostWires = revision.getWiring().getRequiredWires(null);
                     for (int i = 0; (hostWires != null) && (i < hostWires.size()); i++)
                     {
+<<<<<<< HEAD
                         Bundle b = hostWires.get(i).getProviderWiring().getBundle();
                         if (b != null)
                         {
                             list.add(b);
+=======
+                        BundleWire wire = hostWires.get(i);
+                        if (wire.getCapability().getNamespace().equals(BundleRevision.HOST_NAMESPACE))
+                        {
+                            Bundle b = wire.getProviderWiring().getBundle();
+                            if (b != null)
+                            {
+                                list.add(b);
+                            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         }
                     }
                 }

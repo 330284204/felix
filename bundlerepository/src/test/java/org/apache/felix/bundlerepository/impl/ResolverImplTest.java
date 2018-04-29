@@ -18,25 +18,44 @@
  */
 package org.apache.felix.bundlerepository.impl;
 
+<<<<<<< HEAD
 import java.net.URL;
+=======
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collections;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Hashtable;
 
 import junit.framework.TestCase;
 
+<<<<<<< HEAD
 import org.apache.felix.bundlerepository.Requirement;
 import org.apache.felix.bundlerepository.Resource;
 import org.apache.felix.utils.filter.FilterImpl;
 import org.apache.felix.utils.log.Logger;
+=======
+import org.apache.felix.bundlerepository.*;
+import org.apache.felix.utils.filter.FilterImpl;
+import org.apache.felix.utils.log.Logger;
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.easymock.internal.matchers.Captures;
+<<<<<<< HEAD
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.ServiceListener;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.Resolver;
+=======
+import org.osgi.framework.*;
+import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.resource.Capability;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 public class ResolverImplTest extends TestCase
 {
@@ -57,6 +76,102 @@ public class ResolverImplTest extends TestCase
         assertTrue(resolver.resolve());
     }
 
+<<<<<<< HEAD
+=======
+    public void testSpec() throws Exception
+    {
+        URL url = getClass().getResource("/spec_repository.xml");
+        RepositoryAdminImpl repoAdmin = createRepositoryAdmin();
+        repoAdmin.addRepository(url);
+
+        Resolver resolver = repoAdmin.resolver();
+
+        RequirementImpl requirement = new RequirementImpl("foo");
+        requirement.setFilter("(bar=toast)");
+
+        Requirement[] requirements = { requirement };
+
+        Resource[] discoverResources = repoAdmin.discoverResources(requirements);
+        assertNotNull(discoverResources);
+        assertEquals(1, discoverResources.length);
+
+        resolver.add(discoverResources[0]);
+        assertTrue("Resolver could not resolve", resolver.resolve());
+    }
+
+    public void testSpec2() throws Exception
+    {
+        URL url = getClass().getResource("/spec_repository.xml");
+        RepositoryAdminImpl repoAdmin = createRepositoryAdmin();
+        repoAdmin.addRepository(url);
+
+        Resolver resolver = repoAdmin.resolver();
+
+        // Create a Local Resource with an extender capability
+        CapabilityImpl capability = new CapabilityImpl("osgi.extender");
+        capability.addProperty("osgi.extender", "osgi.component");
+        capability.addProperty("version", "Version", "1.3");
+
+        org.apache.felix.bundlerepository.Capability[] capabilities = { capability };
+
+        Resource resource = EasyMock.createMock(Resource.class);
+        EasyMock.expect(resource.getSymbolicName()).andReturn("com.test.bundleA").anyTimes();
+        EasyMock.expect(resource.getRequirements()).andReturn(null).anyTimes();
+        EasyMock.expect(resource.getCapabilities()).andReturn(capabilities).anyTimes();
+        EasyMock.expect(resource.getURI()).andReturn("http://test.com").anyTimes();
+        EasyMock.expect(resource.isLocal()).andReturn(true).anyTimes();
+
+        // Create a Local Resource with a service capability
+        CapabilityImpl capability2 = new CapabilityImpl("service");
+        capability2.addProperty("objectClass", "org.some.other.interface");
+        capability2.addProperty("effective", "active");
+
+        org.apache.felix.bundlerepository.Capability[] capabilities2 = { capability2 };
+
+        Resource resource2 = EasyMock.createMock(Resource.class);
+        EasyMock.expect(resource2.getSymbolicName()).andReturn("com.test.bundleB").anyTimes();
+        EasyMock.expect(resource2.getRequirements()).andReturn(null).anyTimes();
+        EasyMock.expect(resource2.getCapabilities()).andReturn(capabilities2).anyTimes();
+        EasyMock.expect(resource2.getURI()).andReturn("http://test2.com").anyTimes();
+        EasyMock.expect(resource2.isLocal()).andReturn(true).anyTimes();
+
+        EasyMock.replay(resource, resource2);
+
+        resolver.add(resource);
+        resolver.add(resource2);
+
+        // Set the requirements to get the bundle
+        RequirementImpl requirement = new RequirementImpl("foo");
+        requirement.setFilter("(bar=bread)");
+
+        Requirement[] requirements = { requirement };
+
+        Resource[] discoverResources = repoAdmin.discoverResources(requirements);
+        assertNotNull(discoverResources);
+        assertEquals(1, discoverResources.length);
+
+        resolver.add(discoverResources[0]);
+        assertTrue("Resolver could not resolve", resolver.resolve());
+    }
+
+    public void testSpecBundleNamespace() throws Exception
+    {
+        URL url = getClass().getResource("/spec_repository.xml");
+        RepositoryAdminImpl repoAdmin = createRepositoryAdmin();
+        RepositoryImpl repo = (RepositoryImpl) repoAdmin.addRepository(url);
+
+        Resolver resolver = repoAdmin.resolver();
+
+        Resource[] discoverResources = repoAdmin.discoverResources("(symbolicname=org.apache.felix.bundlerepository.test_file_6*)");
+        assertNotNull(discoverResources);
+        assertEquals(1, discoverResources.length);
+
+        resolver.add(discoverResources[0]);
+        assertTrue(resolver.resolve());
+        
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testMatchingReq() throws Exception
     {
         RepositoryAdminImpl repoAdmin = createRepositoryAdmin();
@@ -131,6 +246,50 @@ public class ResolverImplTest extends TestCase
 
     }
 
+<<<<<<< HEAD
+=======
+    public void testFindUpdatableLocalResource() throws Exception {
+        LocalResource resource = EasyMock.createMock(LocalResource.class);
+        EasyMock.expect(resource.getSymbolicName()).andReturn("com.test.bundleA").anyTimes();
+        EasyMock.expect(resource.getRequirements()).andReturn(null).anyTimes();
+        EasyMock.expect(resource.getCapabilities()).andReturn(null).anyTimes();
+        EasyMock.expect(resource.getURI()).andReturn("http://test.com").anyTimes();
+        EasyMock.expect(resource.isLocal()).andReturn(true).anyTimes();
+
+        Repository localRepo = EasyMock.createMock(Repository.class);
+
+        Repository[] localRepos = { localRepo };
+        final LocalResource[] localResources = { resource };
+
+        EasyMock.expect(localRepo.getResources()).andReturn(localResources).anyTimes();
+        EasyMock.expect(localRepo.getURI()).andReturn(Repository.LOCAL).anyTimes();
+        EasyMock.expect(localRepo.getLastModified()).andReturn(System.currentTimeMillis()).anyTimes();
+
+        BundleContext bundleContext = EasyMock.createMock(BundleContext.class);
+
+        EasyMock.replay(resource, localRepo);
+
+        ResolverImpl resolver = new ResolverImpl(bundleContext, localRepos, new Logger(bundleContext)) {
+            @Override
+            public LocalResource[] getLocalResources() {
+                return localResources;
+            }
+        };
+
+        resolver.add(resource);
+
+        boolean exceptionThrown = false;
+        try {
+            resolver.resolve();
+            resolver.deploy(Resolver.START);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exceptionThrown = true;
+        }
+        assertFalse(exceptionThrown);
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public static void main(String[] args) throws Exception
     {
         new ResolverImplTest().testReferral1();
@@ -138,18 +297,36 @@ public class ResolverImplTest extends TestCase
 
     private RepositoryAdminImpl createRepositoryAdmin() throws Exception
     {
+<<<<<<< HEAD
         BundleContext bundleContext = (BundleContext) EasyMock.createMock(BundleContext.class);
         Bundle systemBundle = (Bundle) EasyMock.createMock(Bundle.class);
+=======
+        BundleContext bundleContext = EasyMock.createMock(BundleContext.class);
+        Bundle systemBundle = EasyMock.createMock(Bundle.class);
+        BundleRevision systemBundleRevision = EasyMock.createMock(BundleRevision.class);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         Activator.setContext(bundleContext);
         EasyMock.expect(bundleContext.getProperty(RepositoryAdminImpl.REPOSITORY_URL_PROP))
                     .andReturn(getClass().getResource("/referred.xml").toExternalForm());
         EasyMock.expect(bundleContext.getProperty((String) EasyMock.anyObject())).andReturn(null).anyTimes();
         EasyMock.expect(bundleContext.getBundle(0)).andReturn(systemBundle);
+<<<<<<< HEAD
         EasyMock.expect(systemBundle.getHeaders()).andReturn(new Hashtable());
         EasyMock.expect(systemBundle.getRegisteredServices()).andReturn(null);
         EasyMock.expect(new Long(systemBundle.getBundleId())).andReturn(new Long(0)).anyTimes();
         EasyMock.expect(systemBundle.getBundleContext()).andReturn(bundleContext);
+=======
+        EasyMock.expect(bundleContext.installBundle((String) EasyMock.anyObject(), (InputStream) EasyMock.anyObject())).andReturn(systemBundle);
+        EasyMock.expect(systemBundle.getHeaders()).andReturn(new Hashtable()).anyTimes();
+        systemBundle.start();
+        EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(systemBundle.getRegisteredServices()).andReturn(null);
+        EasyMock.expect(new Long(systemBundle.getBundleId())).andReturn(new Long(0)).anyTimes();
+        EasyMock.expect(systemBundle.getBundleContext()).andReturn(bundleContext);
+        EasyMock.expect(systemBundleRevision.getCapabilities(null)).andReturn(Collections.<Capability>emptyList());
+        EasyMock.expect(systemBundle.adapt(BundleRevision.class)).andReturn(systemBundleRevision);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         bundleContext.addBundleListener((BundleListener) EasyMock.anyObject());
         bundleContext.addServiceListener((ServiceListener) EasyMock.anyObject());
         EasyMock.expect(bundleContext.getBundles()).andReturn(new Bundle[] { systemBundle });
@@ -159,7 +336,11 @@ public class ResolverImplTest extends TestCase
                 return FilterImpl.newInstance((String) c.getValue());
             }
         }).anyTimes();
+<<<<<<< HEAD
         EasyMock.replay(new Object[] { bundleContext, systemBundle });
+=======
+        EasyMock.replay(new Object[] { bundleContext, systemBundle, systemBundleRevision });
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
         RepositoryAdminImpl repoAdmin = new RepositoryAdminImpl(bundleContext, new Logger(bundleContext));
 

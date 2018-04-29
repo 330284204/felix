@@ -19,8 +19,11 @@
 package org.apache.felix.framework;
 
 import java.net.ContentHandler;
+<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.Collections;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +32,10 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.url.URLStreamHandlerService;
+<<<<<<< HEAD
 import org.osgi.util.tracker.ServiceTracker;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 /**
  * <p>
@@ -55,6 +61,7 @@ class URLHandlersActivator implements BundleActivator
     // Bundle activator methods.
     //
 
+    @Override
     public void start(BundleContext context)
     {
         // Only register the framework with the URL Handlers service
@@ -71,6 +78,7 @@ class URLHandlersActivator implements BundleActivator
         URLHandlers.registerFrameworkInstance(m_framework, enable);
     }
 
+    @Override
     public void stop(BundleContext context)
     {
         URLHandlers.unregisterFrameworkInstance(m_framework);
@@ -80,14 +88,22 @@ class URLHandlersActivator implements BundleActivator
     protected Object getStreamHandlerService(String protocol)
     {
         return get(
+<<<<<<< HEAD
             m_framework.getHooks(URLStreamHandlerService.class),
+=======
+            m_framework.getHookRegistry().getHooks(URLStreamHandlerService.class),
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             "url.handler.protocol", protocol);
     }
 
     protected Object getContentHandlerService(String mimeType)
     {
         return get(
+<<<<<<< HEAD
             m_framework.getHooks(ContentHandler.class),
+=======
+            m_framework.getHookRegistry().getHooks(ContentHandler.class),
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             "url.content.mimetype", mimeType);
     }
 
@@ -107,13 +123,21 @@ class URLHandlersActivator implements BundleActivator
                     {
                         if (value.equals(((String[]) values)[valueIdx]))
                         {
+<<<<<<< HEAD
                             return m_framework.getService(m_framework, ref);
+=======
+                            return m_framework.getService(m_framework, ref, false);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         }
                     }
                 }
                 else if (value.equals(values))
                 {
+<<<<<<< HEAD
                     return m_framework.getService(m_framework, ref);
+=======
+                    return m_framework.getService(m_framework, ref, false);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 }
             }
         }

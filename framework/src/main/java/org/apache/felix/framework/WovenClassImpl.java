@@ -24,11 +24,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+<<<<<<< HEAD
 import org.apache.felix.framework.util.ImmutableList;
 import org.apache.felix.framework.util.manifestparser.ManifestParser;
 import org.osgi.framework.AdminPermission;
 import org.osgi.framework.hooks.weaving.WovenClass;
 import org.osgi.framework.wiring.BundleRequirement;
+=======
+
+import org.apache.felix.framework.util.ImmutableList;
+import org.apache.felix.framework.util.manifestparser.ManifestParser;
+import org.osgi.framework.AdminPermission;
+import org.osgi.framework.PackagePermission;
+import org.osgi.framework.hooks.weaving.WovenClass;
+import org.osgi.framework.wiring.BundleRequirement;
+import org.osgi.framework.wiring.BundleRevision;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.wiring.BundleWiring;
 
 class WovenClassImpl implements WovenClass, List<String>
@@ -39,12 +50,20 @@ class WovenClassImpl implements WovenClass, List<String>
     private List<String> m_imports = new ArrayList<String>();
     private Class m_definedClass = null;
     private boolean m_isComplete = false;
+<<<<<<< HEAD
 
     /* package */ WovenClassImpl(String className, BundleWiring wiring, byte[] bytes)
+=======
+    private int m_state;
+
+    /* package */WovenClassImpl(String className, BundleWiring wiring,
+            byte[] bytes)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         m_className = className;
         m_wiring = wiring;
         m_bytes = bytes;
+<<<<<<< HEAD
     }
 
     synchronized void complete(Class definedClass, byte[] bytes, List<String> imports)
@@ -55,6 +74,28 @@ class WovenClassImpl implements WovenClass, List<String>
         m_imports = (imports == null)
             ? ImmutableList.newInstance(m_imports)
             : ImmutableList.newInstance(imports);
+=======
+        m_state = TRANSFORMING;
+    }
+
+    synchronized void complete(Class definedClass, byte[] bytes,
+            List<String> imports)
+    {
+        completeDefine(definedClass);
+        m_bytes = (bytes == null) ? m_bytes : bytes;
+        completeImports(imports);
+    }
+
+    synchronized void completeImports(List<String> imports)
+    {
+        m_imports = (imports == null) ? ImmutableList.newInstance(m_imports)
+                : ImmutableList.newInstance(imports);
+    }
+
+    synchronized void completeDefine(Class definedClass)
+    {
+        m_definedClass = definedClass;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public synchronized byte[] getBytes()
@@ -62,7 +103,12 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         byte[] bytes = m_bytes;
         if (m_isComplete)
@@ -78,6 +124,7 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
         }
         if (m_isComplete)
@@ -86,6 +133,16 @@ class WovenClassImpl implements WovenClass, List<String>
                 "Cannot change bytes after class weaving is completed.");
         }
         else
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+        }
+        if (m_state >= TRANSFORMED)
+        {
+            throw new IllegalStateException(
+                    "Cannot change bytes after class weaving is completed.");
+        } else
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             m_bytes = bytes;
         }
@@ -113,7 +170,12 @@ class WovenClassImpl implements WovenClass, List<String>
 
     public ProtectionDomain getProtectionDomain()
     {
+<<<<<<< HEAD
         return ((BundleImpl) m_wiring.getRevision().getBundle()).getProtectionDomain();
+=======
+        return ((BundleImpl) m_wiring.getRevision().getBundle())
+                .getProtectionDomain();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public synchronized Class<?> getDefinedClass()
@@ -168,12 +230,18 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         if (s != null)
         {
             try
             {
+<<<<<<< HEAD
                 List<BundleRequirement> reqs =
                     ManifestParser.parseDynamicImportHeader(null, null, s);
             }
@@ -184,17 +252,47 @@ class WovenClassImpl implements WovenClass, List<String>
                 re.initCause(ex);
                 throw re;
             }
+=======
+                List<BundleRequirement> reqs = ManifestParser
+                        .parseDynamicImportHeader(null, null, s);
+            } catch (Exception ex)
+            {
+                RuntimeException re = new IllegalArgumentException(
+                        "Unable to parse dynamic import.");
+                re.initCause(ex);
+                throw re;
+            }
+            checkImport(s);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             return m_imports.add(s);
         }
         return false;
     }
 
+<<<<<<< HEAD
+=======
+    private void checkImport(String s)
+    {
+        SecurityManager sm = System.getSecurityManager();
+
+        if (sm != null)
+        {
+            sm.checkPermission(new PackagePermission(s, PackagePermission.IMPORT));
+        }
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public synchronized boolean remove(Object o)
     {
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.remove(o);
     }
@@ -209,12 +307,18 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         for (String s : collection)
         {
             try
             {
+<<<<<<< HEAD
                 List<BundleRequirement> reqs =
                     ManifestParser.parseDynamicImportHeader(null, null, s);
             }
@@ -225,21 +329,44 @@ class WovenClassImpl implements WovenClass, List<String>
                 re.initCause(ex);
                 throw re;
             }
+=======
+                List<BundleRequirement> reqs = ManifestParser
+                        .parseDynamicImportHeader(null, null, s);
+            } catch (Exception ex)
+            {
+                RuntimeException re = new IllegalArgumentException(
+                        "Unable to parse dynamic import.");
+                re.initCause(ex);
+                throw re;
+            }
+            checkImport(s);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.addAll(collection);
     }
 
+<<<<<<< HEAD
     public synchronized boolean addAll(int i, Collection<? extends String> collection)
+=======
+    public synchronized boolean addAll(int i,
+            Collection<? extends String> collection)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         for (String s : collection)
         {
             try
             {
+<<<<<<< HEAD
                 List<BundleRequirement> reqs =
                     ManifestParser.parseDynamicImportHeader(null, null, s);
             }
@@ -250,6 +377,18 @@ class WovenClassImpl implements WovenClass, List<String>
                 re.initCause(ex);
                 throw re;
             }
+=======
+                List<BundleRequirement> reqs = ManifestParser
+                        .parseDynamicImportHeader(null, null, s);
+            } catch (Exception ex)
+            {
+                RuntimeException re = new IllegalArgumentException(
+                        "Unable to parse dynamic import.");
+                re.initCause(ex);
+                throw re;
+            }
+            checkImport(s);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.addAll(i, collection);
     }
@@ -259,7 +398,12 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.removeAll(collection);
     }
@@ -269,13 +413,27 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.retainAll(collection);
     }
 
     public synchronized void clear()
     {
+<<<<<<< HEAD
+=======
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null)
+        {
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+        }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_imports.clear();
     }
 
@@ -289,6 +447,7 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
         }
         try
@@ -303,6 +462,23 @@ class WovenClassImpl implements WovenClass, List<String>
             re.initCause(ex);
             throw re;
         }
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+        }
+        try
+        {
+            List<BundleRequirement> reqs = ManifestParser
+                    .parseDynamicImportHeader(null, null, s);
+        } catch (Exception ex)
+        {
+            RuntimeException re = new IllegalArgumentException(
+                    "Unable to parse dynamic import.");
+            re.initCause(ex);
+            throw re;
+        }
+        checkImport(s);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         return m_imports.set(i, s);
     }
 
@@ -311,6 +487,7 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
         }
         try
@@ -325,6 +502,23 @@ class WovenClassImpl implements WovenClass, List<String>
             re.initCause(ex);
             throw re;
         }
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+        }
+        try
+        {
+            List<BundleRequirement> reqs = ManifestParser
+                    .parseDynamicImportHeader(null, null, s);
+        } catch (Exception ex)
+        {
+            RuntimeException re = new IllegalArgumentException(
+                    "Unable to parse dynamic import.");
+            re.initCause(ex);
+            throw re;
+        }
+        checkImport(s);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_imports.add(i, s);
     }
 
@@ -333,7 +527,12 @@ class WovenClassImpl implements WovenClass, List<String>
         SecurityManager sm = System.getSecurityManager();
         if (sm != null)
         {
+<<<<<<< HEAD
             sm.checkPermission(new AdminPermission(m_wiring.getBundle(), AdminPermission.WEAVE));
+=======
+            sm.checkPermission(new AdminPermission(m_wiring.getBundle(),
+                    AdminPermission.WEAVE));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
         return m_imports.remove(i);
     }
@@ -373,4 +572,43 @@ class WovenClassImpl implements WovenClass, List<String>
         }
         return bytes;
     }
+<<<<<<< HEAD
+=======
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.osgi.framework.hooks.weaving.WovenClass#getState()
+     */
+    public synchronized int getState()
+    {
+        return m_state;
+    }
+
+    public synchronized void setState(int state)
+    {
+        // Per 56.6.4.13 Weaving complete if state is DEFINED, DEFINE_FAILED, or
+        // TRANSFORMING_FAILED
+        if (!m_isComplete
+                && (state == DEFINED || state == DEFINE_FAILED || state == TRANSFORMING_FAILED))
+        {
+            m_isComplete = true;
+            if (state == DEFINED || state == DEFINE_FAILED)
+            {
+                BundleProtectionDomain pd = (BundleProtectionDomain)
+                    ((BundleRevisionImpl) m_wiring.getRevision()).getProtectionDomain();
+                for (String s : m_imports)
+                {
+                    pd.addWoven(s);
+                }
+            }
+        }
+        if(state == TRANSFORMED)
+        {
+            completeImports(null);
+        }
+        m_state = state;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

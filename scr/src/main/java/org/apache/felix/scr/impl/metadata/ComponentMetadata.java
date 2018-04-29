@@ -18,6 +18,7 @@
  */
 package org.apache.felix.scr.impl.metadata;
 
+<<<<<<< HEAD
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -35,6 +36,24 @@ import org.osgi.service.log.LogService;
 
 /**
  * This class holds the information associated to a component in the descriptor *  */
+=======
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.felix.scr.impl.metadata.ServiceMetadata.Scope;
+import org.osgi.service.component.ComponentException;
+
+/**
+ * This class holds the information associated to a component in the descriptor
+ */
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 public class ComponentMetadata
 {
     // Configuration required for component activation (since DS 1.1)
@@ -55,9 +74,14 @@ public class ComponentMetadata
     // marker value indicating duplicate service setting
     private static final ServiceMetadata SERVICE_DUPLICATE = new ServiceMetadata();
 
+<<<<<<< HEAD
     // the namespace code of the namespace declaring this component, this is
     // one of the XmlHandler.DS_VERSION_* constants
     private final int m_namespaceCode;
+=======
+    // the namespace code of the namespace declaring this component
+    private final DSVersion m_dsVersion;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // 112.4.3: A Globally unique component name (required)
     private String m_name;
@@ -66,11 +90,16 @@ public class ComponentMetadata
     private boolean m_enabled = true;
 
     // 112.4.3: Factory identified. If set to a non empty string, it indicates that the component is a factory component (optional).
+<<<<<<< HEAD
     private String m_factory = null;
+=======
+    private String m_factory;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // 112.4.3: Controls whether component configurations must be immediately activated after becoming
     // satisfied or whether activation should be delayed. (optional, default value depends
     // on whether the component has a service element or not).
+<<<<<<< HEAD
     private Boolean m_immediate = null;
 
     // 112.4.4 Implementation Element (required)
@@ -78,17 +107,31 @@ public class ComponentMetadata
 
     // 112.5.8 activate can be specified (since DS 1.1)
     private String m_activate = null;
+=======
+    private Boolean m_immediate;
+
+    // 112.4.4 Implementation Element (required)
+    private String m_implementationClassName;
+
+    // 112.5.8 activate can be specified (since DS 1.1)
+    private String m_activate;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // 112.5.8 whether activate has been specified
     private boolean m_activateDeclared = false;
 
     // 112.5.12 deactivate can be specified (since DS 1.1)
+<<<<<<< HEAD
     private String m_deactivate = null;
+=======
+    private String m_deactivate;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // 112.5.12 whether deactivate has been specified
     private boolean m_deactivateDeclared = false;
 
     // 112.??.?? modified method (configuration update, since DS 1.1)
+<<<<<<< HEAD
     private String m_modified = null;
 
     // 112.4.3 configuration-policy (since DS 1.1)
@@ -99,11 +142,30 @@ public class ComponentMetadata
 
     // Associated properties (0..*)
     private Dictionary<String, Object> m_properties = new Hashtable<String, Object>();
+=======
+    private String m_modified;
+
+    // 112.4.3 configuration-policy (since DS 1.1)
+    private String m_configurationPolicy;
+
+    // 112.4.4 configuration-pid (since DS 1.2)
+    private List<String> m_configurationPid;
+
+    // activation fields (since DS 1.4)
+    private List<String> m_activationFields;
+
+    // Associated properties (0..*)
+    private final Map<String, Object> m_properties = new HashMap<>();
+
+    // Associated factory properties (0..*)
+    private final Map<String, Object> m_factoryProperties = new HashMap<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // List of Property metadata - used while building the meta data
     // while validating the properties contained in the PropertyMetadata
     // instances are copied to the m_properties Dictionary while this
     // list will be cleared
+<<<<<<< HEAD
     private List<PropertyMetadata> m_propertyMetaData = new ArrayList<PropertyMetadata>();
 
     // Provided services (0..1)
@@ -111,22 +173,56 @@ public class ComponentMetadata
 
     // List of service references, (required services 0..*)
     private List<ReferenceMetadata> m_references = new ArrayList<ReferenceMetadata>();
+=======
+    private final List<PropertyMetadata> m_propertyMetaData = new ArrayList<>();
+
+    // List of Property metadata - used while building the meta data
+    // while validating the properties contained in the PropertyMetadata
+    // instances are copied to the m_factoryProperties Dictionary while this
+    // list will be cleared
+    private final List<PropertyMetadata> m_factoryPropertyMetaData = new ArrayList<>();
+
+    // Provided services (0..1)
+    private ServiceMetadata m_service;
+
+    // List of service references, (required services 0..*)
+    private final List<ReferenceMetadata> m_references = new ArrayList<>();
+
+    private boolean m_configurableServiceProperties;
+    private boolean m_persistentFactoryComponent;
+    private boolean m_deleteCallsModify;
+    private Boolean m_obsoleteFactoryComponentFactory;
+    private boolean m_configureWithInterfaces;
+    private boolean m_delayedKeepInstances;
+
+    private String m_init;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     // Flag that is set once the component is verified (its properties cannot be changed)
     private boolean m_validated = false;
 
     static
     {
+<<<<<<< HEAD
         CONFIGURATION_POLICY_VALID = new TreeSet<String>();
+=======
+        CONFIGURATION_POLICY_VALID = new TreeSet<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         CONFIGURATION_POLICY_VALID.add( CONFIGURATION_POLICY_IGNORE );
         CONFIGURATION_POLICY_VALID.add( CONFIGURATION_POLICY_OPTIONAL );
         CONFIGURATION_POLICY_VALID.add( CONFIGURATION_POLICY_REQUIRE );
     }
 
 
+<<<<<<< HEAD
     public ComponentMetadata( int namespaceCode )
     {
         this.m_namespaceCode = namespaceCode;
+=======
+    public ComponentMetadata( final DSVersion dsVersion )
+    {
+        this.m_dsVersion = dsVersion;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /////////////////////////////////////////// SETTERS //////////////////////////////////////
@@ -135,13 +231,21 @@ public class ComponentMetadata
      * Setter for the configuration-pid component (since DS 1.2)
      * @param configurationPid
      */
+<<<<<<< HEAD
     public void setConfigurationPid( String configurationPid )
+=======
+    public void setConfigurationPid( String[] configurationPid )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         if ( m_validated )
         {
             return;
         }
+<<<<<<< HEAD
         m_configurationPid = configurationPid;
+=======
+        m_configurationPid = new ArrayList<>( Arrays.asList( configurationPid ) );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -313,6 +417,27 @@ public class ComponentMetadata
 
 
     /**
+<<<<<<< HEAD
+=======
+     * Used to add a factory property to the instance
+     *
+     * @param newProperty a property metadata object
+     */
+	public void addFactoryProperty( PropertyMetadata newProperty )
+	{
+        if ( m_validated )
+        {
+            return;
+        }
+        if ( newProperty == null )
+        {
+            throw new IllegalArgumentException( "Cannot add a null property" );
+        }
+        m_factoryPropertyMetaData.add( newProperty );
+	}
+
+    /**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Used to set a ServiceMetadata object.
      *
      * @param service a ServiceMetadata
@@ -354,6 +479,7 @@ public class ComponentMetadata
         m_references.add( newReference );
     }
 
+<<<<<<< HEAD
 
     /////////////////////////////////////////// GETTERS //////////////////////////////////////
 
@@ -409,6 +535,80 @@ public class ComponentMetadata
     public boolean isDS12Felix()
     {
         return getNamespaceCode() >= XmlHandler.DS_VERSION_1_2_FELIX;
+=======
+    public void setConfigurableServiceProperties( boolean configurableServiceProperties) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_configurableServiceProperties = configurableServiceProperties;
+	}
+
+	public void setPersistentFactoryComponent(boolean persistentFactoryComponent) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_persistentFactoryComponent = persistentFactoryComponent;
+	}
+
+	public void setDeleteCallsModify(boolean deleteCallsModify) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_deleteCallsModify = deleteCallsModify;
+	}
+
+	public void setObsoleteFactoryComponentFactory( boolean obsoleteFactoryComponentFactory) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_obsoleteFactoryComponentFactory = obsoleteFactoryComponentFactory;
+	}
+
+	public void setConfigureWithInterfaces(boolean configureWithInterfaces) {
+		this.m_configureWithInterfaces = configureWithInterfaces;
+	}
+
+	public void setDelayedKeepInstances(boolean delayedKeepInstances) {
+        if ( m_validated )
+        {
+            return;
+        }
+		this.m_delayedKeepInstances = delayedKeepInstances;
+	}
+
+
+
+	public void setActivationFields( final String[] fields )
+	{
+		if ( !m_validated )
+		{
+	        this.m_activationFields = new ArrayList<>( Arrays.asList( fields ) );
+		}
+	}
+
+	public void setInit( final String value )
+	{
+	    if ( !m_validated )
+	    {
+	        this.m_init = value;
+	    }
+	}
+
+    /////////////////////////////////////////// GETTERS //////////////////////////////////////
+
+	/**
+     * Returns the namespace code of the namespace of the component element
+     * declaring this component. This is one of the XmlHandler.DS_VERSION_*
+     * constants.
+     */
+    public DSVersion getDSVersion()
+    {
+        return m_dsVersion;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
 
@@ -439,6 +639,7 @@ public class ComponentMetadata
      * component's configuration-pid DS 1.2 attribute, if specified. Else the component name is used
      * as the pid by default.
      */
+<<<<<<< HEAD
     public String getConfigurationPid()
     {
         if (m_configurationPid != null) 
@@ -446,6 +647,28 @@ public class ComponentMetadata
             return m_configurationPid;
         }
         return getName();
+=======
+    public List<String> getConfigurationPid()
+    {
+        if ( !m_validated )
+        {
+            throw new IllegalStateException("not yet validated");
+        }
+        return m_configurationPid;
+    }
+
+    public int getPidIndex(TargetedPID pid)
+    {
+        if ( !m_validated )
+        {
+            throw new IllegalStateException("not yet validated");
+        }
+        if (m_configurationPid == null )
+        {
+        	throw new IllegalStateException( "Apparently trying to configure a component " + m_name + " without a configurationPid using " + pid);
+        }
+    	return m_configurationPid.indexOf(pid.getServicePid());
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
@@ -487,7 +710,11 @@ public class ComponentMetadata
      * Returns the flag that defines the activation policy for the component.
      * <p>
      * This method may only be trusted after this instance has been validated
+<<<<<<< HEAD
      * by the {@link #validate( Logger logger )} call. Else it will either return the value
+=======
+     * by the {@link #validate( )} call. Else it will either return the value
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * of an explicitly set "immediate" attribute or return false if a service
      * element or the factory attribute is set or true otherwise. This latter
      * default value deduction may be unsafe while the descriptor has not been
@@ -556,6 +783,31 @@ public class ComponentMetadata
         return m_activateDeclared;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Returns the number of constructor parameters (0 is default)
+     * @return The number of constructor parameters
+     * @since 2.1.0 (DS 1.4)
+     */
+    public int getNumberOfConstructorParameters()
+    {
+        // validate() ensures this is a valid integer
+      	return m_init == null ? 0 : Integer.valueOf(m_init);
+    }
+
+    /**
+     * Returns the names of the activation fields
+     *
+     * @return the list of activation fields or {@code null}
+     * @since 2.1.0 (DS 1.4)
+     */
+    public List<String> getActivationFields()
+    {
+        return m_activationFields;
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Returns the name of the deactivate method
@@ -605,19 +857,49 @@ public class ComponentMetadata
         return m_service;
     }
 
+<<<<<<< HEAD
+=======
+    public Scope getServiceScope()
+    {
+    	if (m_service == null)
+    	{
+    		return Scope.singleton;
+    	}
+    	return m_service.getScope();
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Returns the properties.
      *
      * @return the properties as a Dictionary
      */
+<<<<<<< HEAD
     public Dictionary<String, Object> getProperties()
+=======
+    public Map<String, Object> getProperties()
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         return m_properties;
     }
 
 
     /**
+<<<<<<< HEAD
+=======
+     * Returns the factory properties.
+     *
+     * @return the factory properties as a Dictionary
+     */
+    public Map<String, Object> getFactoryProperties()
+    {
+        return m_factoryProperties;
+    }
+
+
+    /**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Returns the list of property meta data.
      * <b>Note: This method is intended for unit testing only</b>
      *
@@ -630,6 +912,21 @@ public class ComponentMetadata
 
 
     /**
+<<<<<<< HEAD
+=======
+     * Returns the list of factory property meta data.
+     * <b>Note: This method is intended for unit testing only</b>
+     *
+     * @return the list of property meta data.
+     */
+    List<PropertyMetadata> getFactoryPropertyMetaData()
+    {
+        return m_factoryPropertyMetaData;
+    }
+
+
+    /**
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * Returns the dependency descriptors
      *
      * @return a Collection of dependency descriptors
@@ -681,10 +978,41 @@ public class ComponentMetadata
     }
 
 
+<<<<<<< HEAD
     /**
      * Method used to verify if the semantics of this metadata are correct
      */
     public void validate( Logger logger )
+=======
+    public boolean isConfigurableServiceProperties() {
+		return m_configurableServiceProperties;
+	}
+
+	public boolean isPersistentFactoryComponent() {
+		return m_persistentFactoryComponent;
+	}
+
+	public boolean isDeleteCallsModify() {
+		return m_deleteCallsModify;
+	}
+
+	public boolean isObsoleteFactoryComponentFactory() {
+		return m_obsoleteFactoryComponentFactory == null ? false : m_obsoleteFactoryComponentFactory;
+	}
+
+	public boolean isConfigureWithInterfaces() {
+		return m_configureWithInterfaces;
+	}
+
+	public boolean isDelayedKeepInstances() {
+		return m_delayedKeepInstances;
+	}
+
+	/**
+     * Method used to verify if the semantics of this metadata are correct
+     */
+    public void validate( )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         // nothing to do if already validated
         if ( m_validated )
@@ -696,7 +1024,11 @@ public class ComponentMetadata
         if ( m_name == null )
         {
             // 112.4.3 name is optional defaulting to implementation class name since DS 1.1
+<<<<<<< HEAD
             if ( m_namespaceCode < XmlHandler.DS_VERSION_1_1 )
+=======
+            if ( !m_dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             {
                 throw new ComponentException( "The component name has not been set" );
             }
@@ -719,7 +1051,11 @@ public class ComponentMetadata
             // default if not specified or pre DS 1.1
             m_configurationPolicy = CONFIGURATION_POLICY_OPTIONAL;
         }
+<<<<<<< HEAD
         else if ( m_namespaceCode < XmlHandler.DS_VERSION_1_1 )
+=======
+        else if ( !m_dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             throw validationFailure( "configuration-policy declaration requires DS 1.1 or later namespace " );
         }
@@ -734,7 +1070,11 @@ public class ComponentMetadata
             // default if not specified or pre DS 1.1
             m_activate = "activate";
         }
+<<<<<<< HEAD
         else if ( m_namespaceCode < XmlHandler.DS_VERSION_1_1 )
+=======
+        else if ( !m_dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             throw validationFailure( "activate method declaration requires DS 1.1 or later namespace " );
         }
@@ -745,18 +1085,27 @@ public class ComponentMetadata
             // default if not specified or pre DS 1.1
             m_deactivate = "deactivate";
         }
+<<<<<<< HEAD
         else if ( m_namespaceCode < XmlHandler.DS_VERSION_1_1 )
+=======
+        else if ( !m_dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             throw validationFailure( "deactivate method declaration requires DS 1.1 or later namespace " );
         }
 
         // 112.??.?? modified can be specified (since DS 1.1)
+<<<<<<< HEAD
         if ( m_modified != null && m_namespaceCode < XmlHandler.DS_VERSION_1_1 )
+=======
+        if ( m_modified != null && !m_dsVersion.isDS11() )
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         {
             throw validationFailure( "modified method declaration requires DS 1.1 or later namespace " );
         }
 
         // 112.4.4 configuration-pid can be specified since DS 1.2
+<<<<<<< HEAD
         if ( m_configurationPid != null && m_namespaceCode < XmlHandler.DS_VERSION_1_2 )
         {
             throw validationFailure( "configuration-pid attribute requires DS 1.2 or later namespace " );
@@ -767,11 +1116,70 @@ public class ComponentMetadata
         while ( propertyIterator.hasNext() )
         {
             PropertyMetadata propMeta = ( PropertyMetadata ) propertyIterator.next();
+=======
+        if ( m_configurationPid == null )
+        {
+            m_configurationPid = Collections.singletonList( getName() );
+        }
+        else
+        {
+            if ( !m_dsVersion.isDS12() )
+            {
+                throw validationFailure( "configuration-pid attribute requires DS 1.2 or later namespace " );
+            }
+            if (m_configurationPid.isEmpty())
+            {
+                throw validationFailure( "configuration-pid nust not be empty string " );
+            }
+            if (m_configurationPid.size() > 1 && !m_dsVersion.isDS13())
+            {
+                throw validationFailure( "multiple configuration-pid requires DS 1.3 or later namespace " );
+            }
+            for (int i = 0; i < m_configurationPid.size(); i++)
+            {
+                if ("$".equals( m_configurationPid.get(i)))
+                {
+                    if (!m_dsVersion.isDS13())
+                    {
+                        throw validationFailure( "Use of '$' configuration-pid wildcard requires DS 1.3 or later namespace " );
+                    }
+                    m_configurationPid.set( i, getName() );
+                }
+            }
+            if ( new HashSet<>( m_configurationPid ).size() != m_configurationPid.size())
+            {
+                throw validationFailure( "Duplicate pids not allowed: " + m_configurationPid );
+            }
+        }
+
+        // Next check if the properties are valid (and extract property values)
+        for ( PropertyMetadata propMeta: m_propertyMetaData )
+        {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             propMeta.validate( this );
             m_properties.put( propMeta.getName(), propMeta.getValue() );
         }
         m_propertyMetaData.clear();
 
+<<<<<<< HEAD
+=======
+        // Next check if the factory properties are valid (and extract property values)
+        if ( !m_dsVersion.isDS14() && !m_factoryPropertyMetaData.isEmpty() )
+        {
+            throw validationFailure( "Use of factory properties requires DS 1.4 or later namespace " );
+        }
+        if ( m_dsVersion.isDS14() && isFactory() )
+        {
+        	    for ( PropertyMetadata propMeta: m_factoryPropertyMetaData )
+        	    {
+        		    propMeta.validate( this );
+        		    m_factoryProperties.put( propMeta.getName(), propMeta.getValue() );
+        	    }
+        }
+        // if this is not a factory, these props are ignored, so nothing else to do
+        m_factoryPropertyMetaData.clear();
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // Check that the provided services are valid too
         if ( m_service == SERVICE_DUPLICATE )
         {
@@ -783,12 +1191,19 @@ public class ComponentMetadata
         }
 
         // Check that the references are ok
+<<<<<<< HEAD
         HashSet refs = new HashSet();
         Iterator referenceIterator = m_references.iterator();
         while ( referenceIterator.hasNext() )
         {
             ReferenceMetadata refMeta = ( ReferenceMetadata ) referenceIterator.next();
             refMeta.validate( this, logger );
+=======
+        Set<String> refs = new HashSet<>();
+        for ( ReferenceMetadata refMeta: m_references )
+        {
+            refMeta.validate( this );
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
             // flag duplicates
             if ( !refs.add( refMeta.getName() ) )
@@ -824,18 +1239,84 @@ public class ComponentMetadata
         // the component is a factory component or an immediate component
         if ( m_service != null )
         {
+<<<<<<< HEAD
             if ( m_service.isServiceFactory() && ( isFactory() || isImmediate() ) )
             {
                 throw validationFailure( "ServiceFactory cannot be factory or immediate" );
             }
         }
 
+=======
+            if ( (m_service.getScope() != ServiceMetadata.Scope.singleton) && ( isFactory() || isImmediate() ) )
+            {
+                throw validationFailure( "factory or immediate must be scope singleton not " +  m_service.getScope());
+            }
+        }
+
+        // activation fields require DS 1.4
+        if ( m_activationFields != null && !m_dsVersion.isDS14() )
+        {
+            throw validationFailure( "Activation fields require version 1.4 or later");
+        }
+
+        // constructor injection requires DS 1.4
+        if ( this.m_init != null )
+        {
+            if ( !m_dsVersion.isDS14() )
+            {
+                throw validationFailure( "Constructor injection requires version 1.4 or later");
+            }
+            int constructorParameters = 0;
+            try
+            {
+                constructorParameters = Integer.valueOf(m_init);
+                if ( constructorParameters < 0)
+                {
+                    throw validationFailure( "Init parameter must have non negative value: " + m_init);
+                }
+            }
+            catch ( final NumberFormatException nfe)
+            {
+                throw validationFailure( "Init parameter is not a number: " + m_init);
+            }
+        }
+
+        if (m_dsVersion == DSVersion.DS12Felix)
+        {
+            m_configurableServiceProperties = true;
+        }
+        if ( m_configurableServiceProperties && getServiceScope() != Scope.singleton )
+        {
+            throw validationFailure( "configurable service properties only allowed with singleton scope" );
+        }
+        if (m_dsVersion.isDS13())
+        {
+        	    m_deleteCallsModify = true; //spec behavior as of 1.3
+        }
+        if ( !m_dsVersion.isDS13() && m_configureWithInterfaces)
+        {
+        	    throw validationFailure("Configuration with interfaces or annotations only possible with version 1.3 or later");
+        }
+        if (m_dsVersion.isDS13() && m_obsoleteFactoryComponentFactory != null)
+        {
+          	throw validationFailure("Configuration of component factory instances through config admin factory pids supported only through the 1.2 namespace");
+        }
+        if (m_persistentFactoryComponent && !isFactory())
+        {
+         	throw validationFailure("Only a factory component can be a persistent factory component");
+        }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_validated = true;
     }
 
 
     /**
+<<<<<<< HEAD
      * Returns a <code>ComponentException</code> for this compeonent with the
+=======
+     * Returns a <code>ComponentException</code> for this component with the
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      * given explanation for failure.
      *
      * @param reason The explanation for failing to validate this component.

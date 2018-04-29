@@ -19,6 +19,7 @@
 
 package org.apache.felix.ipojo.manipulator;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,14 @@ import org.apache.felix.ipojo.manipulator.metadata.FileMetadataProvider;
 import org.apache.felix.ipojo.manipulator.metadata.StreamMetadataProvider;
 import org.apache.felix.ipojo.manipulator.render.MetadataRenderer;
 import org.apache.felix.ipojo.manipulator.reporter.SystemReporter;
+=======
+import org.apache.felix.ipojo.manipulator.manifest.FileManifestProvider;
+import org.apache.felix.ipojo.manipulator.metadata.*;
+import org.apache.felix.ipojo.manipulator.render.MetadataRenderer;
+import org.apache.felix.ipojo.manipulator.reporter.SystemReporter;
+import org.apache.felix.ipojo.manipulator.spi.ModuleProvider;
+import org.apache.felix.ipojo.manipulator.spi.provider.ServiceLoaderModuleProvider;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.ipojo.manipulator.store.DirectoryResourceStore;
 import org.apache.felix.ipojo.manipulator.store.JarFileResourceStore;
 import org.apache.felix.ipojo.manipulator.store.builder.DefaultManifestBuilder;
@@ -45,8 +54,20 @@ import org.apache.felix.ipojo.manipulator.visitor.writer.ManipulatedResourcesWri
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.xml.parser.SchemaResolver;
 
+<<<<<<< HEAD
 /**
  * Pojoization allows creating an iPOJO bundle from a "normal" bundle.
+=======
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.jar.JarFile;
+
+/**
+ * Pojoization allows creating an iPOJO bundle from a "normal" bundle.
+ *
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
 public class Pojoization {
@@ -67,14 +88,34 @@ public class Pojoization {
     /**
      * Reporter for error reporting.
      */
+<<<<<<< HEAD
     private Reporter m_reporter;
+=======
+    private final Reporter m_reporter;
+
+    private final ModuleProvider m_moduleProvider;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     public Pojoization() {
         this(new SystemReporter());
     }
 
+<<<<<<< HEAD
     public Pojoization(Reporter reporter) {
         m_reporter = reporter;
+=======
+    public Pojoization(ModuleProvider provider) {
+        this(new SystemReporter(), provider);
+    }
+
+    public Pojoization(Reporter reporter) {
+        this(reporter, new ServiceLoaderModuleProvider());
+    }
+
+    public Pojoization(Reporter reporter, final ModuleProvider moduleProvider) {
+        m_reporter = reporter;
+        m_moduleProvider = moduleProvider;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_reporter.info("Apache Felix iPOJO Manipulator - " + Constants.getVersion());
     }
 
@@ -109,16 +150,46 @@ public class Pojoization {
         return m_reporter.getWarnings();
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Manipulates an input bundle.
      * This method creates an iPOJO bundle based on the given metadata file.
      * The original and final bundles must be different.
+<<<<<<< HEAD
      * @param in the original bundle.
      * @param out the final bundle.
      * @param metadata the iPOJO metadata input stream.
      */
     public void pojoization(File in, File out, InputStream metadata) {
+=======
+     * <p/>
+     * This method does not use the classloader parameter, and use the classloader having loaded the
+     * {@link org.apache.felix.ipojo.manipulator.Pojoization} class. It's definitely not recommended.
+     *
+     * @param in       the original bundle.
+     * @param out      the final bundle.
+     * @param metadata the iPOJO metadata input stream.
+     * @deprecated
+     */
+    public void pojoization(File in, File out, InputStream metadata) {
+        pojoization(in, out, metadata, this.getClass().getClassLoader());
+    }
+
+    /**
+     * Manipulates an input bundle.
+     * This method creates an iPOJO bundle based on the given metadata file.
+     * The original and final bundles must be different.
+     *
+     * @param in       the original bundle.
+     * @param out      the final bundle.
+     * @param metadata the iPOJO metadata input stream.
+     * @param loader   the classloader used to compute the bytecode frames.
+     */
+    public void pojoization(File in, File out, InputStream metadata, ClassLoader loader) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         StreamMetadataProvider provider = new StreamMetadataProvider(metadata, m_reporter);
         provider.setValidateUsingLocalSchemas(m_useLocalXSD);
 
@@ -126,6 +197,10 @@ public class Pojoization {
         try {
             JarFile origin = new JarFile(in);
             JarFileResourceStore jfrs = new JarFileResourceStore(origin, out);
+<<<<<<< HEAD
+=======
+            jfrs.setClassLoader(loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if (in.getName().endsWith(".war")) {
                 // this is a war file, use the right mapper
                 jfrs.setResourceMapper(new WABResourceMapper());
@@ -142,7 +217,11 @@ public class Pojoization {
 
         ManipulationVisitor visitor = createDefaultVisitorChain(store);
 
+<<<<<<< HEAD
         pojoization(store, provider, visitor);
+=======
+        pojoization(store, provider, visitor, loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private ManipulationVisitor createDefaultVisitorChain(ResourceStore store) {
@@ -159,11 +238,38 @@ public class Pojoization {
      * Manipulates an input bundle.
      * This method creates an iPOJO bundle based on the given metadata file.
      * The original and final bundles must be different.
+<<<<<<< HEAD
      * @param in the original bundle.
      * @param out the final bundle.
      * @param metadataFile the iPOJO metadata file (XML).
      */
     public void pojoization(File in, File out, File metadataFile) {
+=======
+     * <p/>
+     * This method does not use the classloader parameter, and use the classloader having loaded the
+     * {@link org.apache.felix.ipojo.manipulator.Pojoization} class. It's definitely not recommended.
+     *
+     * @param in           the original bundle.
+     * @param out          the final bundle.
+     * @param metadataFile the iPOJO metadata file (XML).
+     * @deprecated
+     */
+    public void pojoization(File in, File out, File metadataFile) {
+        pojoization(in, out, metadataFile, this.getClass().getClassLoader());
+    }
+
+    /**
+     * Manipulates an input bundle.
+     * This method creates an iPOJO bundle based on the given metadata file.
+     * The original and final bundles must be different.
+     *
+     * @param in           the original bundle.
+     * @param out          the final bundle.
+     * @param metadataFile the iPOJO metadata file (XML).
+     * @param loader       the classloader used to compute the bytecode frames.
+     */
+    public void pojoization(File in, File out, File metadataFile, ClassLoader loader) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         MetadataProvider provider = new EmptyMetadataProvider();
         if (metadataFile != null) {
             FileMetadataProvider fileMetadataProvider = new FileMetadataProvider(metadataFile, m_reporter);
@@ -175,6 +281,10 @@ public class Pojoization {
         try {
             JarFile origin = new JarFile(in);
             JarFileResourceStore jfrs = new JarFileResourceStore(origin, out);
+<<<<<<< HEAD
+=======
+            jfrs.setClassLoader(loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if (in.getName().endsWith(".war")) {
                 // this is a war file, use the right mapper
                 jfrs.setResourceMapper(new WABResourceMapper());
@@ -191,18 +301,49 @@ public class Pojoization {
 
         ManipulationVisitor visitor = createDefaultVisitorChain(store);
 
+<<<<<<< HEAD
         pojoization(store, provider, visitor);
+=======
+        pojoization(store, provider, visitor, loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     /**
      * Manipulates an expanded bundles.
      * Classes are in the specified directory.
      * this method allows to update a customized manifest.
+<<<<<<< HEAD
      * @param directory the directory containing classes
      * @param metadataFile the metadata file
      * @param manifestFile the manifest file. <code>null</code> to use directory/META-INF/MANIFEST.mf
      */
     public void directoryPojoization(File directory, File metadataFile, File manifestFile) {
+=======
+     * <p/>
+     * This method does not use the classloader parameter, and use the classloader having loaded the
+     * {@link org.apache.felix.ipojo.manipulator.Pojoization} class. It's definitely not recommended.
+     *
+     * @param directory    the directory containing classes
+     * @param metadataFile the metadata file
+     * @param manifestFile the manifest file. <code>null</code> to use directory/META-INF/MANIFEST.mf
+     * @deprecated
+     */
+    public void directoryPojoization(File directory, File metadataFile, File manifestFile) {
+        directoryPojoization(directory, metadataFile, manifestFile, this.getClass().getClassLoader());
+    }
+
+    /**
+     * Manipulates an expanded bundles.
+     * Classes are in the specified directory.
+     * this method allows to update a customized manifest.
+     *
+     * @param directory    the directory containing classes
+     * @param metadataFile the metadata file
+     * @param manifestFile the manifest file. <code>null</code> to use directory/META-INF/MANIFEST.mf
+     * @param loader       the classloader used to compute the bytecode frames.
+     */
+    public void directoryPojoization(File directory, File metadataFile, File manifestFile, ClassLoader loader) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // Get the metadata.xml location if not null
         MetadataProvider provider = new EmptyMetadataProvider();
         if (metadataFile != null) {
@@ -264,15 +405,26 @@ public class Pojoization {
 
         ManipulationVisitor visitor = createDefaultVisitorChain(store);
 
+<<<<<<< HEAD
         pojoization(store, provider, visitor);
+=======
+        pojoization(store, provider, visitor, loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     }
 
     public void pojoization(final ResourceStore store,
                             final MetadataProvider metadata,
+<<<<<<< HEAD
                             final ManipulationVisitor visitor) {
 
         ManipulationEngine engine = new ManipulationEngine();
+=======
+                            final ManipulationVisitor visitor,
+                            final ClassLoader loader) {
+
+        ManipulationEngine engine = new ManipulationEngine(loader);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         engine.setResourceStore(store);
         engine.setReporter(m_reporter);
         engine.setManipulationVisitor(visitor);
@@ -284,7 +436,11 @@ public class Pojoization {
             composite.addMetadataProvider(metadata);
 
             if (!m_ignoreAnnotations) {
+<<<<<<< HEAD
                 composite.addMetadataProvider(new AnnotationMetadataProvider(store, m_reporter));
+=======
+                composite.addMetadataProvider(new AnnotationMetadataProvider(store, m_moduleProvider, m_reporter));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
 
             // Get metadata

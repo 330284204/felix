@@ -19,11 +19,18 @@
 package org.apache.felix.eventadmin.impl.tasks;
 
 import java.util.Collection;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+=======
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.felix.eventadmin.impl.handler.EventHandlerProxy;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.service.event.Event;
 
 /**
@@ -43,7 +50,11 @@ public class AsyncDeliverTasks
     private final SyncDeliverTasks m_deliver_task;
 
     /** A map of running threads currently delivering async events. */
+<<<<<<< HEAD
     private final Map m_running_threads = new HashMap();
+=======
+    private final Map<Long, TaskExecuter> m_running_threads = new ConcurrentHashMap<Long, TaskExecuter>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * The constructor of the class that will use the asynchronous.
@@ -65,6 +76,7 @@ public class AsyncDeliverTasks
      * @param tasks The event handler dispatch tasks to execute
      *
      */
+<<<<<<< HEAD
     public void execute(final Collection tasks, final Event event)
     {
         /*
@@ -146,6 +158,131 @@ public class AsyncDeliverTasks
             synchronized ( m_tasks )
             {
                 m_tasks.add(new Object[] {tasks, event});
+=======
+    public void execute(final Collection<EventHandlerProxy> tasks, final Event event)
+    {
+        /*
+        final Iterator i = tasks.iterator();
+        boolean hasOrdered = false;
+        while ( i.hasNext() )
+        {
+            final EventHandlerProxy task = (EventHandlerProxy)i.next();
+            if ( !task.isAsyncOrderedDelivery() )
+            {
+                // do somethimg
+            }
+            else
+            {
+                hasOrdered = true;
+            }
+
+        }
+        if ( hasOrdered )
+        {*/
+            final TaskInfo info = new TaskInfo(tasks, event);
+            final Long currentThreadId = Thread.currentThread().getId();
+            TaskExecuter executer = m_running_threads.get(currentThreadId);
+            if ( executer == null )
+            {
+                executer = new TaskExecuter(currentThreadId, m_running_threads);
+            }
+            synchronized ( executer )
+            {
+                executer.add(info);
+                if ( !executer.isActive() )
+                {
+                    // reactivate thread
+                    executer.setSyncDeliverTasks(m_deliver_task);
+                    if ( !m_pool.executeTask(executer) )
+                    {
+                        // scheduling failed: last resort, call directly
+                        executer.run();
+                    }
+                    m_running_threads.put(currentThreadId, executer);
+                }
+            }
+        //}
+    }
+
+    private final static class TaskInfo {
+        public final Collection<EventHandlerProxy> tasks;
+        public final Event event;
+
+        public TaskInfo next;
+
+        public TaskInfo(final Collection<EventHandlerProxy> tasks, final Event event) {
+            this.tasks = tasks;
+            this.event = event;
+        }
+    }
+
+    private final static class TaskExecuter implements Runnable
+    {
+        private volatile TaskInfo first;
+        private volatile TaskInfo last;
+
+        private volatile SyncDeliverTasks m_deliver_task;
+
+        private final Map<Long, TaskExecuter> m_running_threads;
+
+        private final long threadId;
+
+        public TaskExecuter(final long threadId, final Map<Long, TaskExecuter> runningThreads) {
+            m_running_threads = runningThreads;
+            this.threadId = threadId;
+        }
+
+        public boolean isActive()
+        {
+            return this.m_deliver_task != null;
+        }
+
+        public void setSyncDeliverTasks(final SyncDeliverTasks syncDeliverTasks)
+        {
+            this.m_deliver_task = syncDeliverTasks;
+        }
+
+        @Override
+        public void run()
+        {
+            boolean running;
+            do
+            {
+                TaskInfo info = null;
+                synchronized ( this )
+                {
+                    info = first;
+                    first = info.next;
+                    if ( first == null )
+                    {
+                        last = null;
+                    }
+                }
+                m_deliver_task.execute(info.tasks, info.event, true);
+                synchronized ( this )
+                {
+                    running = first != null;
+                    if ( !running )
+                    {
+                        this.m_deliver_task = null;
+                        this.m_running_threads.remove(threadId);
+                    }
+                }
+            } while ( running );
+        }
+
+        public void add(final TaskInfo info)
+        {
+            if ( first == null )
+            {
+                first = info;
+                last = info;
+            }
+            else
+            {
+                last.next = info;
+                last = info;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             }
         }
     }

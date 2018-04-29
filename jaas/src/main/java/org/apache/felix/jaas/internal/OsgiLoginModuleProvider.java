@@ -19,8 +19,11 @@
 
 package org.apache.felix.jaas.internal;
 
+<<<<<<< HEAD
 import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.util.Collections;
 import java.util.Map;
 
@@ -31,6 +34,7 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
+<<<<<<< HEAD
 final class OsgiLoginModuleProvider implements LoginModuleProvider
 {
     private final LoginModuleFactory delegate;
@@ -47,6 +51,36 @@ final class OsgiLoginModuleProvider implements LoginModuleProvider
             (String) sr.getProperty(LoginModuleFactory.JAAS_CONTROL_FLAG)).flag();
         this.realmName = (String) sr.getProperty(LoginModuleFactory.JAAS_REALM_NAME);
         this.serviceReference = sr;
+=======
+import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+
+final class OsgiLoginModuleProvider implements LoginModuleProvider
+{
+    private final LoginModuleFactory delegate;
+    private final ServiceReference serviceReference;
+
+    private int ranking;
+    private LoginModuleControlFlag flag;
+    private String realmName;
+
+    public OsgiLoginModuleProvider(ServiceReference sr, LoginModuleFactory delegate)
+    {
+        this.delegate = delegate;
+        this.serviceReference = sr;
+        configure();
+    }
+
+    public void configure() {
+        // FELIX-4389: Support jaas.ranking (in addition to service.ranking
+        // to help ordering LoginModuleFactory instances
+        Object rankingProperty = serviceReference.getProperty(LoginModuleFactory.JAAS_RANKING);
+        if (rankingProperty == null) {
+            rankingProperty = serviceReference.getProperty(Constants.SERVICE_RANKING);
+        }
+        this.ranking = PropertiesUtil.toInteger(rankingProperty, 0);
+        this.flag = ControlFlag.from((String) serviceReference.getProperty(LoginModuleFactory.JAAS_CONTROL_FLAG)).flag();
+        this.realmName = Util.trimToNull((String) serviceReference.getProperty(LoginModuleFactory.JAAS_REALM_NAME));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     public Map<String, ?> options()

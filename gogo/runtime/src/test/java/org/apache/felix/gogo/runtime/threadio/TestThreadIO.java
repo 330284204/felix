@@ -18,15 +18,25 @@
  */
 package org.apache.felix.gogo.runtime.threadio;
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 public class TestThreadIO extends TestCase
 {
+=======
+import org.junit.Assert;
+import org.junit.Test;
+
+public class TestThreadIO {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Test if the threadio works in a nested fashion. We first push
@@ -34,11 +44,19 @@ public class TestThreadIO extends TestCase
      * the output in a ByteArrayOutputStream. Then we pop them, also printing
      * a message identifying the level. Then we verify the output for each level.
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testNested()
     {
         ThreadIOImpl tio = new ThreadIOImpl();
         tio.start();
+<<<<<<< HEAD
         List<ByteArrayOutputStream> list = new ArrayList<ByteArrayOutputStream>();
+=======
+        List<ByteArrayOutputStream> list = new ArrayList<>();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         for (int i = 0; i < 10; i++)
         {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -55,13 +73,21 @@ public class TestThreadIO extends TestCase
         for (int i = 0; i < 10; i++)
         {
             String message = list.get(i).toString().trim();
+<<<<<<< HEAD
             assertEquals("b" + i + "e" + i, message);
+=======
+            Assert.assertEquals("b" + i + "e" + i, message);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
     }
 
     /**
      * Simple test too see if the basics work.
      */
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testSimple()
     {
         ThreadIOImpl tio = new ThreadIOImpl();
@@ -82,7 +108,11 @@ public class TestThreadIO extends TestCase
         tio.stop();
         String normal = out.toString().trim();
         //String error = err.toString().trim();
+<<<<<<< HEAD
         assertEquals("Simple Normal Message", normal);
+=======
+        Assert.assertEquals("Simple Normal Message", normal);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         //assertEquals("Simple Error Message", error );
         System.out.println("Goodbye World");
     }

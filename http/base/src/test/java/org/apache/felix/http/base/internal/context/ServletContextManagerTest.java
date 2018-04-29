@@ -16,6 +16,7 @@
  */
 package org.apache.felix.http.base.internal.context;
 
+<<<<<<< HEAD
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
@@ -24,6 +25,17 @@ import org.osgi.service.http.HttpContext;
 import org.mockito.Mockito;
 
 import javax.servlet.ServletContext;
+=======
+import javax.servlet.ServletContext;
+
+import org.apache.felix.http.base.internal.service.ServletContextManager;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.service.http.HttpContext;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
 public class ServletContextManagerTest
 {
@@ -34,7 +46,11 @@ public class ServletContextManagerTest
     {
         Bundle bundle = Mockito.mock(Bundle.class);
         ServletContext globalContext = Mockito.mock(ServletContext.class);
+<<<<<<< HEAD
         this.manager = new ServletContextManager(bundle, globalContext, null, false);
+=======
+        this.manager = new ServletContextManager(bundle, globalContext, false, null);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     @Test

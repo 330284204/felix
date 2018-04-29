@@ -18,6 +18,7 @@
  */
 package org.apache.felix.gogo.runtime;
 
+<<<<<<< HEAD
 import junit.framework.TestCase;
 
 import org.apache.felix.service.command.CommandSession;
@@ -25,6 +26,18 @@ import org.apache.felix.service.command.Descriptor;
 import org.apache.felix.service.command.Parameter;
 
 public class TestCoercion extends TestCase
+=======
+import org.apache.felix.service.command.CommandSession;
+import org.apache.felix.service.command.Descriptor;
+import org.apache.felix.service.command.Parameter;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+public class TestCoercion extends AbstractParserTest
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 {
     public boolean fBool(boolean t)
     {
@@ -57,6 +70,10 @@ public class TestCoercion extends TestCase
         return s;
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testSimpleTypes() throws Exception
     {
         Context c = new Context();
@@ -120,6 +137,15 @@ public class TestCoercion extends TestCase
         return "string";
     }
 
+<<<<<<< HEAD
+=======
+    public String mymethod(String loc)
+    {
+        return loc;
+    }
+
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testBestCoercion() throws Exception
     {
         Context c = new Context();
@@ -130,6 +156,19 @@ public class TestCoercion extends TestCase
         assertEquals("bundles '1'", "string", c.execute("bundles '1'"));
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+    public void testNoCoercionToString() throws Exception
+    {
+        Context c = new Context();
+        c.addCommand("mymethod", this);
+
+        assertEquals("mymethod '1.10'", "1.10", c.execute("mymethod '1.10'"));
+        assertEquals("mymethod 1.10", "1.10", c.execute("mymethod 1.10"));
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     @Descriptor("list all installed bundles")
     public String p0(
         @Descriptor("show location") @Parameter(names = { "-l", "--location" }, presentValue = "true", absentValue = "false") boolean showLoc,
@@ -147,6 +186,10 @@ public class TestCoercion extends TestCase
         return flag;
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testParameter0() throws Exception
     {
         Context c = new Context();
@@ -175,6 +218,10 @@ public class TestCoercion extends TestCase
         return parm1;
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public void testParameter1() throws Exception
     {
         Context c = new Context();

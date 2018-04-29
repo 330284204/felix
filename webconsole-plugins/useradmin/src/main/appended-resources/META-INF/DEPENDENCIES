@@ -5,6 +5,7 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 Licensed under the Apache License 2.0.
 
+<<<<<<< HEAD
 
 II. Used Software
 
@@ -26,4 +27,18 @@ III. License Summary
 - Apache License 2.0
 - The MIT License
 - New BSD License
+=======
+This product includes icons from the Batch icon set
+(http://adamwhitcroft.com/batch/license/)
+Distributed as Public Domain
+
+This product uses software developed at
+jsTree (http://jstree.com/).
+Copyright (c) 2014 Ivan Bozhanov
+Licensed under The MIT License (http://www.opensource.org/licenses/mit-license.php)
+
+III. License Summary
+- Apache License 2.0
+- The MIT License
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 - Public Domain

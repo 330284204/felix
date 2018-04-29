@@ -16,18 +16,33 @@
  */
 package org.apache.felix.webconsole.plugins.ds.internal;
 
+<<<<<<< HEAD
 import org.apache.felix.webconsole.ConfigurationPrinter;
 import org.apache.felix.webconsole.SimpleWebConsolePlugin;
+=======
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.apache.felix.inventory.Format;
+import org.apache.felix.inventory.InventoryPrinter;
+import org.apache.felix.webconsole.SimpleWebConsolePlugin;
+import org.apache.felix.webconsole.bundleinfo.BundleInfoProvider;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+<<<<<<< HEAD
+=======
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * Activator is the main starting class.
  */
+<<<<<<< HEAD
 public class Activator implements BundleActivator, ServiceTrackerCustomizer
 {
 
@@ -36,14 +51,35 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer
 
     private SimpleWebConsolePlugin plugin;
     private ServiceRegistration printerRegistration;
+=======
+public class Activator implements BundleActivator, ServiceTrackerCustomizer<ServiceComponentRuntime, ServiceComponentRuntime>
+{
+
+    private ServiceTracker<ServiceComponentRuntime, ServiceComponentRuntime> tracker;
+    private BundleContext context;
+
+    private SimpleWebConsolePlugin plugin;
+
+    private ServiceRegistration<InventoryPrinter> printerRegistration;
+
+    private ServiceRegistration<BundleInfoProvider> infoRegistration;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+<<<<<<< HEAD
     public final void start(BundleContext context) throws Exception
     {
         this.context = context;
         this.tracker = new ServiceTracker(context, WebConsolePlugin.SCR_SERVICE, this);
+=======
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public final void start(BundleContext context) throws Exception
+    {
+        this.context = context;
+        this.tracker = new ServiceTracker(context, ServiceComponentRuntime.class, this);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         this.tracker.open();
     }
 
@@ -64,21 +100,48 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer
      * @see org.osgi.util.tracker.ServiceTrackerCustomizer#modifiedService(org.osgi.framework.ServiceReference,
      *      java.lang.Object)
      */
+<<<<<<< HEAD
     public final void modifiedService(ServiceReference reference, Object service)
+=======
+    public final void modifiedService(final ServiceReference<ServiceComponentRuntime> reference, final ServiceComponentRuntime service)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {/* unused */
     }
 
     /**
      * @see org.osgi.util.tracker.ServiceTrackerCustomizer#addingService(org.osgi.framework.ServiceReference)
      */
+<<<<<<< HEAD
     public final Object addingService(ServiceReference reference)
+=======
+    public final ServiceComponentRuntime addingService(final ServiceReference<ServiceComponentRuntime> reference)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         SimpleWebConsolePlugin plugin = this.plugin;
         if (plugin == null)
         {
+<<<<<<< HEAD
             this.plugin = plugin = new WebConsolePlugin().register(context);
             printerRegistration = context.registerService(ConfigurationPrinter.SERVICE,
                 new ComponentConfigurationPrinter(context.getService(reference)), null);
+=======
+            final ServiceComponentRuntime service = context.getService(reference);
+            this.plugin = plugin = new WebConsolePlugin(service).register(context);
+
+            final Dictionary<String, Object> props = new Hashtable<String, Object>();
+            final String name = "Declarative Services Components";
+            props.put(InventoryPrinter.NAME, "scr"); //$NON-NLS-1$
+            props.put(InventoryPrinter.TITLE, name);
+            props.put(InventoryPrinter.FORMAT, new String[] {
+                    Format.TEXT.toString(),
+                    Format.JSON.toString()
+            });
+            printerRegistration = context.registerService(InventoryPrinter.class,
+                new ComponentConfigurationPrinter(service, (WebConsolePlugin) plugin),
+                props);
+
+            infoRegistration = new InfoProvider(context.getBundle(), service).register(context);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
         return context.getService(reference);
@@ -88,7 +151,11 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer
      * @see org.osgi.util.tracker.ServiceTrackerCustomizer#removedService(org.osgi.framework.ServiceReference,
      *      java.lang.Object)
      */
+<<<<<<< HEAD
     public final void removedService(ServiceReference reference, Object service)
+=======
+    public final void removedService(final ServiceReference<ServiceComponentRuntime> reference, final ServiceComponentRuntime service)
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     {
         SimpleWebConsolePlugin plugin = this.plugin;
 
@@ -98,12 +165,26 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer
             plugin.unregister();
             this.plugin = null;
             // unregister configuration printer too
+<<<<<<< HEAD
             ServiceRegistration reg = printerRegistration;
+=======
+            ServiceRegistration<?> reg = printerRegistration;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             if (reg != null)
             {
                 reg.unregister();
                 printerRegistration = null;
             }
+<<<<<<< HEAD
+=======
+            // unregister info provider too
+            reg = infoRegistration;
+            if (reg != null)
+            {
+                reg.unregister();
+                infoRegistration = null;
+            }
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         }
 
     }

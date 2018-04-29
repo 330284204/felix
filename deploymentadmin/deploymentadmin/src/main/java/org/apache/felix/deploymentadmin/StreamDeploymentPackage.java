@@ -35,6 +35,10 @@ import org.osgi.service.deploymentadmin.DeploymentException;
 public class StreamDeploymentPackage extends AbstractDeploymentPackage {
     private final JarInputStream m_input;
     private final List m_names = new ArrayList();
+<<<<<<< HEAD
+=======
+    private boolean m_inMetaInf = true;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Creates an instance of this class.
@@ -52,12 +56,55 @@ public class StreamDeploymentPackage extends AbstractDeploymentPackage {
         throw new UnsupportedOperationException("Not applicable for stream-based deployment package");
     }
 
+<<<<<<< HEAD
     // This only works for those resources that have been read from the stream already, no guarantees for remainder of stream
+=======
+    public InputStream getCurrentEntryStream() {
+        return new NonCloseableStream(m_input);
+    }
+
+    public AbstractInfo getNextEntry() throws IOException {
+        String name;
+
+        boolean metaInfFile = true;
+        do {
+            ZipEntry nextEntry = m_input.getNextJarEntry();
+            if (nextEntry == null) {
+                return null;
+            }
+            name = nextEntry.getName();
+
+            // FELIX-518: do not try to process signature or localization files...
+            metaInfFile = isMetaInfFile(name);
+            if (metaInfFile) {
+                if (!m_inMetaInf) {
+                    throw new IOException("Unexpected signature file found after manifest files: " + name);
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        while (metaInfFile);
+
+        m_inMetaInf = false;
+        m_names.add(name);
+
+        return getAbstractInfoByPath(name);
+    }
+
+    // This only works for those resources that have been read from the stream already, no guarantees for remainder of
+    // stream
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     public BundleInfoImpl[] getOrderedBundleInfos() {
         List result = new ArrayList();
 
         // add all bundle resources ordered by location in stream
+<<<<<<< HEAD
         for(Iterator i = m_names.iterator(); i.hasNext();) {
+=======
+        for (Iterator i = m_names.iterator(); i.hasNext();) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             String indexEntry = (String) i.next();
             AbstractInfo bundleInfo = getBundleInfoByPath(indexEntry);
             if (bundleInfo != null) {
@@ -68,7 +115,11 @@ public class StreamDeploymentPackage extends AbstractDeploymentPackage {
         // add bundle resources marked missing to the end of the result
         BundleInfoImpl[] bundleInfoImpls = getBundleInfoImpls();
         for (int i = 0; i < bundleInfoImpls.length; i++) {
+<<<<<<< HEAD
             if(bundleInfoImpls[i].isMissing()) {
+=======
+            if (bundleInfoImpls[i].isMissing()) {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                 result.add(bundleInfoImpls[i]);
             }
         }
@@ -78,6 +129,7 @@ public class StreamDeploymentPackage extends AbstractDeploymentPackage {
     public ResourceInfoImpl[] getOrderedResourceInfos() {
         throw new UnsupportedOperationException("Not applicable for stream-based deployment package");
     }
+<<<<<<< HEAD
 
     public AbstractInfo getNextEntry() throws IOException {
         ZipEntry nextEntry = m_input.getNextJarEntry();
@@ -93,4 +145,6 @@ public class StreamDeploymentPackage extends AbstractDeploymentPackage {
     public InputStream getCurrentEntryStream() {
         return new NonCloseableStream(m_input);
     }
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }

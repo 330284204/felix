@@ -30,6 +30,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.deploymentadmin.DeploymentException;
 import org.osgi.service.deploymentadmin.spi.ResourceProcessor;
 import org.osgi.service.deploymentadmin.spi.ResourceProcessorException;
+<<<<<<< HEAD
 
 /**
  * Command that processes all the processed resources in the source deployment package
@@ -38,23 +39,47 @@ import org.osgi.service.deploymentadmin.spi.ResourceProcessorException;
  * System property <code>org.apache.felix.deploymentadmin.allowforeigncustomizers</code> allows
  * you to skip the source handling of resource processors, allowing the use of processors already on
  * the system. Defaults to <code>false</code>.
+=======
+import org.osgi.service.log.LogService;
+
+/**
+ * Command that processes all the processed resources in the source deployment
+ * package of a deployment session by finding their Resource Processors and
+ * having those process the resources. System property
+ * <code>org.apache.felix.deploymentadmin.allowforeigncustomizers</code> allows
+ * you to skip the source handling of resource processors, allowing the use of
+ * processors already on the system. Defaults to <code>false</code>.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
  */
 public class ProcessResourceCommand extends Command {
 
     private final CommitResourceCommand m_commitCommand;
 
     /**
+<<<<<<< HEAD
      * Creates an instance of this command, the <code>CommitCommand</code> is used
      * to ensure that all used <code>ResourceProcessor</code>s will be committed at a later
      * stage in the deployment session.
      *
      * @param commitCommand The <code>CommitCommand</code> that will commit all resource processors used in this command.
+=======
+     * Creates an instance of this command, the <code>CommitCommand</code> is
+     * used to ensure that all used <code>ResourceProcessor</code>s will be
+     * committed at a later stage in the deployment session.
+     * 
+     * @param commitCommand The <code>CommitCommand</code> that will commit all
+     *            resource processors used in this command.
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
      */
     public ProcessResourceCommand(CommitResourceCommand commitCommand) {
         m_commitCommand = commitCommand;
     }
 
+<<<<<<< HEAD
     public void execute(DeploymentSessionImpl session) throws DeploymentException {
+=======
+    protected void doExecute(DeploymentSessionImpl session) throws Exception {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         // Allow proper rollback in case the drop fails...
         addRollback(new RollbackCommitAction(session));
 
@@ -71,6 +96,7 @@ public class ProcessResourceCommand extends Command {
         }
 
         try {
+<<<<<<< HEAD
             String allowForeignCustomerizers = System.getProperty("org.apache.felix.deploymentadmin.allowforeigncustomizers", "false");
 
         	while (!expectedResources.isEmpty()) {
@@ -133,6 +159,80 @@ public class ProcessResourceCommand extends Command {
         }
         
         public void run() {
+=======
+            while (!expectedResources.isEmpty()) {
+                AbstractInfo jarEntry = source.getNextEntry();
+                if (jarEntry == null) {
+                    throw new DeploymentException(CODE_OTHER_ERROR, "Expected more resources in the stream: " + expectedResources.keySet());
+                }
+
+                String name = jarEntry.getPath();
+
+                ResourceInfoImpl resourceInfo = (ResourceInfoImpl) expectedResources.remove(name);
+                if (resourceInfo == null) {
+                    throw new DeploymentException(CODE_OTHER_ERROR, "Resource '" + name + "' is not described in the manifest.");
+                }
+                // FELIX-4491: only resources that need to be processed should be handled...
+                if (!resourceInfo.isProcessedResource()) {
+                    session.getLog().log(LogService.LOG_INFO, "Ignoring non-processed resource: " + resourceInfo.getPath());
+                    continue;
+                }
+
+                ServiceReference ref = source.getResourceProcessor(name);
+                if (ref == null) {
+                    throw new DeploymentException(CODE_PROCESSOR_NOT_FOUND, "No resource processor for resource: '" + name + "'");
+                }
+                if (!isValidCustomizer(session, ref)) {
+                    throw new DeploymentException(CODE_FOREIGN_CUSTOMIZER, "Resource processor for resource '" + name + "' belongs to foreign deployment package");
+                }
+
+                ResourceProcessor resourceProcessor = (ResourceProcessor) context.getService(ref);
+                if (resourceProcessor == null) {
+                    throw new DeploymentException(CODE_PROCESSOR_NOT_FOUND, "No resource processor for resource: '" + name + "'");
+                }
+
+                try {
+                    if (m_commitCommand.addResourceProcessor(resourceProcessor)) {
+                        resourceProcessor.begin(session);
+                    }
+                    resourceProcessor.process(name, source.getCurrentEntryStream());
+                }
+                catch (ResourceProcessorException rpe) {
+                    if (rpe.getCode() == ResourceProcessorException.CODE_RESOURCE_SHARING_VIOLATION) {
+                        throw new DeploymentException(CODE_RESOURCE_SHARING_VIOLATION, "Sharing violation while processing resource '" + name + "'", rpe);
+                    }
+                    else {
+                        throw new DeploymentException(CODE_OTHER_ERROR, "Error while processing resource '" + name + "'", rpe);
+                    }
+                }
+            }
+        }
+        catch (IOException e) {
+            throw new DeploymentException(CODE_OTHER_ERROR, "Problem while reading stream", e);
+        }
+    }
+
+    private boolean isValidCustomizer(DeploymentSessionImpl session, ServiceReference ref) {
+        if (session.getConfiguration().isAllowForeignCustomizers()) {
+            // If foreign customizers are allowed, any non-null customizer will do...
+            return ref != null;
+        }
+
+        AbstractDeploymentPackage source = session.getSourceAbstractDeploymentPackage();
+        String serviceOwnerSymName = ref.getBundle().getSymbolicName();
+        // If only local customizers are allowed, we must be able to find this customizer in our DP...
+        return source.getBundleInfoByName(serviceOwnerSymName) != null;
+    }
+
+    private class RollbackCommitAction extends AbstractAction {
+        private final DeploymentSessionImpl m_session;
+
+        public RollbackCommitAction(DeploymentSessionImpl session) {
+            m_session = session;
+        }
+
+        protected void doRun() {
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
             m_commitCommand.rollback(m_session);
         }
     }

@@ -19,6 +19,7 @@
 
 package org.apache.felix.ipojo.manipulator.metadata.annotation.module;
 
+<<<<<<< HEAD
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Controller;
@@ -56,6 +57,16 @@ import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.UpdatedVis
 import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.Action;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.MethodBindVisitor;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.ParameterBindVisitor;
+=======
+import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.manipulator.Reporter;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.ComponentWorkbench;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.*;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.Action;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.MethodBindVisitor;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.bind.ParameterBindVisitor;
+import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.generic.GenericVisitorFactory;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.util.Elements;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.util.Names;
 import org.apache.felix.ipojo.manipulator.spi.AbsBindingModule;
@@ -63,7 +74,10 @@ import org.apache.felix.ipojo.manipulator.spi.AnnotationVisitorFactory;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
 import org.apache.felix.ipojo.metadata.Element;
 import org.objectweb.asm.AnnotationVisitor;
+<<<<<<< HEAD
 import org.objectweb.asm.tree.FieldNode;
+=======
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -128,7 +142,11 @@ public class DefaultBindingModule extends AbsBindingModule {
                 .when(on(ElementType.FIELD))
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         return new RequiresVisitor(context.getWorkbench(), ((FieldNode) context.getNode()).name);
+=======
+                        return new RequiresVisitor(context.getWorkbench(), context.getFieldNode().name);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     }
                 })
                 .when(on(ElementType.PARAMETER))
@@ -141,14 +159,22 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Controller.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         return new ControllerVisitor(context.getWorkbench(), ((FieldNode) context.getNode()).name);
+=======
+                        return new ControllerVisitor(context.getWorkbench(), context.getFieldNode().name);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                     }
                 });
 
         bind(ServiceProperty.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         String name = ((FieldNode) context.getNode()).name;
+=======
+                        String name = context.getFieldNode().name;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         ComponentWorkbench workbench = context.getWorkbench();
 
                         if (!workbench.getIds().containsKey("provides")) {
@@ -167,7 +193,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(ServiceController.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         String name = ((FieldNode) context.getNode()).name;
+=======
+                        String name = context.getFieldNode().name;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         ComponentWorkbench workbench = context.getWorkbench();
 
                         if (!workbench.getIds().containsKey("provides")) { // The provides annotation is already computed.
@@ -189,7 +219,11 @@ public class DefaultBindingModule extends AbsBindingModule {
 
                         ComponentWorkbench workbench = context.getWorkbench();
                         Element properties = Elements.getPropertiesElement(workbench);
+<<<<<<< HEAD
                         String name = ((FieldNode) context.getNode()).name;
+=======
+                        String name = context.getFieldNode().name;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new FieldPropertyVisitor(name, properties);
                     }
 
@@ -201,7 +235,11 @@ public class DefaultBindingModule extends AbsBindingModule {
                         ComponentWorkbench workbench = context.getWorkbench();
                         // @Property on method parameter
                         Element properties = Elements.getPropertiesElement(workbench);
+<<<<<<< HEAD
                         String name = ((MethodNode) context.getNode()).name;
+=======
+                        String name = context.getMethodNode().name;
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new MethodPropertyVisitor(properties, name);
                     }
                 })
@@ -212,7 +250,11 @@ public class DefaultBindingModule extends AbsBindingModule {
                         ComponentWorkbench workbench = context.getWorkbench();
                         // @Property on method parameter
                         Element properties = Elements.getPropertiesElement(workbench);
+<<<<<<< HEAD
                         MethodNode method = (MethodNode) context.getNode();
+=======
+                        MethodNode method = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new ParameterPropertyVisitor(properties, method, context.getParameterIndex());
                     }
                 });
@@ -220,7 +262,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Validate.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new LifecycleVisitor(context.getWorkbench(),
                                 Names.computeEffectiveMethodName(node.name),
                                 LifecycleVisitor.Transition.VALIDATE);
@@ -230,7 +276,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Invalidate.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new LifecycleVisitor(context.getWorkbench(),
                                 Names.computeEffectiveMethodName(node.name),
                                 LifecycleVisitor.Transition.INVALIDATE);
@@ -240,7 +290,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Updated.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new UpdatedVisitor(context.getWorkbench(),
                                 Names.computeEffectiveMethodName(node.name));
                     }
@@ -249,7 +303,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Bind.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new MethodBindVisitor(context.getWorkbench(), Action.BIND, node, context.getReporter());
                     }
                 });
@@ -257,7 +315,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Unbind.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new MethodBindVisitor(context.getWorkbench(), Action.UNBIND, node, context.getReporter());
                     }
                 });
@@ -265,7 +327,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(Modified.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new MethodBindVisitor(context.getWorkbench(), Action.MODIFIED, node, context.getReporter());
                     }
                 });
@@ -273,7 +339,11 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(PostRegistration.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
+=======
+                        MethodNode node = context.getMethodNode();
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
                         return new PostRegistrationVisitor(context.getWorkbench(), node.name);
                     }
                 });
@@ -281,10 +351,19 @@ public class DefaultBindingModule extends AbsBindingModule {
         bind(PostUnregistration.class)
                 .to(new AnnotationVisitorFactory() {
                     public AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+<<<<<<< HEAD
                         MethodNode node = (MethodNode) context.getNode();
                         return new PostRegistrationVisitor(context.getWorkbench(), node.name);
                     }
                 });
+=======
+                        MethodNode node = context.getMethodNode();
+                        return new PostUnregistrationVisitor(context.getWorkbench(), node.name);
+                    }
+                });
+
+        bind(Context.class).to(new GenericVisitorFactory("context", ""));
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     }
 
     private DocumentBuilder m_builder;
@@ -310,7 +389,11 @@ public class DefaultBindingModule extends AbsBindingModule {
             return m_builder;
         }
 
+<<<<<<< HEAD
         // The builder has to be reseted
+=======
+        // The builder has to be reset
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
         m_builder.reset();
 
         return m_builder;

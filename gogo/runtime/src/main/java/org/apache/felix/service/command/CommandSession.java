@@ -20,9 +20,27 @@ package org.apache.felix.service.command;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+<<<<<<< HEAD
 
 public interface CommandSession
 {
+=======
+import java.nio.file.Path;
+import java.util.List;
+
+public interface CommandSession extends AutoCloseable
+{
+
+    /*
+     * Variable name to disable glob (filename) expansion
+     */
+    String OPTION_NO_GLOB = "gogo.option.noglob";
+
+    Path currentDir();
+
+    void currentDir(Path path);
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
     /**
      * Execute a program in this session.
      *
@@ -74,7 +92,11 @@ public interface CommandSession
      * @param name  Name of the variable.
      * @param value Value of the variable
      */
+<<<<<<< HEAD
     void put(String name, Object value);
+=======
+    Object put(String name, Object value);
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 
     /**
      * Convert an object to string form (CharSequence). The level is defined in
@@ -93,4 +115,38 @@ public interface CommandSession
      */
 
     Object convert(Class<?> type, Object instance);
+<<<<<<< HEAD
+=======
+
+    //
+    // Job support
+    //
+
+    /**
+     * List jobs. Always return a non-null list.
+     */
+    List<Job> jobs();
+
+    /**
+     * Get the current foreground job or null.
+     */
+    Job foregroundJob();
+
+    /**
+     * Set the job listener for this session.
+     */
+    void setJobListener(JobListener listener);
+
+    /**
+     * Return the current session.
+     * Available inside from a command call.
+     */
+    class Utils {
+        public static CommandSession current() {
+            Job j = Job.Utils.current();
+            return j != null ? j.session() : null;
+        }
+    }
+
+>>>>>>> 502e622adcc798bcbd433d6b42ca78673cfab368
 }
